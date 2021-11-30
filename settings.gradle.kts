@@ -1,0 +1,1 @@
+rootProject.name = "com.mospolytech.mph.schedule.mospolyhelper-schedule"
