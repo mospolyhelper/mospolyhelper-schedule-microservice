@@ -4,7 +4,3 @@ kotlin {
         val test by getting
     }
 }
-
-dependencies {
-    api(project(":domain:base"))
-}

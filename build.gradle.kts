@@ -16,8 +16,6 @@ buildscript {
     }
 }
 
-group = "com.mospolytech.mph.schedule"
-version = "0.0.1"
 application {
     mainClass.set("io.ktor.server.netty.EngineMain")
 }
@@ -31,14 +29,13 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
     }
-
-
 }
 
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
 
     dependencies {
         implementation("io.ktor:ktor-server-auth:$ktor_version")

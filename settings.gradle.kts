@@ -1,4 +1,4 @@
-rootProject.name = "mospolyhelper-schedule"
+rootProject.name = "mospolyhelper-web"
 
 pluginManagement {
     repositories {
@@ -8,8 +8,17 @@ pluginManagement {
     }
 }
 
-include(":app")
+include(":microservices")
+include(":microservices:auth")
+include(":microservices:schedule")
+
 include(":data")
-include(":test")
 include(":data:base")
 include(":data:schedule")
+
+include(":domain")
+include(":domain:base")
+include(":domain:schedule")
+
+include(":features")
+include(":features:schedule")
