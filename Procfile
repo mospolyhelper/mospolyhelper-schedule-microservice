@@ -1,1 +1,1 @@
-web: ./microservices\schedule\build\install/schedule/bin/schedule
+web: ./microservices/schedule/build/install/schedule/bin/schedule
