@@ -56,12 +56,6 @@ subprojects {
     }
 }
 
-tasks.withType<Jar>() {
-
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    configurations["compileClasspath"].forEach { file: File ->
-        from(zipTree(file.absoluteFile))
-    }
+tasks.create("stage") {
+    dependsOn("installDist")
 }
-
