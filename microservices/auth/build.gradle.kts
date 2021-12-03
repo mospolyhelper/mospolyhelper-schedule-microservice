@@ -1,4 +1,11 @@
-group = "com.mospolytech.mph.auth"
+plugins {
+    application
+}
+
+application {
+    mainClass.set("io.ktor.server.netty.EngineMain")
+}
+
 version = "0.0.1"
 
 kotlin {

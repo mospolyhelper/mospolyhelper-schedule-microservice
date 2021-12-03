@@ -1,4 +1,10 @@
-group = "com.mospolytech.mph.schedule"
+plugins {
+    application
+}
+
+application {
+    mainClass.set("io.ktor.server.netty.EngineMain")
+}
 version = "0.0.1"
 
 kotlin {

@@ -1,5 +1,4 @@
 plugins {
-    application
     kotlin("jvm") version "1.6.0"
     kotlin("plugin.serialization") version "1.6.0"
 }
@@ -9,15 +8,10 @@ buildscript {
         gradlePluginPortal()
         google()
         mavenCentral()
-        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
     }
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.0")
     }
-}
-
-application {
-    mainClass.set("io.ktor.server.netty.EngineMain")
 }
 
 val ktor_version: String by project
@@ -36,6 +30,8 @@ allprojects {
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
+
+
 
     dependencies {
         implementation("io.ktor:ktor-server-auth:$ktor_version")
@@ -59,3 +55,13 @@ subprojects {
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     }
 }
+
+tasks.withType<Jar>() {
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    configurations["compileClasspath"].forEach { file: File ->
+        from(zipTree(file.absoluteFile))
+    }
+}
+
