@@ -31,8 +31,6 @@ subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
 
-
-
     dependencies {
         implementation("io.ktor:ktor-server-auth:$ktor_version")
         implementation("io.ktor:ktor-server-core:$ktor_version")
@@ -54,8 +52,4 @@ subprojects {
         testImplementation("io.ktor:ktor-server-tests:$ktor_version")
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     }
-}
-
-tasks.create("stage") {
-    dependsOn("installDist")
 }
