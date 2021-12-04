@@ -1,9 +1,8 @@
 package com.mospolytech.mph.schedule
 
-import com.mospolytech.mph.data.schedule.ScheduleService
 import com.mospolytech.mph.features.base.koin.get
 import com.mospolytech.mph.features.schedule.scheduleDataConversion
-import com.mospolytech.mph.features.schedule.scheduleRoutes
+import com.mospolytech.mph.features.schedule.scheduleRoutesV1
 import com.mospolytech.mph.schedule.plugins.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
@@ -24,7 +23,7 @@ fun Application.module() {
 }
 
 fun Application.setRoutes() {
-    scheduleRoutes(get())
+    scheduleRoutesV1(get())
 }
 
 fun Application.setDataConversions() {

@@ -9,11 +9,18 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 
-fun Application.scheduleRoutes(service: ScheduleService) {
+fun Application.scheduleRoutesV1(service: ScheduleService) {
     routing {
         route("/schedule") {
             get("/sources") {
                 call.respond(ScheduleSources.values().map { it.name.lowercase() })
+            }
+        }
+
+
+        route("schedules") {
+            get {
+                call.respond(service.getSchedules(false))
             }
             get("/complex") {
                 call.respond(mapOf("Cant" to "do this"))

@@ -1,5 +1,6 @@
 package com.mospolytech.mph.data.schedule
 
+import com.mospolytech.mph.data.schedule.model.ScheduleResponse
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -37,7 +38,7 @@ class ScheduleService(
         }.body()
     }
 
-    suspend fun getSchedules(isSession: Boolean): String {
+    suspend fun getSchedules(isSession: Boolean): ScheduleResponse {
         return client.get(if (isSession) GET_SCHEDULES_SESSION_ALL else GET_SCHEDULES_ALL) {
             header("referer", BASE_URL)
             // For json error status if schedule is not ready instead html
