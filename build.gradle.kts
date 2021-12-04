@@ -17,13 +17,20 @@ buildscript {
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
-val prometeus_version : String by project
+val prometeus_version: String by project
+val koin_version: String by project
 
 allprojects {
     repositories {
         google()
         mavenCentral()
         maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
+    }
+
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        kotlinOptions.freeCompilerArgs += listOf(
+            "-Xuse-experimental=io.ktor.server.locations.KtorExperimentalLocationsAPI",
+        )
     }
 }
 
@@ -41,6 +48,7 @@ subprojects {
         implementation("io.ktor:ktor-server-host-common:$ktor_version")
         implementation("io.ktor:ktor-server-status-pages:$ktor_version")
         implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
+        implementation("io.ktor:ktor-server-data-conversion:$ktor_version")
         implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
         implementation("io.ktor:ktor-metrics-micrometer:$ktor_version")
         implementation("io.micrometer:micrometer-registry-prometheus:$prometeus_version")
@@ -48,7 +56,11 @@ subprojects {
         implementation("io.ktor:ktor-server-call-logging:$ktor_version")
         implementation("io.ktor:ktor-server-cors:$ktor_version")
         implementation("io.ktor:ktor-server-netty:$ktor_version")
+        implementation("io.insert-koin:koin-core:$koin_version")
+        implementation("io.insert-koin:koin-ktor:$koin_version")
         implementation("ch.qos.logback:logback-classic:$logback_version")
+
+
         testImplementation("io.ktor:ktor-server-tests:$ktor_version")
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     }

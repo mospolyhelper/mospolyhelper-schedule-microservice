@@ -1,5 +1,6 @@
 package com.mospolytech.mph.domain.schedule.model
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable

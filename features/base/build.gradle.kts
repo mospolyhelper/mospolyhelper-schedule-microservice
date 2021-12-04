@@ -6,7 +6,6 @@ kotlin {
 }
 
 dependencies {
-    api(project(":features:base"))
-    api(project(":data:schedule"))
-    api(project(":domain:schedule"))
+    api(project(":data:base"))
+    api(project(":domain:base"))
 }

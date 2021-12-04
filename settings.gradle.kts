@@ -21,4 +21,5 @@ include(":domain:base")
 include(":domain:schedule")
 
 include(":features")
+include(":features:base")
 include(":features:schedule")
