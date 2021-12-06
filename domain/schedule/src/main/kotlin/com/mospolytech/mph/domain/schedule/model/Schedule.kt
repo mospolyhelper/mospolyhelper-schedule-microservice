@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Schedule(
-    val lessons: List<LessonDateTimes>
+    val lessons: List<ScheduleDay>
 )

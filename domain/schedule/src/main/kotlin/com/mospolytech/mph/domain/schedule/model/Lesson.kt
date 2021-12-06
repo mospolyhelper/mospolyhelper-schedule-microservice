@@ -1,8 +1,6 @@
 package com.mospolytech.mph.domain.schedule.model
 
 import kotlinx.serialization.Serializable
-import java.time.LocalDate
-import java.time.LocalTime
 
 @Serializable
 data class Lesson(
@@ -11,4 +9,14 @@ data class Lesson(
     val teachers: List<Teacher>,
     val groups: List<Group>,
     val places: List<Place>,
-)
+): Comparable<Lesson> {
+    override fun compareTo(other: Lesson): Int {
+        val comparing = title.compareTo(other.title)
+        return if (comparing != 0) {
+            comparing
+        } else {
+            type.compareTo(other.type)
+        }
+    }
+
+}

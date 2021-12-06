@@ -1,7 +1,8 @@
 package com.mospolytech.mph.features.schedule
 
-import com.mospolytech.mph.data.schedule.ScheduleService
+import com.mospolytech.mph.domain.schedule.model.ScheduleSource
 import com.mospolytech.mph.domain.schedule.model.ScheduleSources
+import com.mospolytech.mph.domain.schedule.repository.ScheduleRepository
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.locations.*
@@ -9,7 +10,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 
-fun Application.scheduleRoutesV1(service: ScheduleService) {
+fun Application.scheduleRoutesV1(repository: ScheduleRepository) {
     routing {
         route("/schedule") {
             get("/sources") {
@@ -20,15 +21,19 @@ fun Application.scheduleRoutesV1(service: ScheduleService) {
 
         route("schedules") {
             get {
-                call.respond(service.getSchedules(false))
+                call.respond(repository.getSchedule())
             }
             get("/complex") {
                 call.respond(mapOf("Cant" to "do this"))
             }
             get<ScheduleRequest> {
-                val schedule = service
-                    .getScheduleByGroup(it.key, false)
-                call.respondText(schedule, ContentType.parse("application/json"))
+                call.respond(repository.getSchedule(ScheduleSource(it.type, it.key)))
+            }
+        }
+
+        route("lessons") {
+            get {
+                call.respond(repository.getLessons())
             }
         }
     }
