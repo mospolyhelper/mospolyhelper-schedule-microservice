@@ -3,6 +3,7 @@ package com.mospolytech.mph.data.schedule.converters
 import com.mospolytech.mph.data.schedule.model.ApiGroup
 import com.mospolytech.mph.data.schedule.model.ApiLesson
 import com.mospolytech.mph.data.schedule.model.ScheduleResponse
+import com.mospolytech.mph.data.schedule.model.ScheduleSessionResponse
 import com.mospolytech.mph.domain.schedule.model.*
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -10,6 +11,7 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.*
+import kotlin.collections.ArrayList
 
 class ApiScheduleConverter {
     companion object {
@@ -19,6 +21,17 @@ class ApiScheduleConverter {
 
     fun convertToLessons(scheduleResponse: ScheduleResponse): List<LessonDateTimes> {
         val lessons = scheduleResponse.contents.values.flatMap {
+            convertLessons(
+                it.grid.toList(),
+                listOf(it.group),
+                it.isSession
+            )
+        }
+        return lessons
+    }
+
+    fun convertToLessons(scheduleResponse: ScheduleSessionResponse): List<LessonDateTimes> {
+        val lessons = scheduleResponse.contents.flatMap {
             convertLessons(
                 it.grid.toList(),
                 listOf(it.group),
@@ -143,15 +156,19 @@ class ApiScheduleConverter {
     }
 }
 
-fun mergeLessons(lessons: List<LessonDateTimes>): List<LessonDateTimes> {
-    val resList = mutableListOf<LessonDateTimes>()
+fun mergeLessons(vararg lessonsList: List<LessonDateTimes>): List<LessonDateTimes> {
+    val countTotal = lessonsList.sumOf { it.size }
+    val suggestedNewCount = (countTotal * 0.85).toInt()
+    val resList: MutableList<LessonDateTimes> = ArrayList(suggestedNewCount)
 
-    for (lessonDateTimes in lessons) {
-        val indexToMerge = resList.indexOfFirst { lessonDateTimes.canMergeByGroup(it) }
-        if (indexToMerge != -1) {
-            resList[indexToMerge] = resList[indexToMerge].mergeByGroup(lessonDateTimes)
-        } else {
-            resList.add(lessonDateTimes)
+    for (lessons in lessonsList) {
+        for (lessonDateTimes in lessons) {
+            val indexToMerge = resList.indexOfFirst { lessonDateTimes.canMergeByGroup(it) }
+            if (indexToMerge != -1) {
+                resList[indexToMerge] = resList[indexToMerge].mergeByGroup(lessonDateTimes)
+            } else {
+                resList.add(lessonDateTimes)
+            }
         }
     }
     resList.sort()

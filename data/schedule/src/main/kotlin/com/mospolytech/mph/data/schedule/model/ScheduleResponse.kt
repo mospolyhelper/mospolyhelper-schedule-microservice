@@ -29,13 +29,13 @@ data class ApiSchedule(
 data class ApiLesson(
     val sbj: String,
     val teacher: String,
-    val dts: String,
-    val df: String,
-    val dt: String,
+    val dts: String = "",
+    val df: String = "",
+    val dt: String = "",
     val auditories: List<Auditory>,
     val type: String,
-    val week: String,
-    val align: String,
+    val week: String = "",
+    val align: String = "",
     @SerialName("e_link")
     val eLink: String?
 ) {

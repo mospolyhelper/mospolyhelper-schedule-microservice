@@ -85,12 +85,17 @@ class ScheduleRepositoryImpl(
     private val updateScheduleLock = Any()
 
     private suspend fun updateSchedule(): List<LessonDateTimes> {
-        val semester = service.getSchedules(false)
-        //val session = service.getSchedules(true)
-        val lessons = converter.convertToLessons(semester)
-        val mergedLessons = mergeLessons(lessons)
+        val semester = service.getSchedules()
+        val lessonsSemester = converter.convertToLessons(semester)
+
+        val session = service.getSchedulesSession()
+
+        val lessonsSession = converter.convertToLessons(session)
+
+        val mergedLessons = mergeLessons(lessonsSemester, lessonsSession)
         synchronized(updateScheduleLock) {
             scheduleCache = mergedLessons
+            scheduleCacheUpdateDateTime = LocalDateTime.now()
         }
         return mergedLessons
     }
