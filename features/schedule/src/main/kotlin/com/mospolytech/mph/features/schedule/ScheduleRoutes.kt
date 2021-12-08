@@ -13,9 +13,15 @@ import io.ktor.server.routing.*
 fun Application.scheduleRoutesV1(repository: ScheduleRepository) {
     routing {
         route("/schedule") {
-            get("/sources") {
-                call.respond(ScheduleSources.values().map { it.name.lowercase() })
+            route("/sources") {
+                get {
+                    call.respond(ScheduleSources.values().map { it.name.lowercase() })
+                }
+                get<ScheduleSourceListRequest> {
+                    call.respond(repository.getSourceList(it.type))
+                }
             }
+
         }
 
 
@@ -43,4 +49,9 @@ fun Application.scheduleRoutesV1(repository: ScheduleRepository) {
 data class ScheduleRequest(
     val type: ScheduleSources,
     val key: String
+)
+
+@Location("/{type}")
+data class ScheduleSourceListRequest(
+    val type: ScheduleSources
 )
