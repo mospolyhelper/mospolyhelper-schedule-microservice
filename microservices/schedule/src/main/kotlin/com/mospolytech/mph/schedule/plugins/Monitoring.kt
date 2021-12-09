@@ -10,21 +10,22 @@ import io.ktor.server.request.*
 import io.ktor.server.routing.*
 
 fun Application.configureMonitoring() {
-    val appMicrometerRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
-    
-        install(MicrometerMetrics) {
-            registry = appMicrometerRegistry
-            // ...
-        }
-    
     install(CallLogging) {
         level = Level.INFO
         filter { call -> call.request.path().startsWith("/") }
     }
 
-    routing {
-        get("/metrics-micrometer") {
-            call.respond(appMicrometerRegistry.scrape())
-        }
-    }
+//    val appMicrometerRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
+//
+//    install(MicrometerMetrics) {
+//        registry = appMicrometerRegistry
+//        // ...
+//    }
+//
+//
+//    routing {
+//        get("/metrics-micrometer") {
+//            call.respond(appMicrometerRegistry.scrape())
+//        }
+//    }
 }
