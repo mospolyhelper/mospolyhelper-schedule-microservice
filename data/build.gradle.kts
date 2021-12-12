@@ -1,4 +1,4 @@
 subprojects {
-    group = "com.mospolytech.mph.data"
-    version = "com.mospolytech.mph.data"
+    group = "com.mospolytech.data"
+    version = "com.mospolytech.data"
 }

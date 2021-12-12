@@ -3,7 +3,7 @@ plugins {
 }
 
 application {
-    mainClass.set("com.mospolytech.mph.workers.schedule.ApplicationKt")
+    mainClass.set("com.mospolytech.workers.schedule.ApplicationKt")
 }
 version = "0.0.1"
 
