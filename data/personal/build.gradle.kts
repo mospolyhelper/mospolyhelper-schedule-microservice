@@ -7,5 +7,5 @@ kotlin {
 
 dependencies {
     api(project(":data:base"))
-//    api(project(":domain:personal"))
+    api(project(":domain:personal"))
 }
