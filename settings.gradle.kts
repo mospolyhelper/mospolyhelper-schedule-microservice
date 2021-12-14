@@ -11,6 +11,7 @@ pluginManagement {
 include(":microservices")
 include(":microservices:auth")
 include(":microservices:schedule")
+include(":microservices:account")
 
 include(":workers")
 include(":workers:schedule")
