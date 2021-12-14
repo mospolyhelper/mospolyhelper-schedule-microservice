@@ -1,5 +1,7 @@
 package com.mospolytech.domain.applications.model
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Application(
     val creationDateTime: String,
     val number: String,
