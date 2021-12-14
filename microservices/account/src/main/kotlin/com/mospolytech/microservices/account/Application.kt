@@ -1,8 +1,9 @@
-package com.mospolytech.android.account
+package com.mospolytech.microservices.account
 
-import com.mospolytech.android.account.plugins.*
+
 import com.mospolytech.features.applications.applicationsRoutesV1
 import com.mospolytech.features.base.koin.get
+import com.mospolytech.microservices.account.plugins.*
 import io.ktor.server.application.*
 
 fun main(args: Array<String>): Unit =

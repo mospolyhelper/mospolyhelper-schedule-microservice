@@ -1,4 +1,4 @@
-package com.mospolytech.android.account.plugins
+package com.mospolytech.microservices.account.plugins
 
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.plugins.*

@@ -1,4 +1,4 @@
-package com.mospolytech.android.account
+package com.mospolytech.microservices.account
 
 import com.mospolytech.data.applications.applicationsDataModule
 import com.mospolytech.data.base.baseDataModule

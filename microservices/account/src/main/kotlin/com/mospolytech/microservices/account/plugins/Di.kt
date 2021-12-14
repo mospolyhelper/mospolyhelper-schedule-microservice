@@ -1,6 +1,6 @@
-package com.mospolytech.android.account.plugins
+package com.mospolytech.microservices.account.plugins
 
-import com.mospolytech.android.account.appModules
+import com.mospolytech.microservices.account.appModules
 import com.mospolytech.features.base.koin.Koin
 import io.ktor.server.application.*
 
