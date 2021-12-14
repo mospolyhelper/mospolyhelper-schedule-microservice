@@ -17,18 +17,6 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":data:base"))
-    implementation(project(":data:performance"))
-    implementation(project(":data:peoples"))
-    implementation(project(":data:applications"))
-    implementation(project(":data:payments"))
-    implementation(project(":data:personal"))
-    implementation(project(":domain:base"))
-    implementation(project(":domain:performance"))
-    implementation(project(":domain:peoples"))
-    implementation(project(":domain:applications"))
-    implementation(project(":domain:payments"))
-    implementation(project(":domain:personal"))
     implementation(project(":features:base"))
     implementation(project(":features:performance"))
     implementation(project(":features:peoples"))
