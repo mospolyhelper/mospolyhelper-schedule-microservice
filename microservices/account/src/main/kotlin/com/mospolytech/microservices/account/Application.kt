@@ -3,6 +3,7 @@ package com.mospolytech.microservices.account
 
 import com.mospolytech.features.applications.applicationsRoutesV1
 import com.mospolytech.features.base.koin.get
+import com.mospolytech.features.payments.paymentsRoutesV1
 import com.mospolytech.microservices.account.plugins.*
 import io.ktor.server.application.*
 
@@ -22,4 +23,5 @@ fun Application.module() {
 
 fun Application.setRoutes() {
     applicationsRoutesV1(get())
+    paymentsRoutesV1(get())
 }

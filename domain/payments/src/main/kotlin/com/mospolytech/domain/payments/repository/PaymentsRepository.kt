@@ -4,6 +4,7 @@ import com.mospolytech.domain.payments.model.PaymentType
 import com.mospolytech.domain.payments.model.Payments
 
 interface PaymentsRepository {
-    fun getPaymentTypes(): PaymentType
-    fun getPayments(type: PaymentType): Payments
+    fun getPaymentTypes(): List<PaymentType>
+    fun getPayment(type: PaymentType): Payments
+    fun getPayments(): List<Payments>
 }

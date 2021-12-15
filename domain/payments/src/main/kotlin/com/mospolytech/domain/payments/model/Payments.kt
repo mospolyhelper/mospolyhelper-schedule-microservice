@@ -15,5 +15,6 @@ data class Payments(
     val dateCredit: LocalDate?,
     val unit: String,
     val paymentQR: String?,
-    val payments: List<Payment>
+    val payments: List<Payment>,
+    val type: PaymentType?,
 )
