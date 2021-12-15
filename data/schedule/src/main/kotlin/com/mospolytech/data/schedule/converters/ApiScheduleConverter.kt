@@ -18,6 +18,12 @@ class ApiScheduleConverter {
         private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
     }
 
+    val globalLocations = mutableSetOf<String>()
+
+    fun printGlobalData() {
+        println(globalLocations)
+    }
+
 
     fun convertToLessons(scheduleResponse: ScheduleResponse): List<LessonDateTimes> {
         val lessons = scheduleResponse.contents.values.flatMap {
@@ -27,6 +33,7 @@ class ApiScheduleConverter {
                 it.isSession
             )
         }
+        printGlobalData()
         return lessons
     }
 
@@ -38,6 +45,7 @@ class ApiScheduleConverter {
                 it.isSession
             )
         }
+        printGlobalData()
         return lessons
     }
 
@@ -135,6 +143,8 @@ class ApiScheduleConverter {
         val teachers = LessonTeachersConverter.convertTeachers(apiLesson.teacher)
         val groups = LessonGroupsConverter.convertGroups(apiGroups)
         val places = LessonPlacesConverter.convertPlaces(apiLesson.auditories)
+
+        globalLocations.add(apiLesson.location)
 
         return Lesson(
             title = title,
@@ -241,7 +251,24 @@ fun buildSchedule(
     return lessons
 }
 
-fun getDateRange(lessons: List<LessonDateTimes>): Pair<LocalDate, LocalDate> {
+fun getDateRange(lessons: List<LocalDate>): Pair<LocalDate, LocalDate> {
+    var minDate = LocalDate.MAX
+    var maxDate = LocalDate.MIN
+
+    for (dateTime in lessons) {
+        if (dateTime < minDate) {
+            minDate = dateTime
+        }
+
+        if (dateTime > maxDate) {
+            maxDate = dateTime
+        }
+    }
+
+    return minDate to maxDate
+}
+
+fun getLessonDateRange(lessons: List<LessonDateTimes>): Pair<LocalDate, LocalDate> {
     var minDate = LocalDate.MAX
     var maxDate = LocalDate.MIN
 
