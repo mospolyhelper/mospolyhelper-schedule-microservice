@@ -33,6 +33,8 @@ data class ApiLesson(
     val df: String = "",
     val dt: String = "",
     val auditories: List<Auditory>,
+    val shortRooms: List<String>,
+    val location: String,
     val type: String,
     val week: String = "",
     val align: String = "",

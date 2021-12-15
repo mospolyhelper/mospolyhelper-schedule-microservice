@@ -7,4 +7,5 @@ interface ScheduleRepository {
     suspend fun getSchedule(source: ScheduleSource): List<ScheduleDay>
     suspend fun getLessons(): List<LessonDateTimes>
     suspend fun getSourceList(sourceType: ScheduleSources): List<ScheduleSourceFull>
+    suspend fun getLessonsReview(source: ScheduleSource): List<LessonTimesReview>
 }

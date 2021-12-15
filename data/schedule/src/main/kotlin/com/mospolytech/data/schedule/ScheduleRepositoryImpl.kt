@@ -1,12 +1,11 @@
 package com.mospolytech.data.schedule
 
-import com.mospolytech.data.schedule.converters.ApiScheduleConverter
-import com.mospolytech.data.schedule.converters.buildSchedule
-import com.mospolytech.data.schedule.converters.getDateRange
-import com.mospolytech.data.schedule.converters.mergeLessons
+import com.mospolytech.data.schedule.converters.*
 import com.mospolytech.domain.schedule.model.*
 import com.mospolytech.domain.schedule.repository.ScheduleRepository
 import com.mospolytech.domain.schedule.utils.filterByGroup
+import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
@@ -19,23 +18,16 @@ class ScheduleRepositoryImpl(
 
     override suspend fun getSchedule(): List<ScheduleDay> {
         val lessons = getLessons()
-        val (minDate, maxDate) = getDateRange(lessons)
+        val (minDate, maxDate) = getLessonDateRange(lessons)
 
         return buildSchedule(lessons, minDate, maxDate)
     }
 
     override suspend fun getSchedule(source: ScheduleSource): List<ScheduleDay> {
-        val lessons = getLessons()
-        val (minDate, maxDate) = getDateRange(lessons)
+        val lessons = getLessons(source)
+        val (minDate, maxDate) = getLessonDateRange(lessons)
 
-        return when (source.type) {
-            ScheduleSources.Group -> buildSchedule(lessons.filterByGroup(source.key), minDate, maxDate)
-            ScheduleSources.Teacher -> buildSchedule(lessons, minDate, maxDate)
-            ScheduleSources.Student -> buildSchedule(lessons, minDate, maxDate)
-            ScheduleSources.Place -> buildSchedule(lessons, minDate, maxDate)
-            ScheduleSources.Subject -> buildSchedule(lessons, minDate, maxDate)
-            ScheduleSources.Complex -> buildSchedule(lessons, minDate, maxDate)
-        }
+        return buildSchedule(lessons, minDate, maxDate)
     }
 
     override suspend fun getLessons(): List<LessonDateTimes> {
@@ -43,6 +35,19 @@ class ScheduleRepositoryImpl(
             updateSchedule()
         } else {
             scheduleCache
+        }
+    }
+
+    suspend fun getLessons(source: ScheduleSource): List<LessonDateTimes> {
+        val lessons = getLessons()
+
+        return when (source.type) {
+            ScheduleSources.Group -> lessons.filterByGroup(source.key)
+            ScheduleSources.Teacher -> lessons
+            ScheduleSources.Student -> lessons
+            ScheduleSources.Place -> lessons
+            ScheduleSources.Subject -> lessons
+            ScheduleSources.Complex -> lessons
         }
     }
 
@@ -81,6 +86,60 @@ class ScheduleRepositoryImpl(
             ScheduleSources.Complex -> emptyList()
         }
     }
+
+    override suspend fun getLessonsReview(source: ScheduleSource): List<LessonTimesReview> {
+        val lessons = getLessons(source)
+
+        val resMap = mutableMapOf<String, MutableMap<TempClass, MutableList<LocalDate>>>()
+
+
+        lessons.forEach { lessonDateTimes ->
+            lessonDateTimes.time.forEach { lessonDateTime ->
+                val key = TempClass(
+                    type = lessonDateTimes.lesson.type,
+                    dayOfWeek = lessonDateTime.date.dayOfWeek,
+                    lessonTime = lessonDateTime.time
+                )
+                resMap
+                    .getOrPut(lessonDateTimes.lesson.title) { mutableMapOf() }
+                    .getOrPut(key) { mutableListOf() }
+                    .add(lessonDateTime.date)
+            }
+        }
+
+
+        val resList = resMap.map { (title, map2) ->
+            LessonTimesReview(
+                lessonTitle = title,
+                days = map2.map {  (tempClass, dateList) ->
+                    if (dateList.size == 1) {
+                        LessonReviewDay.Single(
+                            lessonType = tempClass.type,
+                            date = dateList.first(),
+                            time = tempClass.lessonTime
+                        )
+                    } else {
+                        val (dateFrom, dateTo) = getDateRange(dateList)
+                        LessonReviewDay.Regular(
+                            lessonType = tempClass.type,
+                            dayOfWeek = tempClass.dayOfWeek,
+                            time = tempClass.lessonTime,
+                            dateFrom = dateFrom,
+                            dateTo = dateTo
+                        )
+                    }
+                }
+            )
+        }.sortedBy { it.lessonTitle }
+
+        return resList
+    }
+
+    data class TempClass(
+        val type: String,
+        val dayOfWeek: DayOfWeek,
+        val lessonTime: LessonTime
+    )
 
     private val updateScheduleLock = Any()
 
