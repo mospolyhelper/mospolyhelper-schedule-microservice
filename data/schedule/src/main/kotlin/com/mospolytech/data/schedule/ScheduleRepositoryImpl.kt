@@ -128,7 +128,7 @@ class ScheduleRepositoryImpl(
                             dateTo = dateTo
                         )
                     }
-                }
+                }.sorted()
             )
         }.sortedBy { it.lessonTitle }
 
