@@ -207,32 +207,19 @@ fun buildSchedule(
 ): List<ScheduleDay> {
     val resMap: MutableMap<LocalDate, MutableMap<LessonTime, MutableList<Lesson>>> = TreeMap()
 
-    for (lessonDateTimes in lessons) {
-        for (dateTime in lessonDateTimes.time) {
-            val timeToLessonsMap = resMap[dateTime.date]
-            if (timeToLessonsMap != null) {
-                val lessonList = timeToLessonsMap[dateTime.time]
-                if (lessonList != null) {
-                    lessonList.add(lessonDateTimes.lesson)
-                } else {
-                    timeToLessonsMap[dateTime.time] = mutableListOf(lessonDateTimes.lesson)
-                }
-            } else {
-                resMap[dateTime.date] = TreeMap<LessonTime, MutableList<Lesson>>().apply {
-                    set(dateTime.time, mutableListOf(lessonDateTimes.lesson))
-                }
-            }
-        }
-    }
-
     var currentDay = dateFrom
     do {
-        if (!resMap.containsKey(currentDay)) {
-            resMap[currentDay]
-        }
-        currentDay = currentDay.plusDays(7)
+        resMap[currentDay] = TreeMap<LessonTime, MutableList<Lesson>>()
+        currentDay = currentDay.plusDays(1)
     } while (currentDay <= dateTo)
 
+    for (lessonDateTimes in lessons) {
+        for (dateTime in lessonDateTimes.time) {
+            val timeToLessonsMap = resMap.getOrPut(dateTime.date) { TreeMap<LessonTime, MutableList<Lesson>>() }
+            val lessonList = timeToLessonsMap.getOrPut(dateTime.time) { mutableListOf() }
+            lessonList.add(lessonDateTimes.lesson)
+        }
+    }
 
     val lessons = resMap.map { (key, value) ->
         val l1 = value.map { (key2, value2) ->
