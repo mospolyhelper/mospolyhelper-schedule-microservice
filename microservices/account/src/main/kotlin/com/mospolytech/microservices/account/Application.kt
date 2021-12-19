@@ -5,6 +5,7 @@ import com.mospolytech.features.applications.applicationsRoutesV1
 import com.mospolytech.features.base.koin.get
 import com.mospolytech.features.payments.paymentsDataConversion
 import com.mospolytech.features.payments.paymentsRoutesV1
+import com.mospolytech.features.peoples.peoplesRoutesV1
 import com.mospolytech.features.performance.performanceRoutesV1
 import com.mospolytech.features.personal.personalRoutesV1
 import com.mospolytech.microservices.account.plugins.*
@@ -31,6 +32,7 @@ fun Application.setRoutes() {
     paymentsRoutesV1(get())
     personalRoutesV1(get())
     performanceRoutesV1(get())
+    peoplesRoutesV1(get())
 }
 
 fun Application.setDataConversions() {

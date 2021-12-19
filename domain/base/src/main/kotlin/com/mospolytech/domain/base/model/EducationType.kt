@@ -1,4 +1,4 @@
-package com.mospolytech.domain.personal.model
+package com.mospolytech.domain.base.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -9,6 +9,8 @@ enum class EducationType {
     Bachelor,
     @SerialName("magistrate")
     Magistrate,
-    @SerialName("Aspirant")
-    Aspirant
+    @SerialName("aspirant")
+    Aspirant,
+    @SerialName("college")
+    College
 }

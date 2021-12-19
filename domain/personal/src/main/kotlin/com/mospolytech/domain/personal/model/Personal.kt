@@ -1,5 +1,6 @@
 package com.mospolytech.domain.personal.model
 
+import com.mospolytech.domain.base.model.EducationType
 import com.mospolytech.domain.base.utils.converters.LocalDateConverter
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
