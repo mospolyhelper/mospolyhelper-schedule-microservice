@@ -4,7 +4,10 @@ import com.mospolytech.data.schedule.model.ApiLesson
 import com.mospolytech.domain.schedule.model.Place
 
 object LessonPlacesConverter {
+
+
     fun convertPlaces(auditoriums: List<ApiLesson.Auditory>, url: String = ""): List<Place> {
+
         return auditoriums.map { processAuditorium(it.title, url) }
     }
 }
@@ -22,13 +25,18 @@ enum class AuditoriumTypes(val type: String, val isOnline: Boolean) {
     VideoConference("Видеоконф.", true),
     Other("", false)
 }
+private val regex = Regex("""href="(.*?)".*?>(.*?)<""")
+
 
 fun processAuditorium(auditorium: String, url: String): Place {
-//    val parsedHtml = SpannableString(
-//        HtmlCompat.fromHtml(auditorium, HtmlCompat.FROM_HTML_MODE_LEGACY)
-//    )
-    val parsedHtml = auditorium
-    val rawTitle = parsedHtml.toString().trim()
+    val regGroups = regex.find(auditorium)?.groupValues
+    val (url, rawTitle0) = if (regGroups != null)
+        regGroups.getOrNull(1) to regGroups.getOrNull(2)
+    else
+        null to null
+
+    val parsedHtml = rawTitle0 ?: auditorium
+    val rawTitle = parsedHtml.trim()
         .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
     val (title, type) = parseEmoji(rawTitle)
     val url2 = ""
