@@ -90,44 +90,40 @@ class ScheduleRepositoryImpl(
     override suspend fun getLessonsReview(source: ScheduleSource): List<LessonTimesReview> {
         val lessons = getLessons(source)
 
-        val resMap = mutableMapOf<String, MutableMap<TempClass, MutableList<LocalDate>>>()
+        val resMap = mutableMapOf<String, MutableMap<String, MutableMap<DayReviewUnit, MutableList<LocalDate>>>>()
 
 
         lessons.forEach { lessonDateTimes ->
             lessonDateTimes.time.forEach { lessonDateTime ->
-                val key = TempClass(
-                    type = lessonDateTimes.lesson.type,
+                val key = DayReviewUnit(
                     dayOfWeek = lessonDateTime.date.dayOfWeek,
                     lessonTime = lessonDateTime.time
                 )
                 resMap
                     .getOrPut(lessonDateTimes.lesson.title) { mutableMapOf() }
+                    .getOrPut(lessonDateTimes.lesson.type) { mutableMapOf() }
                     .getOrPut(key) { mutableListOf() }
                     .add(lessonDateTime.date)
             }
         }
 
 
-        val resList = resMap.map { (title, map2) ->
+        val resList = resMap.map { (title, typeToDays) ->
             LessonTimesReview(
                 lessonTitle = title,
-                days = map2.map {  (tempClass, dateList) ->
-                    if (dateList.size == 1) {
-                        LessonReviewDay.Single(
-                            lessonType = tempClass.type,
-                            date = dateList.first(),
-                            time = tempClass.lessonTime
-                        )
-                    } else {
-                        val (dateFrom, dateTo) = getDateRange(dateList)
-                        LessonReviewDay.Regular(
-                            lessonType = tempClass.type,
-                            dayOfWeek = tempClass.dayOfWeek,
-                            time = tempClass.lessonTime,
-                            dateFrom = dateFrom,
-                            dateTo = dateTo
-                        )
-                    }
+                days = typeToDays.map { (type, mapOfDays) ->
+                    LessonTimesReviewByType(lessonType =  type,
+                       days = mapOfDays.map { (dayReviewUnit, dateList) ->
+                           val (dateFrom, dateTo) = getDateRange(dateList)
+
+                           LessonReviewDay(
+                               dayOfWeek = dayReviewUnit.dayOfWeek,
+                               time = dayReviewUnit.lessonTime,
+                               dateFrom = dateFrom,
+                               dateTo = dateTo
+                           )
+                       }.sorted()
+                    )
                 }.sorted()
             )
         }.sortedBy { it.lessonTitle }
@@ -135,8 +131,7 @@ class ScheduleRepositoryImpl(
         return resList
     }
 
-    data class TempClass(
-        val type: String,
+    data class DayReviewUnit(
         val dayOfWeek: DayOfWeek,
         val lessonTime: LessonTime
     )
