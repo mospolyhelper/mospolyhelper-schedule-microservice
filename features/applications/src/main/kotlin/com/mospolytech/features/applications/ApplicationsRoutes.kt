@@ -11,7 +11,7 @@ fun Application.applicationsRoutesV1(repository: ApplicationsRepository) {
     routing {
         route("/applications") {
             get {
-                call.respond(repository.getApplications().toResponse())
+                call.respond(repository.getApplications())
             }
         }
     }

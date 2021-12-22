@@ -12,11 +12,11 @@ fun Application.paymentsRoutesV1(repository: PaymentsRepository) {
     routing {
         route("/payments") {
             get {
-                call.respond(repository.getPayments().toResponse())
+                call.respond(repository.getPayments())
             }
             route("/types") {
                 get {
-                    call.respond(repository.getPaymentTypes().map { it.name.lowercase() }.toResponse())
+                    call.respond(repository.getPaymentTypes().map { it.name.lowercase() })
                 }
             }
         }
@@ -24,7 +24,7 @@ fun Application.paymentsRoutesV1(repository: PaymentsRepository) {
     routing {
         route("/payment") {
             get<PaymentsTypeRequest> {
-                call.respond(repository.getPayment(it.type).toResponse())
+                call.respond(repository.getPayment(it.type))
             }
         }
     }

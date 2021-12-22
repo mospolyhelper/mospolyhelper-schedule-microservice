@@ -11,11 +11,11 @@ fun Application.personalRoutesV1(repository: PersonalRepository) {
     routing {
         route("/personal") {
             get {
-                call.respond(repository.getPersonalInfo().toResponse())
+                call.respond(repository.getPersonalInfo())
             }
             route("/orders") {
                 get {
-                    call.respond(repository.getOrders().toResponse())
+                    call.respond(repository.getOrders())
                 }
             }
         }
