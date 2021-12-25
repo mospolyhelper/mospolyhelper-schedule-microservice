@@ -1,9 +1,12 @@
 package com.mospolytech.features.schedule
 
-import com.mospolytech.domain.schedule.model.ScheduleSource
-import com.mospolytech.domain.schedule.model.ScheduleSources
+import com.mospolytech.domain.schedule.model.source.ScheduleSource
+import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import com.mospolytech.domain.schedule.repository.ScheduleRepository
-import io.ktor.http.*
+import com.mospolytech.features.schedule.routes.freePlaceRoutesV1
+import com.mospolytech.features.schedule.routes.lessonsRoutesV1
+import com.mospolytech.features.schedule.routes.scheduleRoutesV1
+import com.mospolytech.features.schedule.routes.sourcesRoutesV1
 import io.ktor.server.application.*
 import io.ktor.server.locations.*
 import io.ktor.server.response.*
@@ -12,44 +15,10 @@ import io.ktor.server.routing.*
 
 fun Application.scheduleRoutesV1(repository: ScheduleRepository) {
     routing {
-        route("/schedule") {
-            route("/sources") {
-                get {
-                    call.respond(ScheduleSources.values().map { it.name.lowercase() })
-                }
-                get<ScheduleSourceListRequest> {
-                    call.respond(repository.getSourceList(it.type))
-                }
-            }
-
-        }
-
-
-        route("schedules") {
-            get {
-                call.respond(repository.getSchedule())
-            }
-            get("/complex") {
-                call.respond(mapOf("Cant" to "do this"))
-            }
-            get<ScheduleRequest> {
-                call.respond(repository.getSchedule(ScheduleSource(it.type, it.key)))
-            }
-        }
-
-        route("lessons") {
-            get {
-                call.respond(repository.getLessons())
-            }
-            route("/review") {
-                get("/complex") {
-                    call.respond(mapOf("Cant" to "do this"))
-                }
-                get<ScheduleRequest> {
-                    call.respond(repository.getLessonsReview(ScheduleSource(it.type, it.key)))
-                }
-            }
-        }
+        sourcesRoutesV1(repository)
+        scheduleRoutesV1(repository)
+        lessonsRoutesV1(repository)
+        freePlaceRoutesV1(repository)
     }
 }
 

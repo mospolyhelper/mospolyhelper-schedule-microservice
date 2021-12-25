@@ -1,10 +1,9 @@
-package com.mospolytech.domain.schedule.model
+package com.mospolytech.domain.schedule.model.lesson
 
 import com.mospolytech.domain.base.utils.converters.LocalDateConverter
 import kotlinx.serialization.Serializable
-import com.mospolytech.domain.base.utils.converters.LocalTimeConverter
 import java.time.LocalDate
-import java.time.LocalTime
+import java.time.LocalDateTime
 
 @Serializable
 data class LessonDateTimes(
@@ -22,3 +21,7 @@ data class LessonDateTime(
     val date: LocalDate,
     val time: LessonTime
 )
+
+fun LessonDateTime.toDateTimeRange(): ClosedRange<LocalDateTime> {
+    return LocalDateTime.of(date, time.startTime)..LocalDateTime.of(date, time.endTime)
+}

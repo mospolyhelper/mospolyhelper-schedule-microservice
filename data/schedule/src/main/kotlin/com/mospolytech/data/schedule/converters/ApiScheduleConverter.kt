@@ -4,7 +4,12 @@ import com.mospolytech.data.schedule.model.ApiGroup
 import com.mospolytech.data.schedule.model.ApiLesson
 import com.mospolytech.data.schedule.model.ScheduleResponse
 import com.mospolytech.data.schedule.model.ScheduleSessionResponse
-import com.mospolytech.domain.schedule.model.*
+import com.mospolytech.domain.schedule.model.lesson.Lesson
+import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
+import com.mospolytech.domain.schedule.model.lesson.LessonDateTimes
+import com.mospolytech.domain.schedule.model.lesson.LessonTime
+import com.mospolytech.domain.schedule.model.schedule.LessonsByTime
+import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
@@ -269,6 +274,11 @@ fun getLessonDateRange(lessons: List<LessonDateTimes>): Pair<LocalDate, LocalDat
                 maxDate = dateTime.date
             }
         }
+    }
+
+    if (minDate == LocalDate.MAX && maxDate == LocalDate.MIN) {
+        minDate = LocalDate.now()
+        maxDate = LocalDate.now()
     }
 
     return minDate to maxDate

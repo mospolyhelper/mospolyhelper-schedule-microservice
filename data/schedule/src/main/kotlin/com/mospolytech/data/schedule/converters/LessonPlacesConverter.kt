@@ -1,7 +1,9 @@
 package com.mospolytech.data.schedule.converters
 
 import com.mospolytech.data.schedule.model.ApiLesson
-import com.mospolytech.domain.schedule.model.Place
+import com.mospolytech.domain.schedule.model.place.Place
+import io.ktor.util.*
+import kotlin.text.isLowerCase
 
 object LessonPlacesConverter {
 
@@ -42,6 +44,7 @@ fun processAuditorium(auditorium: String, url: String): Place {
     val url2 = ""
 
     return Place(
+        title.encodeBase64(),
         title,
 //        type,
 //        if (url.isEmpty()) url2 else url
