@@ -11,10 +11,10 @@ fun Application.configureRouting() {
     install(Locations) {
     }
     install(StatusPages) {
-        exception<AuthenticationException> { cause ->
+        exception<AuthenticationException> { call, cause ->
             call.respond(HttpStatusCode.Unauthorized)
         }
-        exception<AuthorizationException> { cause ->
+        exception<AuthorizationException> { call, cause ->
             call.respond(HttpStatusCode.Forbidden)
         }
     }
