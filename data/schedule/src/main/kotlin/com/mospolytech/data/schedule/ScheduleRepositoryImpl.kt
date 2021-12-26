@@ -81,15 +81,15 @@ class ScheduleRepositoryImpl(
             }
             ScheduleSources.Student -> {
                 getLessons()
-                    .map { it.lesson.title }
+                    .flatMap { it.lesson.teachers }
                     .toSortedSet()
-                    .map { ScheduleSourceFull(sourceType, it, it, "", "") }
+                    .map { ScheduleSourceFull(sourceType, it.id, it.name, "", "") }
             }
             ScheduleSources.Place -> {
                 getLessons()
                     .flatMap { it.lesson.places }
                     .toSortedSet()
-                    .map { ScheduleSourceFull(sourceType, it.id, it.title, "", "") }
+                    .map { ScheduleSourceFull(sourceType, it.id, it.title, it.description, "") }
             }
             ScheduleSources.Subject -> {
                 getLessons()
