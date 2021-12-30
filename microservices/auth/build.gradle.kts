@@ -17,9 +17,7 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":data:base"))
-    implementation(project(":data:schedule"))
-    implementation(project(":domain:base"))
-    implementation(project(":domain:schedule"))
-    implementation(project(":features:schedule"))
+    implementation(project(":data:auth"))
+    implementation(project(":domain:auth"))
+    implementation(project(":features:auth"))
 }

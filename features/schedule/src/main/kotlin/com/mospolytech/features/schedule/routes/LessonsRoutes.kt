@@ -15,8 +15,8 @@ fun Routing.lessonsRoutesV1(repository: ScheduleRepository) {
             call.respond(repository.getLessons())
         }
         route("/review") {
-            get("/complex") {
-                call.respond(mapOf("Cant" to "do this"))
+            post("/complex") {
+                call.respond(repository.getLessons())
             }
             get<ScheduleRequest> {
                 call.respond(repository.getLessonsReview(ScheduleSource(it.type, it.key)))

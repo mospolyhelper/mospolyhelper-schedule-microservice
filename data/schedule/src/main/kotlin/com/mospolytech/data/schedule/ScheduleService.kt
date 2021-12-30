@@ -5,25 +5,24 @@ import com.mospolytech.data.schedule.model.ScheduleSessionResponse
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 
 class ScheduleService(
     private val client: HttpClient
 ) {
     companion object {
-        private const val BASE_URL = "https://rasp.dmami.ru"
+        private const val BaseUrl = "https://rasp.dmami.ru"
 
-        private const val GET_SCHEDULE = "$BASE_URL/site/group"
-        private const val GET_SCHEDULES_ALL = "$BASE_URL/semester.json"
-        private const val GET_SCHEDULES_SESSION_ALL = "$BASE_URL/session-file.json"
+        private const val GetSchedule = "$BaseUrl/site/group"
+        private const val GetScheduleAll = "$BaseUrl/semester.json"
+        private const val GetScheduleAllSessopn = "$BaseUrl/session-file.json"
 
-        private const val BASE_URL_TEACHER = "https://kaf.dmami.ru"
-        private const val GET_SCHEDULE_TEACHER = "$BASE_URL_TEACHER/lessons/teacher-html"
+        private const val BaseUrlTeacher = "https://kaf.dmami.ru"
+        private const val GetScheduleTeacher = "$BaseUrlTeacher/lessons/teacher-html"
     }
 
     suspend fun getScheduleByGroup(groupTitle: String, isSession: Boolean): String {
-        return client.get(GET_SCHEDULE) {
-            header("referer", BASE_URL)
+        return client.get(GetSchedule) {
+            header("referer", BaseUrl)
             // For json error status if schedule is not ready instead html
             header("X-Requested-With", "XMLHttpRequest")
             parameter("group", groupTitle)
@@ -32,24 +31,24 @@ class ScheduleService(
     }
 
     suspend fun getScheduleByTeacher(teacherId: String): String {
-        return client.get(GET_SCHEDULE_TEACHER) {
-            header("referer", BASE_URL_TEACHER)
+        return client.get(GetScheduleTeacher) {
+            header("referer", BaseUrlTeacher)
             header("X-Requested-With", "XMLHttpRequest")
             parameter("id", teacherId)
         }.body()
     }
 
     suspend fun getSchedules(): ScheduleResponse {
-        return client.get(GET_SCHEDULES_ALL) {
-            header("referer", BASE_URL)
+        return client.get(GetScheduleAll) {
+            header("referer", BaseUrl)
             // For json error status if schedule is not ready instead html
             header("X-Requested-With", "XMLHttpRequest")
         }.body()
     }
 
     suspend fun getSchedulesSession(): ScheduleSessionResponse {
-        return client.get(GET_SCHEDULES_SESSION_ALL) {
-            header("referer", BASE_URL)
+        return client.get(GetScheduleAllSessopn) {
+            header("referer", BaseUrl)
             // For json error status if schedule is not ready instead html
             header("X-Requested-With", "XMLHttpRequest")
         }.body()

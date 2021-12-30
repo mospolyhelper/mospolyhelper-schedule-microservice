@@ -13,8 +13,8 @@ fun Routing.scheduleRoutesV1(repository: ScheduleRepository) {
         get {
             call.respond(repository.getSchedule())
         }
-        get("/complex") {
-            call.respond(mapOf("Cant" to "do this"))
+        post("/complex") {
+            call.respond(repository.getSchedule())
         }
         get<ScheduleRequest> {
             call.respond(repository.getSchedule(ScheduleSource(it.type, it.key)))

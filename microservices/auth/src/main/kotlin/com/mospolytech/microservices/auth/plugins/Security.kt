@@ -6,31 +6,39 @@ import io.ktor.client.engine.apache.*
 import io.ktor.http.*
 import io.ktor.server.sessions.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.jwt.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.configureSecurity() {
     
     install(Authentication) {
-            oauth("auth-oauth-google") {
-                urlProvider = { "http://localhost:8008/callback" }
-                providerLookup = {
-                    OAuthServerSettings.OAuth2ServerSettings(
-                        name = "google",
-                        authorizeUrl = "https://accounts.google.com/o/oauth2/auth",
-                        accessTokenUrl = "https://accounts.google.com/o/oauth2/token",
-                        requestMethod = HttpMethod.Post,
-                        clientId = System.getenv("GOOGLE_CLIENT_ID"),
-                        clientSecret = System.getenv("GOOGLE_CLIENT_SECRET"),
-                        defaultScopes = listOf("https://www.googleapis.com/auth/userinfo.profile")
-                    )
-                }
-                client = HttpClient(Apache)
-            }
+//        oauth("auth-oauth-google") {
+//            urlProvider = { "http://localhost:8008/callback" }
+//            providerLookup = {
+//                OAuthServerSettings.OAuth2ServerSettings(
+//                    name = "google",
+//                    authorizeUrl = "https://accounts.google.com/o/oauth2/auth",
+//                    accessTokenUrl = "https://accounts.google.com/o/oauth2/token",
+//                    requestMethod = HttpMethod.Post,
+//                    clientId = System.getenv("GOOGLE_CLIENT_ID"),
+//                    clientSecret = System.getenv("GOOGLE_CLIENT_SECRET"),
+//                    defaultScopes = listOf("https://www.googleapis.com/auth/userinfo.profile")
+//                )
+//            }
+//            client = HttpClient(Apache)
+//        }
+        jwt {
+
         }
+        customAuth("mph-auth") {
+
+        }
+    }
 
     routing {
-        authenticate("auth-oauth-google") {
+        authenticate("mph-auth") {
                     get("login") {
                         call.respondRedirect("/callback")
                     }
@@ -44,3 +52,9 @@ fun Application.configureSecurity() {
     }
 }
 class UserSession(accessToken: String)
+
+private fun ApplicationRequest.parseAuthorizationHeaderOrNull() = try {
+    parseAuthorizationHeader()
+} catch (ex: IllegalArgumentException) {
+    null
+}
