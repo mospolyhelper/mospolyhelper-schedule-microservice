@@ -4,6 +4,7 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
+import io.ktor.http.*
 
 class AuthService(
     private val client: HttpClient
@@ -16,11 +17,12 @@ class AuthService(
     }
 
     suspend fun getToken(login: String, password: String): TokenResponse {
-        return client.post(GetToken) {
-            formData {
-               append("ulogin", login)
+        return client.submitForm(
+            GetToken,
+            Parameters.build {
+                append("ulogin", login)
                 append("upassword", password)
             }
-        }.body()
+        ).body()
     }
 }

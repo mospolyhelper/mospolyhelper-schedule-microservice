@@ -17,6 +17,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":data:personal"))
     implementation(project(":data:auth"))
     implementation(project(":domain:auth"))
     implementation(project(":features:auth"))

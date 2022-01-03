@@ -29,16 +29,16 @@ data class Personal(
     val degreeLevel: String,
     val enterYear: String,
     val orders: List<String>,
-    val subdivisions: List<Subdivision>?
+    val subdivisions: List<Subdivision>? = null
 )
 
 @Serializable
 data class Subdivision(
     val category: String,
-    val jobType: String?,
-    val status: String?,
-    val subdivision: String?,
-    val wage: String?,
+    val jobType: String? = null,
+    val status: String? = null,
+    val subdivision: String? = null,
+    val wage: String? = null,
 )
 
 //data class Personal(

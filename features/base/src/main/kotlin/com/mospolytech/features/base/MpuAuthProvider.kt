@@ -1,23 +1,23 @@
-package com.mospolytech.microservices.auth.plugins
+package com.mospolytech.features.base
 
 import com.auth0.jwk.*
 import com.auth0.jwt.*
 import com.auth0.jwt.exceptions.*
 import com.auth0.jwt.impl.*
 import com.auth0.jwt.interfaces.*
-import com.auth0.jwt.interfaces.JWTVerifier
 import io.ktor.http.auth.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
+import io.ktor.util.*
 import io.ktor.util.pipeline.*
 import org.slf4j.*
 import java.util.*
 import kotlin.reflect.*
 
-private val CustomAuthKey: Any = "JWTAuth"
+private val CustomAuthKey: Any = "MpuAuth"
 
 private val CustomLogger: Logger = LoggerFactory.getLogger("com.mospolytech.microservices.auth.plugins")
 
@@ -26,26 +26,26 @@ private val CustomLogger: Logger = LoggerFactory.getLogger("com.mospolytech.micr
  * @param payload JWT
  * @see Payload
  */
-class CustomAuthCredential(token: String) : Credential
+class MpuCredential(val token: String) : Credential
 
 /**
  * Represents a JWT principal consist of the specified [String]
  */
-class CustomAuthPrincipal(token: String) : Principal
+class MpuPrincipal(val token: String) : Principal
 
 /**
  * JWT authentication provider that will be registered with the specified [name]
  */
-class JWTAuthenticationProvider(config: Configuration) : AuthenticationProvider(config) {
+class MpuAuthenticationProvider(config: Configuration) : AuthenticationProvider(config) {
     internal val authHeader: (ApplicationCall) -> HttpAuthHeader? = config.authHeader
     internal val authenticationFunction = config.authenticationFunction
-    internal val challengeFunction: CustomAuthChallengeFunction = config.challenge
+    internal val challengeFunction: MpuAuthChallengeFunction = config.challenge
 
     /**
      * JWT auth provider configuration
      */
     class Configuration(name: String?) : AuthenticationProvider.Configuration(name) {
-        internal var authenticationFunction: AuthenticationFunction<CustomAuthCredential> = {
+        internal var authenticationFunction: AuthenticationFunction<MpuCredential> = {
             throw NotImplementedError(
                 "JWT auth validate function is not specified. Use jwt { validate { ... } } to fix."
             )
@@ -54,7 +54,7 @@ class JWTAuthenticationProvider(config: Configuration) : AuthenticationProvider(
         internal var authHeader: (ApplicationCall) -> HttpAuthHeader? =
             { call -> call.request.parseAuthorizationHeaderOrNull() }
 
-        internal var challenge: CustomAuthChallengeFunction = { scheme ->
+        internal var challenge: MpuAuthChallengeFunction = { scheme ->
             call.respond(
                 UnauthorizedResponse(
                     HttpAuthHeader.Parameterized(
@@ -64,15 +64,20 @@ class JWTAuthenticationProvider(config: Configuration) : AuthenticationProvider(
                 )
             )
         }
-        internal fun build() = JWTAuthenticationProvider(this)
+
+        public fun validate(validate: suspend ApplicationCall.(MpuCredential) -> Principal?) {
+            authenticationFunction = validate
+        }
+
+        internal fun build() = MpuAuthenticationProvider(this)
     }
 }
 
-fun Authentication.Configuration.customAuth(
+fun Authentication.Configuration.mpuAuth(
     name: String? = null,
-    configure: JWTAuthenticationProvider.Configuration.() -> Unit
+    configure: MpuAuthenticationProvider.Configuration.() -> Unit
 ) {
-    val provider = JWTAuthenticationProvider.Configuration(name).apply(configure).build()
+    val provider = MpuAuthenticationProvider.Configuration(name).apply(configure).build()
     val authenticate = provider.authenticationFunction
 
     provider.pipeline.intercept(AuthenticationPipeline.RequestAuthentication) { context ->
@@ -84,7 +89,7 @@ fun Authentication.Configuration.customAuth(
 
         try {
             val principal = verifyAndValidate(call, token) {
-                authenticate(this, CustomAuthCredential(token.getBlob()!!))
+                authenticate(this, MpuCredential(token.getBlob()!!))
             }
             if (principal != null) {
                 context.principal(principal)
@@ -107,15 +112,15 @@ fun Authentication.Configuration.customAuth(
 /**
  * Specifies what to send back if session authentication fails.
  */
-typealias CustomAuthChallengeFunction =
+typealias MpuAuthChallengeFunction =
         suspend PipelineContext<*, ApplicationCall>.(defaultScheme: String) -> Unit
 
 private fun AuthenticationContext.bearerChallenge(
     cause: AuthenticationFailedCause,
-    challengeFunction: CustomAuthChallengeFunction
+    challengeFunction: MpuAuthChallengeFunction
 ) {
     challenge(CustomAuthKey, cause) {
-        challengeFunction(this, "bearer")
+        challengeFunction(this, "Bearer")
         if (!it.completed && call.response.status() != null) {
             it.complete()
         }
@@ -128,7 +133,9 @@ private suspend fun verifyAndValidate(
     validate: suspend ApplicationCall.(String) -> Principal?
 ): Principal? {
     val jwt = try {
-        if (token.toString() == "qwerqw") token.getBlob() else null
+        // There is no check
+        //if (token.toString() == "qwerqw") token.getBlob() else null
+        token.getBlob()
     } catch (ex: JWTVerificationException) {
         CustomLogger.trace("Token verification failed: {}", ex.message)
         null
@@ -137,7 +144,7 @@ private suspend fun verifyAndValidate(
 }
 
 private fun HttpAuthHeader.getBlob() = when {
-    this is HttpAuthHeader.Single && authScheme == "bearer" -> blob
+    this is HttpAuthHeader.Single && authScheme == "Bearer" -> blob.decodeBase64String()
     else -> null
 }
 

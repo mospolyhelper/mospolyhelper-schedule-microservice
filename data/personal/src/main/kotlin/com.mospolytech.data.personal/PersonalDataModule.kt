@@ -5,5 +5,5 @@ import org.koin.dsl.module
 
 val personalDataModule = module {
     single { PersonalService(get()) }
-    single<PersonalRepository> { PersonalRepositoryImpl() }
+    single<PersonalRepository> { PersonalRepositoryImpl(get()) }
 }

@@ -20,5 +20,5 @@ fun Application.module() {
 }
 
 fun Application.setRoutes() {
-    authRoutesV1(get())
+    authRoutesV1(get(), get())
 }

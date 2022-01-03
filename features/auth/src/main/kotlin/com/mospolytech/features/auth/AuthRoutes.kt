@@ -2,13 +2,15 @@ package com.mospolytech.features.auth
 
 import com.mospolytech.domain.auth.AuthRepository
 import com.mospolytech.domain.personal.repository.PersonalRepository
-import io.ktor.client.plugins.*
+import com.mospolytech.features.base.AuthConfigs
+import com.mospolytech.features.base.MpuPrincipal
+import com.mospolytech.features.base.respondResult
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.request.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.server.util.*
+import io.ktor.util.*
 import kotlinx.serialization.Serializable
 
 fun Application.authRoutesV1(
@@ -18,25 +20,18 @@ fun Application.authRoutesV1(
     routing {
         post("login") {
             val loginRequest = call.receive<LoginRequest>()
-            val token = repository.getToken(loginRequest.login, loginRequest.password)
-            token.onSuccess {
-                call.respond(TokenResponse(it))
-            }.onFailure {
-                when (it) {
-                    is ClientRequestException -> when (it.response.status) {
-                        HttpStatusCode.BadRequest -> call.respondText("", status = HttpStatusCode.Forbidden)
-                        else -> call.respondText("", status = HttpStatusCode.BadGateway)
-                    }
-                    else -> call.respondText("", status = HttpStatusCode.BadGateway)
-                }
-            }
+            val token = repository.getToken(loginRequest.login, loginRequest.password).map { TokenResponse(it.encodeBase64()) }
+            call.respondResult(token)
         }
 
-        get("validate") {
-            val userTypeField = call.parameters[ValidationFields.UserType.toString().lowercase()]
-            val scheduleKeyField = call.parameters[ValidationFields.ScheduleKey.toString().lowercase()]
+        authenticate(AuthConfigs.Mpu, optional = true) {
+            get("validate") {
+                val principal: MpuPrincipal? = call.authentication.principal()
+                val userTypeField = call.parameters[ValidationFields.UserType.toString().lowercase()]
+                val scheduleKeyField = call.parameters[ValidationFields.ScheduleKey.toString().lowercase()]
 
-            personalRepository.getPersonalInfo()
+                call.respondResult(personalRepository.getPersonalInfo(principal!!.token))
+            }
         }
     }
 }
@@ -52,6 +47,7 @@ data class LoginRequest(
     val password: String
 )
 
+@Serializable
 data class TokenResponse(
     val token: String
 )

@@ -1,15 +1,10 @@
 package com.mospolytech.microservices.auth.plugins
 
+import com.mospolytech.features.base.AuthConfigs
+import com.mospolytech.features.base.MpuPrincipal
+import com.mospolytech.features.base.mpuAuth
 import io.ktor.server.auth.*
-import io.ktor.client.*
-import io.ktor.client.engine.apache.*
-import io.ktor.http.*
-import io.ktor.server.sessions.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.jwt.*
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
 
 fun Application.configureSecurity() {
     
@@ -29,32 +24,10 @@ fun Application.configureSecurity() {
 //            }
 //            client = HttpClient(Apache)
 //        }
-        jwt {
-
-        }
-        customAuth("mph-auth") {
-
+        mpuAuth(AuthConfigs.Mpu) {
+            validate {
+                MpuPrincipal(it.token)
+            }
         }
     }
-
-    routing {
-        authenticate("mph-auth") {
-                    get("login") {
-                        call.respondRedirect("/callback")
-                    }
-        
-                    get("/callback") {
-                        val principal: OAuthAccessTokenResponse.OAuth2? = call.authentication.principal()
-                        call.sessions.set(UserSession(principal?.accessToken.toString()))
-                        call.respondRedirect("/hello")
-                    }
-                }
-    }
-}
-class UserSession(accessToken: String)
-
-private fun ApplicationRequest.parseAuthorizationHeaderOrNull() = try {
-    parseAuthorizationHeader()
-} catch (ex: IllegalArgumentException) {
-    null
 }
