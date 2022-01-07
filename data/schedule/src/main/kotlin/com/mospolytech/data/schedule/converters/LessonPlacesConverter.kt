@@ -55,7 +55,7 @@ fun processAuditorium(auditorium: String, url: String): Place {
 }
 
 private fun processTitle(raw: String): String {
-    return raw.trim('_')
+    return raw.trim('_', '-')
 }
 
 private val emojis = listOf(
@@ -67,9 +67,9 @@ private val emojis = listOf(
 fun parseEmoji(raw: String): Pair<String, String> {
     val emoji = emojis.firstOrNull { raw.contains(it.first) }
     return if (emoji == null)
-        Pair(raw.trim(), "")
+        raw.trim() to ""
     else
-        Pair(raw.replace(emoji.first, "").trim(), emoji.second)
+        raw.replace(emoji.first, "").trim() to emoji.second
 }
 
 fun getPlaceDescription(title: String): String {
@@ -102,7 +102,7 @@ private val audMap = mapOf(
     """^[_-]*(LMS|ЛМС)[_-]*$""" to """Обучение в ЛМС""",
     """^Обучение\s+в\s+LMS$""" to """Обучение в ЛМС""",
     """^Webex$""" to """Видеоконференция в Webex""",
-    """^Webinar$""" to """Онлайн лекция в Webinar""""",
+    """^Webinar$""" to """Онлайн лекция в Webinar""",
 
     """^м[\s\p{P}]*спорт[\s\p{P}]*зал[\p{P}]*$""" to """Михалковская, Спортзал""",
     """^Зал\s+№*(\d)[_]*$""" to """Спортивный зал №$1""",

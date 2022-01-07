@@ -5,6 +5,7 @@ import com.mospolytech.features.base.MpuPrincipal
 import com.mospolytech.features.base.mpuAuth
 import io.ktor.server.auth.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.jwt.*
 
 fun Application.configureSecurity() {
     
