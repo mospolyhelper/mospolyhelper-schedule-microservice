@@ -20,15 +20,17 @@ sealed class Place : Comparable<Place> {
         }
     }
 
+    @Serializable
     @SerialName("offline")
     data class Offline(
         override val id: String,
         override val title: String,
         override val description: String,
         override val imageUrl: String,
-        val location: Location
+        val location: Location?
     ) : Place()
 
+    @Serializable
     @SerialName("online")
     data class Online(
         override val id: String,

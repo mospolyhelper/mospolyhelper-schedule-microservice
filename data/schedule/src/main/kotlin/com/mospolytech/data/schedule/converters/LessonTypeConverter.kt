@@ -7,25 +7,48 @@ object LessonTypeConverter {
 }
 
 enum class LessonTypes(
-    val title: String,
     val isImportant: Boolean
 ) {
-    CourseProject("Курсовой проект", true),
-    Exam("Экзамен", true),
-    Credit("Зачёт", true),
-    CreditWithMark("Зачёт с оценкой", true),
-    ExaminationReview("Экз. просмотр", true),
-    ExaminationDepartmentalReview("Экз. каф. просмотр", true),
-    Consultation("Консультация", false),
-    LaboratoryWork("Лаб. работа", false),
-    Practice("Практика", false),
-    Lecture("Лекция", false),
-    KeyLecture("Установочная лекция", false),
-    LectureAndPracticeAndLaboratory("Лекц., практ., лаб.", false),
-    LectureAndPractice("Лекц. и практ.", false),
-    LectureAndLaboratory("Лекц. и лаб.", false),
-    PracticeAndLaboratory("Практ. и лаб.", false),
-    Other("Другое", false)
+    CourseProject(true),
+    Exam(true),
+    Credit(true),
+    CreditWithMark(true),
+    ExaminationReview(true),
+    ExaminationDepartmentalReview(true),
+    Consultation(false),
+    LaboratoryWork(false),
+    Practice(false),
+    Lecture(false),
+    KeyLecture(false),
+    LectureAndPracticeAndLaboratory(false),
+    LectureAndPractice(false),
+    LectureAndLaboratory(false),
+    PracticeAndLaboratory(false),
+    Other(false)
+}
+
+val LessonTypes.title
+    get() = getLessonTypeTitle(this)
+
+fun getLessonTypeTitle(type: LessonTypes): String {
+    return when(type) {
+        LessonTypes.CourseProject -> "Курсовой проект"
+        LessonTypes.Exam -> "Экзамен"
+        LessonTypes.Credit -> "Зачёт"
+        LessonTypes.CreditWithMark -> "Зачёт с оценкой"
+        LessonTypes.ExaminationReview -> "Экз. просмотр"
+        LessonTypes.ExaminationDepartmentalReview -> "Экз. каф. просмотр"
+        LessonTypes.Consultation -> "Консультация"
+        LessonTypes.LaboratoryWork -> "Лаб. работа"
+        LessonTypes.Practice -> "Практика"
+        LessonTypes.Lecture -> "Лекция"
+        LessonTypes.KeyLecture -> "Установочная лекция"
+        LessonTypes.LectureAndPracticeAndLaboratory -> "Лекц., практ., лаб."
+        LessonTypes.LectureAndPractice -> "Лекц. и практ."
+        LessonTypes.LectureAndLaboratory -> "Лекц. и лаб."
+        LessonTypes.PracticeAndLaboratory -> "Практ. и лаб."
+        LessonTypes.Other -> "Другое"
+    }
 }
 
 class LessonTypeParserPack(

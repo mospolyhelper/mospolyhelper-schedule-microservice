@@ -1,5 +1,8 @@
 package com.mospolytech.microservices.schedule.plugins
 
+import com.mospolytech.features.base.AuthConfigs
+import com.mospolytech.features.base.MpuPrincipal
+import com.mospolytech.features.base.mpuAuth
 import io.ktor.server.auth.*
 import io.ktor.util.*
 import io.ktor.client.*
@@ -13,37 +16,11 @@ import io.ktor.server.request.*
 import io.ktor.server.routing.*
 
 fun Application.configureSecurity() {
-    
     install(Authentication) {
-            oauth("auth-oauth-google") {
-                urlProvider = { "http://localhost:8008/callback" }
-                providerLookup = {
-                    OAuthServerSettings.OAuth2ServerSettings(
-                        name = "google",
-                        authorizeUrl = "https://accounts.google.com/o/oauth2/auth",
-                        accessTokenUrl = "https://accounts.google.com/o/oauth2/token",
-                        requestMethod = HttpMethod.Post,
-                        clientId = System.getenv("GOOGLE_CLIENT_ID"),
-                        clientSecret = System.getenv("GOOGLE_CLIENT_SECRET"),
-                        defaultScopes = listOf("https://www.googleapis.com/auth/userinfo.profile")
-                    )
-                }
-                client = HttpClient(Apache)
+        mpuAuth(AuthConfigs.Mpu) {
+            validate {
+                MpuPrincipal(it.token)
             }
         }
-
-    routing {
-        authenticate("auth-oauth-google") {
-                    get("login") {
-                        call.respondRedirect("/callback")
-                    }
-        
-                    get("/callback") {
-                        val principal: OAuthAccessTokenResponse.OAuth2? = call.authentication.principal()
-                        call.sessions.set(UserSession(principal?.accessToken.toString()))
-                        call.respondRedirect("/hello")
-                    }
-                }
     }
 }
-class UserSession(accessToken: String)
