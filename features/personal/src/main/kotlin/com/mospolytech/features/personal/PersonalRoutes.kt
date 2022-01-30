@@ -11,7 +11,7 @@ fun Application.personalRoutesV1(repository: PersonalRepository) {
     routing {
         route("/personal") {
             get {
-                call.respond(repository.getPersonalInfo().toResponse())
+                call.respond(repository.getPersonalInfo("").toResponse())
             }
             route("/orders") {
                 get {
