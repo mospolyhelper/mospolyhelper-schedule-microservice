@@ -19,6 +19,7 @@ import com.mospolytech.domain.schedule.utils.filterByGroup
 import com.mospolytech.domain.schedule.utils.filterByPlace
 import com.mospolytech.domain.schedule.utils.filterByPlaces
 import com.mospolytech.domain.schedule.utils.filterByTeacher
+import io.ktor.util.*
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -56,10 +57,10 @@ class ScheduleRepositoryImpl(
         val lessons = getLessons()
 
         return when (source.type) {
-            ScheduleSources.Group -> lessons.filterByGroup(source.key)
-            ScheduleSources.Teacher -> lessons.filterByTeacher(source.key)
+            ScheduleSources.Group -> lessons.filterByGroup(source.key.decodeBase64String())
+            ScheduleSources.Teacher -> lessons.filterByTeacher(source.key.decodeBase64String())
             ScheduleSources.Student -> lessons
-            ScheduleSources.Place -> lessons.filterByPlace(source.key)
+            ScheduleSources.Place -> lessons.filterByPlace(source.key.decodeBase64String())
             ScheduleSources.Subject -> lessons
             ScheduleSources.Complex -> lessons
         }
