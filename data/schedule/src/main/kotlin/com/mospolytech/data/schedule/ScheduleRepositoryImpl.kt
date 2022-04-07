@@ -5,6 +5,7 @@ import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTimes
 import com.mospolytech.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.domain.schedule.model.lesson.toDateTimeRange
+import com.mospolytech.domain.schedule.model.lesson_type.LessonType
 import com.mospolytech.domain.schedule.model.place.Place
 import com.mospolytech.domain.schedule.model.place.PlaceFilters
 import com.mospolytech.domain.schedule.model.review.LessonReviewDay
@@ -105,7 +106,7 @@ class ScheduleRepositoryImpl(
     override suspend fun getLessonsReview(source: ScheduleSource): List<LessonTimesReview> {
         val lessons = getLessons(source)
 
-        val resMap = mutableMapOf<String, MutableMap<String, MutableMap<DayReviewUnit, MutableList<LocalDate>>>>()
+        val resMap = mutableMapOf<String, MutableMap<LessonType, MutableMap<DayReviewUnit, MutableList<LocalDate>>>>()
 
 
         lessons.forEach { lessonDateTimes ->
@@ -127,7 +128,7 @@ class ScheduleRepositoryImpl(
             LessonTimesReview(
                 lessonTitle = title,
                 days = typeToDays.map { (type, mapOfDays) ->
-                    LessonTimesReviewByType(lessonType =  type,
+                    LessonTimesReviewByType(lessonType = type,
                        days = mapOfDays.map { (dayReviewUnit, dateList) ->
                            val (dateFrom, dateTo) = getDateRange(dateList)
 

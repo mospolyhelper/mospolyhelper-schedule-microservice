@@ -8,6 +8,7 @@ import com.mospolytech.domain.schedule.model.lesson.Lesson
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTimes
 import com.mospolytech.domain.schedule.model.lesson.LessonTime
+import com.mospolytech.domain.schedule.model.lesson_type.LessonType
 import com.mospolytech.domain.schedule.model.schedule.LessonsByTime
 import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
 import java.time.DayOfWeek
@@ -23,13 +24,6 @@ class ApiScheduleConverter {
         private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
     }
 
-    val globalLocations = mutableSetOf<String>()
-
-    fun printGlobalData() {
-        println(globalLocations)
-    }
-
-
     fun convertToLessons(scheduleResponse: ScheduleResponse): List<LessonDateTimes> {
         val lessons = scheduleResponse.contents.values.flatMap {
             convertLessons(
@@ -38,7 +32,6 @@ class ApiScheduleConverter {
                 it.isSession
             )
         }
-        printGlobalData()
         return lessons
     }
 
@@ -50,7 +43,6 @@ class ApiScheduleConverter {
                 it.isSession
             )
         }
-        printGlobalData()
         return lessons
     }
 
@@ -149,11 +141,9 @@ class ApiScheduleConverter {
         val groups = LessonGroupsConverter.convertGroups(apiGroups)
         val places = LessonPlacesConverter.convertPlaces(apiLesson.auditories)
 
-        globalLocations.add(apiLesson.location)
-
         return Lesson(
             title = title,
-            type = type,
+            type = LessonType.from(type),
             teachers = teachers,
             groups = groups,
             places = places

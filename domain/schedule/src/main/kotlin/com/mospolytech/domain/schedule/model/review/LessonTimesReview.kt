@@ -2,6 +2,7 @@ package com.mospolytech.domain.schedule.model.review
 
 import com.mospolytech.domain.base.utils.converters.LocalDateConverter
 import com.mospolytech.domain.schedule.model.lesson.LessonTime
+import com.mospolytech.domain.schedule.model.lesson_type.LessonType
 import kotlinx.serialization.Serializable
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -14,11 +15,11 @@ data class LessonTimesReview(
 
 @Serializable
 data class LessonTimesReviewByType(
-    val lessonType: String,
+    val lessonType: LessonType,
     val days: List<LessonReviewDay>
 ): Comparable<LessonTimesReviewByType> {
     override operator fun compareTo(other: LessonTimesReviewByType): Int {
-        return this.lessonType.compareTo(other.lessonType)
+        return this.lessonType.title.compareTo(other.lessonType.title)
     }
 }
 
