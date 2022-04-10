@@ -4,13 +4,16 @@ import com.mospolytech.data.schedule.model.ApiGroup
 import com.mospolytech.data.schedule.model.ApiLesson
 import com.mospolytech.data.schedule.model.ScheduleResponse
 import com.mospolytech.data.schedule.model.ScheduleSessionResponse
+import com.mospolytech.domain.schedule.model.group.Group
 import com.mospolytech.domain.schedule.model.lesson.Lesson
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTimes
 import com.mospolytech.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.domain.schedule.model.lesson_type.LessonType
+import com.mospolytech.domain.schedule.model.place.Place
 import com.mospolytech.domain.schedule.model.schedule.LessonsByTime
 import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
+import com.mospolytech.domain.schedule.model.teacher.Teacher
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
@@ -144,9 +147,9 @@ class ApiScheduleConverter {
         return Lesson(
             title = title,
             type = LessonType.from(type),
-            teachers = teachers,
-            groups = groups,
-            places = places
+            teachers = teachers.map { Teacher.from(it) },
+            groups = groups.map { Group.from(it) },
+            places = places.map { Place.from(it) },
         )
     }
 

@@ -10,4 +10,16 @@ data class Teacher(
     override fun compareTo(other: Teacher): Int {
         return name.compareTo(other.name)
     }
+
+    companion object {
+        private val map = mutableMapOf<TeacherInfo, Teacher>()
+
+        fun from(info: TeacherInfo) =
+            map.getOrPut(info) {
+                Teacher(
+                    id = info.id,
+                    name = info.name
+                )
+            }
+    }
 }

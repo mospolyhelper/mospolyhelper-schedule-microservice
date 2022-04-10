@@ -8,15 +8,14 @@ data class LessonType(
     val title: String
 ) {
     companion object {
-        private val lessonTypeMap = mutableMapOf<LessonTypeInfo, LessonType>()
+        private val map = mutableMapOf<LessonTypeInfo, LessonType>()
 
         fun from(info: LessonTypeInfo) =
-            lessonTypeMap.getOrPut(info) {
+            map.getOrPut(info) {
                 LessonType(
                     id = info.id,
                     title = info.shortTitle
                 )
             }
-
     }
 }

@@ -23,7 +23,11 @@ fun Routing.scheduleRoutesV1(repository: ScheduleRepository) {
         get<ScheduleRequest> {
             call.respond(repository.getSchedule(ScheduleSource(it.type, it.key)))
         }
-
+        route("/pack") {
+            get<ScheduleRequest> {
+                call.respond(repository.getSchedulePack(ScheduleSource(it.type, it.key)))
+            }
+        }
         authenticate(AuthConfigs.Mpu, optional = true) {
             get("my") {
                 val principal: MpuPrincipal? = call.authentication.principal()

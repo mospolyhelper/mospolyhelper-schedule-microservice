@@ -1,42 +1,25 @@
 package com.mospolytech.domain.schedule.model.place
 
-import com.mospolytech.domain.base.model.Location
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Place : Comparable<Place> {
-    abstract val id: String
-    abstract val title: String
-    abstract val description: String
-    abstract val imageUrl: String
-
+data class Place(
+    val id: String,
+    val title: String
+) : Comparable<Place> {
     override fun compareTo(other: Place): Int {
-        return when {
-            this is Offline && other is Offline -> this.title.compareTo(other.title)
-            this is Online && other is Online -> this.title.compareTo(other.title)
-            this is Offline -> -1
-            else -> 1
-        }
+        return title.compareTo(other.title)
     }
 
-    @Serializable
-    @SerialName("offline")
-    data class Offline(
-        override val id: String,
-        override val title: String,
-        override val description: String,
-        override val imageUrl: String,
-        val location: Location?
-    ) : Place()
+    companion object {
+        private val map = mutableMapOf<PlaceInfo, Place>()
 
-    @Serializable
-    @SerialName("online")
-    data class Online(
-        override val id: String,
-        override val title: String,
-        override val description: String,
-        override val imageUrl: String,
-        val url: String
-    ) : Place()
+        fun from(info: PlaceInfo) =
+            map.getOrPut(info) {
+                Place(
+                    id = info.id,
+                    title = info.title
+                )
+            }
+    }
 }

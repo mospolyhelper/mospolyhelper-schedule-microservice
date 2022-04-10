@@ -3,14 +3,13 @@ package com.mospolytech.data.schedule.converters
 import com.mospolytech.data.schedule.model.ApiLesson
 import com.mospolytech.domain.base.model.Location
 import com.mospolytech.domain.base.utils.capitalized
-import com.mospolytech.domain.schedule.model.place.Place
-import io.ktor.util.*
+import com.mospolytech.domain.schedule.model.place.PlaceInfo
 import kotlin.text.isLowerCase
 
 object LessonPlacesConverter {
 
 
-    fun convertPlaces(auditoriums: List<ApiLesson.Auditory>, url: String = ""): List<Place> {
+    fun convertPlaces(auditoriums: List<ApiLesson.Auditory>, url: String = ""): List<PlaceInfo> {
 
         return auditoriums.map { processAuditorium(it.title, url) }
     }
@@ -33,7 +32,7 @@ enum class AuditoriumTypes(val type: String, val isOnline: Boolean) {
 private val regex = Regex("""href="(.*?)".*?>(.*?)<""")
 
 
-fun processAuditorium(auditorium: String, url: String): Place {
+fun processAuditorium(auditorium: String, url: String): PlaceInfo {
     val regGroups = regex.find(auditorium)?.groupValues
     val (url2, rawTitle0) = if (regGroups != null)
         regGroups.getOrNull(1) to regGroups.getOrNull(2)
@@ -48,17 +47,7 @@ fun processAuditorium(auditorium: String, url: String): Place {
 
     val finalUrl = url.ifEmpty { url2 ?: "" }
 
-    val placeInfo = parsePlace(title, finalUrl)
-
-    val finalTitle = placeInfo.title
-
-    return Place.Offline(
-        finalTitle.encodeBase64(),
-        finalTitle,
-        placeInfo.description2,
-        imageUrl = "",
-        location = null
-    )
+    return parsePlace(title, finalUrl)
 }
 
 private fun fixTitle(raw: String): String {
@@ -89,39 +78,6 @@ fun parseEmoji(raw: String): Pair<String, String> {
         raw.replace(emoji.first, "").trim() to emoji.second
 }
 
-sealed class PlaceInfo {
-    abstract val title: String
-    val description2
-        get() = toString()
-
-    data class Building(
-        override val title: String,
-        val areaAlias: String? = null,
-        val street: String? = null,
-        val building: String? = null,
-        val floor: String? = null,
-        val auditorium: String? = null,
-        val location: Location? = null,
-        val description: Map<String, String>? = null
-    ) : PlaceInfo()
-
-    data class Online(
-        override val title: String,
-        val url: String? = null,
-        val description: Map<String, String>? = null
-    ) : PlaceInfo()
-
-    data class Other(
-        override val title: String,
-        val description: Map<String, String>? = null
-        ) : PlaceInfo()
-
-    data class Unclassified(
-        override val title: String,
-        val description: Map<String, String>? = null
-        ) : PlaceInfo()
-}
-
 fun parsePlace(place: String, url: String = ""): PlaceInfo {
     return parserChain.firstNotNullOfOrNull {
         val matchResult = place.parseBy(patterns = it.patterns.toTypedArray())
@@ -129,7 +85,7 @@ fun parsePlace(place: String, url: String = ""): PlaceInfo {
             null
         else
             it.placeFactory(matchResult, listOf(url))
-    } ?: PlaceInfo.Unclassified(place)
+    } ?: PlaceInfo.Unclassified.create(place)
 }
 
 
@@ -154,7 +110,7 @@ private val otherMap = mapOf(
 
 private val parserChain = listOf(
     PlaceParserPack("""^ав\s*((\d)(\d)(.+))$""") {
-        PlaceInfo.Building(
+        PlaceInfo.Building.create(
             title = groupValues[0],
             areaAlias = "Автозаводская",
             street = "Автозаводская улица, 16",
@@ -173,7 +129,7 @@ private val parserChain = listOf(
         )
     },
     PlaceParserPack("""^пр\s*((\d)(\d).+)$""") {
-        PlaceInfo.Building(
+        PlaceInfo.Building.create(
             title = groupValues[0],
             areaAlias = "Прянишникова",
             street = "улица Прянишникова, 2А",
@@ -190,7 +146,7 @@ private val parserChain = listOf(
     PlaceParserPack("""^пр\s*ВЦ\s*\d+\s*\(((\d)(\d).+)\)$""") {
         val building = groupValues[2]
 
-        PlaceInfo.Building(
+        PlaceInfo.Building.create(
             title = groupValues[0],
             areaAlias = "Прянишникова",
             street = "улица Прянишникова, 2А",
@@ -205,7 +161,7 @@ private val parserChain = listOf(
         )
     },
     PlaceParserPack("""^пр\s(ФО[\s-]*\d+)$""") {
-        PlaceInfo.Building(
+        PlaceInfo.Building.create(
             title = groupValues[0],
             areaAlias = "Прянишникова",
             street = "улица Прянишникова, 2А",
@@ -218,7 +174,7 @@ private val parserChain = listOf(
     PlaceParserPack("""^м\s*((\d)(\d).+)$""") {
         val building = groupValues[2]
 
-        PlaceInfo.Building(
+        PlaceInfo.Building.create(
             title = groupValues[0],
             areaAlias = "Михалковская",
             street = "Михалковская улица, 7",
@@ -232,7 +188,7 @@ private val parserChain = listOf(
         )
     },
     PlaceParserPack("""^м\s*(эстамп)$""") {
-        PlaceInfo.Building(
+        PlaceInfo.Building.create(
             title = groupValues[0],
             areaAlias = "Михалковская",
             street = "Михалковская улица, 7",
@@ -242,7 +198,7 @@ private val parserChain = listOf(
     PlaceParserPack("""^(\d)пк\s*((\d).+)$""") {
         val building = groupValues[1]
 
-        PlaceInfo.Building(
+        PlaceInfo.Building.create(
             title = groupValues[0],
             areaAlias = "Павла Корчагина",
             street = "улица Павла Корчагина, 22",
@@ -257,7 +213,7 @@ private val parserChain = listOf(
         )
     },
     PlaceParserPack("""^пк\s*((\d).+)$""") {
-        PlaceInfo.Building(
+        PlaceInfo.Building.create(
             title = groupValues[0],
             areaAlias = "Павла Корчагина",
             street = "улица Павла Корчагина, 22",
@@ -270,7 +226,7 @@ private val parserChain = listOf(
     PlaceParserPack("""^([АБВНH]|Нд)\s*(\d).+$""") {
         val building = groupValues[1].replace('H', 'Н').lowercase().capitalized()
 
-        PlaceInfo.Building(
+        PlaceInfo.Building.create(
             title = groupValues[0],
             areaAlias = "Б. Семёновская",
             street = "Большая Семёновская улица, 38",
@@ -291,7 +247,7 @@ private val parserChain = listOf(
     PlaceParserPack("""^(А)[\s-]?ОМД$""") {
         val building = groupValues[1].lowercase().capitalized()
 
-        PlaceInfo.Building(
+        PlaceInfo.Building.create(
             title = groupValues[0],
             areaAlias = "Б. Семёновская",
             street = "Большая Семёновская улица, 38",
@@ -362,7 +318,7 @@ private val parserChain = listOf(
         else
             mapOf()
 
-        PlaceInfo.Building(
+        PlaceInfo.Building.create(
             title = "Спортзал №${gymNumber}",
             areaAlias = "Спортивный зал №${gymNumber}",
             street = street,
@@ -371,7 +327,7 @@ private val parserChain = listOf(
         )
     },
     PlaceParserPack("""^м[\s\p{P}]*спорт[\s\p{P}]*зал[\p{P}]*$""") {
-        PlaceInfo.Building(
+        PlaceInfo.Building.create(
             title = "М Спортзал",
             areaAlias = "Михалковская",
             street = "Михалковская улица, 7с2",
@@ -387,7 +343,7 @@ private val parserChain = listOf(
     PlaceParserPack("""^Автозаводская\s+(\d)$""") {
         val gymNumber = groupValues[1]
 
-        PlaceInfo.Building(
+        PlaceInfo.Building.create(
             title = "Ав Спортзал №${gymNumber}",
             areaAlias = "Спорткомплекс №${gymNumber} «На Автозаводской»",
             street = "Автозаводская улица, 16с2",
@@ -401,7 +357,7 @@ private val parserChain = listOf(
         )
     },
     PlaceParserPack("""^(.*Измайлово.*)$""") {
-        PlaceInfo.Building(
+        PlaceInfo.Building.create(
             title = groupValues[1],
             areaAlias = "Спорткомплекс «Измайлово»",
             street = "11-я Парковая улица, 36с2",
@@ -415,38 +371,38 @@ private val parserChain = listOf(
         )
     },
     PlaceParserPack("""^[_\s\.]*Ц?ПД[_\s\.1]*$""") {
-        PlaceInfo.Other("Проектная деятельность")
+        PlaceInfo.Other.create("Проектная деятельность")
     },
     PlaceParserPack(
         """^[_-]*(LMS|ЛМС)[_-]*$""",
         """^Обучение\s+в\s+(LMS|ЛМС)$""",
         """^Обучение\s+(LMS|ЛМС)$"""
     ) {
-        PlaceInfo.Online(
+        PlaceInfo.Online.create(
             title = "Обучение в ЛМС",
             url = it.firstOrNull()
         )
     },
     PlaceParserPack("""^Webex$""") {
-        PlaceInfo.Online(
+        PlaceInfo.Online.create(
             title = "Видеоконференция в Webex",
             url = it.firstOrNull()
         )
     },
     PlaceParserPack("""^Webinar$""") {
-        PlaceInfo.Online(
+        PlaceInfo.Online.create(
             title = "Онлайн лекция в Webinar",
             url = it.firstOrNull()
         )
     },
     PlaceParserPack("""^Online\sкурс$""") {
-        PlaceInfo.Online(
+        PlaceInfo.Online.create(
             title = "Онлайн курс",
             url = it.firstOrNull()
         )
     },
     PlaceParserPack("""^Онлайн$""") {
-        PlaceInfo.Online(
+        PlaceInfo.Online.create(
             title = "Онлайн курс",
             url = it.firstOrNull()
         )
@@ -462,7 +418,7 @@ private val parserChain = listOf(
                 null
         }
 
-        PlaceInfo.Other(
+        PlaceInfo.Other.create(
             title = title,
             description = mapOf("" to description1)
         )

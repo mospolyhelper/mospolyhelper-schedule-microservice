@@ -12,7 +12,7 @@ data class LessonTypeInfo(
     val isImportant: Boolean
 ) {
     companion object {
-        private val lessonTypeInfoMap = mutableMapOf<Int, LessonTypeInfo>()
+        val map = mutableMapOf<String, LessonTypeInfo>()
 
         fun create(
             title: String,
@@ -25,8 +25,8 @@ data class LessonTypeInfo(
             shortTitle = shortTitle,
             description = description,
             isImportant = isImportant
-        ).apply {
-            lessonTypeInfoMap[hashCode()] = this
+        ).run {
+            map.getOrPut(id) { this }
         }
     }
 }

@@ -1,20 +1,26 @@
 package com.mospolytech.data.schedule
 
 import com.mospolytech.data.schedule.converters.*
+import com.mospolytech.domain.schedule.model.group.GroupInfo
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTimes
 import com.mospolytech.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.domain.schedule.model.lesson.toDateTimeRange
 import com.mospolytech.domain.schedule.model.lesson_type.LessonType
+import com.mospolytech.domain.schedule.model.lesson_type.LessonTypeInfo
 import com.mospolytech.domain.schedule.model.place.Place
+import com.mospolytech.domain.schedule.model.place.PlaceInfo
 import com.mospolytech.domain.schedule.model.place.PlaceFilters
 import com.mospolytech.domain.schedule.model.review.LessonReviewDay
 import com.mospolytech.domain.schedule.model.review.LessonTimesReview
 import com.mospolytech.domain.schedule.model.review.LessonTimesReviewByType
 import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
+import com.mospolytech.domain.schedule.model.schedule.ScheduleInfo
+import com.mospolytech.domain.schedule.model.schedule.SchedulePack
 import com.mospolytech.domain.schedule.model.source.ScheduleSource
 import com.mospolytech.domain.schedule.model.source.ScheduleSourceFull
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
+import com.mospolytech.domain.schedule.model.teacher.TeacherInfo
 import com.mospolytech.domain.schedule.repository.ScheduleRepository
 import com.mospolytech.domain.schedule.utils.filterByGroup
 import com.mospolytech.domain.schedule.utils.filterByPlace
@@ -91,7 +97,7 @@ class ScheduleRepositoryImpl(
                 getLessons()
                     .flatMap { it.lesson.places }
                     .toSortedSet()
-                    .map { ScheduleSourceFull(sourceType, it.id, it.title, it.description, "") }
+                    .map { ScheduleSourceFull(sourceType, it.id, it.title, "", "") }
             }
             ScheduleSources.Subject -> {
                 getLessons()
@@ -152,6 +158,25 @@ class ScheduleRepositoryImpl(
         val lessons = getLessons().let { if (ids != null) it.filterByPlaces(ids) else it }
 
         return arrangePlacesByLessons(lessons, filters.dateTimeFrom, filters.dateTimeTo)
+    }
+
+    override suspend fun getSchedulePack(source: ScheduleSource): SchedulePack {
+        val lessons = getLessons(source)
+
+        val typesId = lessons.asSequence().map { it.lesson.type.id }.distinct()
+        val teachersId = lessons.asSequence().flatMap { it.lesson.teachers.map { it.id } }.distinct()
+        val groupsId = lessons.asSequence().flatMap { it.lesson.groups.map { it.id } }.distinct()
+        val placesId = lessons.asSequence().flatMap { it.lesson.places.map { it.id } }.distinct()
+
+        return SchedulePack(
+            lessons = lessons,
+            info = ScheduleInfo(
+                typesInfo = typesId.mapNotNull { LessonTypeInfo.map[it] }.toList(),
+                teachersInfo = teachersId.mapNotNull { TeacherInfo.map[it] }.toList(),
+                groupsInfo = groupsId.mapNotNull { GroupInfo.map[it] }.toList(),
+                placesInfo = placesId.mapNotNull { PlaceInfo.map[it] }.toList()
+            )
+        )
     }
 
     private fun arrangePlacesByLessons(
