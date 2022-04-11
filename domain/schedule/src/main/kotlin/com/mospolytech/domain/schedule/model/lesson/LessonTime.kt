@@ -7,17 +7,16 @@ import java.time.LocalTime
 @Serializable
 data class LessonTime(
     @Serializable(with = LocalTimeConverter::class)
-    val startTime: LocalTime,
+    val start: LocalTime,
     @Serializable(with = LocalTimeConverter::class)
-    val endTime: LocalTime
+    val end: LocalTime
 ) : Comparable<LessonTime> {
     override fun compareTo(other: LessonTime): Int {
-        val start = this.startTime.compareTo(other.startTime)
+        val start = this.start.compareTo(other.start)
         if (start == 0) {
-            val end = this.endTime.compareTo(other.endTime)
+            val end = this.end.compareTo(other.end)
             return end
         }
         return start
     }
-
 }

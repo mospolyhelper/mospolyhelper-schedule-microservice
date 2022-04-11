@@ -20,7 +20,7 @@ data class LessonTypeInfo(
             description: String,
             isImportant: Boolean
         ) = LessonTypeInfo(
-            id = title.encodeBase64(),
+            id = title,
             title = title,
             shortTitle = shortTitle,
             description = description,

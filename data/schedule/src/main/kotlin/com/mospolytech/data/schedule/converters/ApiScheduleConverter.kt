@@ -9,6 +9,7 @@ import com.mospolytech.domain.schedule.model.lesson.Lesson
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTimes
 import com.mospolytech.domain.schedule.model.lesson.LessonTime
+import com.mospolytech.domain.schedule.model.lesson_subject.LessonSubject
 import com.mospolytech.domain.schedule.model.lesson_type.LessonType
 import com.mospolytech.domain.schedule.model.place.Place
 import com.mospolytech.domain.schedule.model.schedule.LessonsByTime
@@ -83,30 +84,40 @@ class ApiScheduleConverter {
         return convertedDays
     }
 
-    private fun getDates(day: String, isByDate: Boolean, dateFrom: LocalDate, dateTo: LocalDate): List<LocalDate> {
-        if (isByDate) {
+    private fun getDates(day: String, isByDate: Boolean, dateFrom: LocalDate, dateTo: LocalDate): Pair<LocalDate, LocalDate?> {
+        return if (isByDate) {
             val date = LocalDate.parse(day, dateFormatter)
-            return listOf(date)
+            date to null
         } else {
             val dayOfWeek = DayOfWeek.of(day.toIntOrNull() ?: 1)
-            val dateFromDayOfWeek = dateFrom.dayOfWeek.value
-            var daysToAdd = (dayOfWeek.value - dateFromDayOfWeek)
-            if (daysToAdd < 0) daysToAdd += 7
-            val firstDayOfWeek = dateFrom.plusDays(daysToAdd.toLong())
-            val dates = mutableListOf<LocalDate>()
-            var currentDay = firstDayOfWeek
-            do {
-                dates += currentDay
-                currentDay = currentDay.plusDays(7)
-            } while (currentDay <= dateTo)
-            return dates
+            val firstDayOfWeek = getClosestDayNotEarly(dateFrom, dayOfWeek)
+            val lastDayOfWeek = getClosestDayNotLater(dateTo, dayOfWeek)
+            firstDayOfWeek to lastDayOfWeek
         }
+    }
+
+    private fun getClosestDayNotEarly(day: LocalDate, dayOfWeek: DayOfWeek): LocalDate {
+        val fromDayOfWeek = day.dayOfWeek.value
+        val daysToAdd = (dayOfWeek.value - fromDayOfWeek).toLong()
+        return if (daysToAdd >= 0)
+            day.plusDays(daysToAdd)
+        else
+            day.plusDays(daysToAdd + 7L)
+    }
+
+    private fun getClosestDayNotLater(day: LocalDate, dayOfWeek: DayOfWeek): LocalDate {
+        val toDayOfWeek = day.dayOfWeek.value
+        val daysToAdd = (dayOfWeek.value - toDayOfWeek).toLong()
+        return if (daysToAdd <= 0)
+            day.plusDays(daysToAdd)
+        else
+            day.plusDays(daysToAdd - 7L)
     }
 
     private fun convertLessonDateTimes(
         apiLesson: ApiLesson,
         groups: List<ApiGroup>,
-        dates: List<LocalDate>,
+        dates: Pair<LocalDate, LocalDate?>,
         timeStart: LocalTime,
         timeEnd: LocalTime
     ): LessonDateTimes {
@@ -115,38 +126,36 @@ class ApiScheduleConverter {
 
         return LessonDateTimes(
             lesson = lesson,
-            time = dateTimes
+            time = listOf(dateTimes)
         )
     }
 
     private fun convertLessonDateTime(
-        dates: List<LocalDate>,
+        dates: Pair<LocalDate, LocalDate?>,
         timeStart: LocalTime,
         timeEnd: LocalTime
-    ): List<LessonDateTime> {
-        val dateTimes = dates.map { date ->
-            LessonDateTime(
-                date = date,
-                time = LessonTime(
-                    startTime = timeStart,
-                    endTime = timeEnd
-                )
-            )
-        }
+    ): LessonDateTime {
 
-        return dateTimes
+        return LessonDateTime(
+            startDate = dates.first,
+            endDate = dates.second,
+            time = LessonTime(
+                start = timeStart,
+                end = timeEnd
+            )
+        )
     }
 
     private fun convertLesson(apiLesson: ApiLesson, apiGroups: List<ApiGroup>): Lesson {
-        val title = LessonTitleConverter.convertTitle(apiLesson.sbj)
+        val subject = LessonSubjectConverter.convertTitle(apiLesson.sbj)
         val type = LessonTypeConverter.convertType(apiLesson.type, apiLesson.sbj)
         val teachers = LessonTeachersConverter.convertTeachers(apiLesson.teacher)
         val groups = LessonGroupsConverter.convertGroups(apiGroups)
         val places = LessonPlacesConverter.convertPlaces(apiLesson.auditories)
 
         return Lesson(
-            title = title,
             type = LessonType.from(type),
+            subject = LessonSubject.from(subject),
             teachers = teachers.map { Teacher.from(it) },
             groups = groups.map { Group.from(it) },
             places = places.map { Place.from(it) },
@@ -184,7 +193,7 @@ fun mergeLessons(vararg lessonsList: List<LessonDateTimes>): List<LessonDateTime
 }
 
 fun LessonDateTimes.mergeByGroup(other: LessonDateTimes): LessonDateTimes {
-    return this.copy(lesson = lesson.copy(groups = lesson.groups + other.lesson.groups))
+    return this.copy(lesson = lesson.copy(groups = (lesson.groups + other.lesson.groups).sorted()))
 }
 
 fun LessonDateTimes.canMergeByGroup(other: LessonDateTimes): Boolean {
@@ -193,7 +202,7 @@ fun LessonDateTimes.canMergeByGroup(other: LessonDateTimes): Boolean {
 }
 
 fun Lesson.canMergeByGroup(other: Lesson): Boolean {
-    return title == other.title &&
+    return subject == other.subject &&
             places == other.places &&
             teachers == other.teachers
 }
@@ -213,7 +222,7 @@ fun buildSchedule(
 
     for (lessonDateTimes in lessons) {
         for (dateTime in lessonDateTimes.time) {
-            val timeToLessonsMap = resMap.getOrPut(dateTime.date) { TreeMap<LessonTime, MutableList<Lesson>>() }
+            val timeToLessonsMap = resMap.getOrPut(dateTime.startDate) { TreeMap<LessonTime, MutableList<Lesson>>() }
             val lessonList = timeToLessonsMap.getOrPut(dateTime.time) { mutableListOf() }
             lessonList.add(lessonDateTimes.lesson)
         }
@@ -259,12 +268,12 @@ fun getLessonDateRange(lessons: List<LessonDateTimes>): Pair<LocalDate, LocalDat
 
     for (lessonDateTimes in lessons) {
         for (dateTime in lessonDateTimes.time) {
-            if (dateTime.date < minDate) {
-                minDate = dateTime.date
+            if (dateTime.startDate < minDate) {
+                minDate = dateTime.startDate
             }
 
-            if (dateTime.date > maxDate) {
-                maxDate = dateTime.date
+            if (dateTime.startDate > maxDate) {
+                maxDate = dateTime.startDate
             }
         }
     }

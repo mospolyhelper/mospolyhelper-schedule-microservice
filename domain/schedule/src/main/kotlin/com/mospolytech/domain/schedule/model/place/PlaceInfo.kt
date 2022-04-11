@@ -39,7 +39,7 @@ sealed class PlaceInfo {
                 location: Location? = null,
                 description: Map<String, String>? = null
             ) = Building(
-                id = (this::class.simpleName + title).encodeBase64(),
+                id = (Building::class.simpleName + title),
                 title = title,
                 areaAlias,
                 street,
@@ -68,7 +68,7 @@ sealed class PlaceInfo {
                 url: String? = null,
                 description: Map<String, String>? = null
             ) = Online(
-                id = (this::class.simpleName + title + url).encodeBase64(),
+                id = (Online::class.simpleName + title + url),
                 title = title,
                 url = url,
                 description = description,
@@ -90,7 +90,7 @@ sealed class PlaceInfo {
                 title: String,
                 description: Map<String, String>? = null
             ) = Other(
-                id = (this::class.simpleName + title).encodeBase64(),
+                id = (Other::class.simpleName + title),
                 title = title,
                 description = description,
             ).run {
@@ -111,7 +111,7 @@ sealed class PlaceInfo {
                 title: String,
                 description: Map<String, String>? = null
             ) = Unclassified(
-                id = (this::class.simpleName + title).encodeBase64(),
+                id = (Unclassified::class.simpleName + title),
                 title = title,
                 description = description,
             ).run {

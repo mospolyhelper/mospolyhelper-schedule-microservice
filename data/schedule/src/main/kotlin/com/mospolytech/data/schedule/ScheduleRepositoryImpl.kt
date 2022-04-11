@@ -5,9 +5,12 @@ import com.mospolytech.domain.schedule.model.group.GroupInfo
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTimes
 import com.mospolytech.domain.schedule.model.lesson.LessonTime
-import com.mospolytech.domain.schedule.model.lesson.toDateTimeRange
+import com.mospolytech.domain.schedule.model.lesson.toDateTimeRanges
+import com.mospolytech.domain.schedule.model.lesson_subject.LessonSubjectInfo
 import com.mospolytech.domain.schedule.model.lesson_type.LessonType
 import com.mospolytech.domain.schedule.model.lesson_type.LessonTypeInfo
+import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
+import com.mospolytech.domain.schedule.model.pack.CompactLessonFeatures
 import com.mospolytech.domain.schedule.model.place.Place
 import com.mospolytech.domain.schedule.model.place.PlaceInfo
 import com.mospolytech.domain.schedule.model.place.PlaceFilters
@@ -15,8 +18,8 @@ import com.mospolytech.domain.schedule.model.review.LessonReviewDay
 import com.mospolytech.domain.schedule.model.review.LessonTimesReview
 import com.mospolytech.domain.schedule.model.review.LessonTimesReviewByType
 import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
-import com.mospolytech.domain.schedule.model.schedule.ScheduleInfo
-import com.mospolytech.domain.schedule.model.schedule.SchedulePack
+import com.mospolytech.domain.schedule.model.pack.ScheduleInfo
+import com.mospolytech.domain.schedule.model.pack.CompactSchedule
 import com.mospolytech.domain.schedule.model.source.ScheduleSource
 import com.mospolytech.domain.schedule.model.source.ScheduleSourceFull
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
@@ -60,14 +63,14 @@ class ScheduleRepositoryImpl(
         }
     }
 
-    suspend fun getLessons(source: ScheduleSource): List<LessonDateTimes> {
+    private suspend fun getLessons(source: ScheduleSource): List<LessonDateTimes> {
         val lessons = getLessons()
 
         return when (source.type) {
-            ScheduleSources.Group -> lessons.filterByGroup(source.key.decodeBase64String())
-            ScheduleSources.Teacher -> lessons.filterByTeacher(source.key.decodeBase64String())
+            ScheduleSources.Group -> lessons.filterByGroup(source.key)
+            ScheduleSources.Teacher -> lessons.filterByTeacher(source.key)
             ScheduleSources.Student -> lessons
-            ScheduleSources.Place -> lessons.filterByPlace(source.key.decodeBase64String())
+            ScheduleSources.Place -> lessons.filterByPlace(source.key)
             ScheduleSources.Subject -> lessons
             ScheduleSources.Complex -> lessons
         }
@@ -101,9 +104,9 @@ class ScheduleRepositoryImpl(
             }
             ScheduleSources.Subject -> {
                 getLessons()
-                    .map { it.lesson.title }
+                    .map { it.lesson.subject }
                     .toSortedSet()
-                    .map { ScheduleSourceFull(sourceType, "", it, "", "") }
+                    .map { ScheduleSourceFull(sourceType, it.id, it.title, "", "") }
             }
             ScheduleSources.Complex -> emptyList()
         }
@@ -118,14 +121,14 @@ class ScheduleRepositoryImpl(
         lessons.forEach { lessonDateTimes ->
             lessonDateTimes.time.forEach { lessonDateTime ->
                 val key = DayReviewUnit(
-                    dayOfWeek = lessonDateTime.date.dayOfWeek,
+                    dayOfWeek = lessonDateTime.startDate.dayOfWeek,
                     lessonTime = lessonDateTime.time
                 )
                 resMap
-                    .getOrPut(lessonDateTimes.lesson.title) { mutableMapOf() }
+                    .getOrPut(lessonDateTimes.lesson.subject.title) { mutableMapOf() }
                     .getOrPut(lessonDateTimes.lesson.type) { mutableMapOf() }
                     .getOrPut(key) { mutableListOf() }
-                    .add(lessonDateTime.date)
+                    .add(lessonDateTime.startDate)
             }
         }
 
@@ -160,18 +163,31 @@ class ScheduleRepositoryImpl(
         return arrangePlacesByLessons(lessons, filters.dateTimeFrom, filters.dateTimeTo)
     }
 
-    override suspend fun getSchedulePack(source: ScheduleSource): SchedulePack {
-        val lessons = getLessons(source)
+    override suspend fun getSchedulePack(source: ScheduleSource): CompactSchedule {
+        val lessons = getLessons(source).map {
+            CompactLessonAndTimes(
+                lesson = CompactLessonFeatures(
+                    typeId = it.lesson.type.id,
+                    subjectId = it.lesson.subject.id,
+                    teachersId = it.lesson.teachers.map { it.id },
+                    groupsId = it.lesson.groups.map { it.id },
+                    placesId = it.lesson.places.map { it.id }
+                ),
+                times = it.time
+            )
+        }
 
-        val typesId = lessons.asSequence().map { it.lesson.type.id }.distinct()
-        val teachersId = lessons.asSequence().flatMap { it.lesson.teachers.map { it.id } }.distinct()
-        val groupsId = lessons.asSequence().flatMap { it.lesson.groups.map { it.id } }.distinct()
-        val placesId = lessons.asSequence().flatMap { it.lesson.places.map { it.id } }.distinct()
+        val typesId = lessons.asSequence().map { it.lesson.typeId }.distinct()
+        val subjectsId = lessons.asSequence().map { it.lesson.subjectId }.distinct()
+        val teachersId = lessons.asSequence().flatMap { it.lesson.teachersId }.distinct()
+        val groupsId = lessons.asSequence().flatMap { it.lesson.groupsId }.distinct()
+        val placesId = lessons.asSequence().flatMap { it.lesson.placesId }.distinct()
 
-        return SchedulePack(
+        return CompactSchedule(
             lessons = lessons,
             info = ScheduleInfo(
                 typesInfo = typesId.mapNotNull { LessonTypeInfo.map[it] }.toList(),
+                subjectsInfo = subjectsId.mapNotNull { LessonSubjectInfo.map[it] }.toList(),
                 teachersInfo = teachersId.mapNotNull { TeacherInfo.map[it] }.toList(),
                 groupsInfo = groupsId.mapNotNull { GroupInfo.map[it] }.toList(),
                 placesInfo = placesId.mapNotNull { PlaceInfo.map[it] }.toList()
@@ -199,9 +215,11 @@ class ScheduleRepositoryImpl(
     }
 
     operator fun ClosedRange<LocalDateTime>.contains(lessonDateTime: LessonDateTime): Boolean {
-        val lessonDateTimeRange = lessonDateTime.toDateTimeRange()
+        val lessonDateTimeRanges = lessonDateTime.toDateTimeRanges()
 
-        return lessonDateTimeRange.start in this || lessonDateTimeRange.endInclusive in this
+        return lessonDateTimeRanges.any {
+            it.start in this || it.endInclusive in this
+        }
     }
 
     data class DayReviewUnit(

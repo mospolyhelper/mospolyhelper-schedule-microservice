@@ -16,7 +16,7 @@ data class GroupInfo(
             title: String,
             description: String
         ) = GroupInfo(
-            id = title.encodeBase64(),
+            id = title,
             title = title,
             description = description
         ).run {

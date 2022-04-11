@@ -8,7 +8,10 @@ data class Group(
     val title: String
 ) : Comparable<Group> {
     override fun compareTo(other: Group): Int {
-        return title.compareTo(other.title)
+        return if (title.length == other.title.length)
+            title.compareTo(other.title)
+        else
+            title.length - other.title.length
     }
 
     companion object {

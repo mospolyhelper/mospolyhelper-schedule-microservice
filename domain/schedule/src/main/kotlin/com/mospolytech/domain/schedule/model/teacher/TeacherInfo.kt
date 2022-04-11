@@ -16,7 +16,7 @@ data class TeacherInfo(
             name: String,
             description: String
         ) = TeacherInfo(
-            id = name.encodeBase64(),
+            id = name,
             name = name,
             description = description
         ).run {

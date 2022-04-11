@@ -53,8 +53,8 @@ object LessonTypeConverter {
         ),
         ExaminationDepartmentalReview(
             LessonTypeInfo.create(
-                title = "Экз. кафедральный просмотр",
-                shortTitle = "Экзаменационный каф. просмотр",
+                title = "Экзаменационный кафедральный просмотр",
+                shortTitle = "Экз. каф. просмотр",
                 description = "",
                 isImportant = true
             )
