@@ -1,8 +1,9 @@
 package com.mospolytech.microservices.schedule
 
+import com.mospolytech.features.auth.authRoutesV1
 import com.mospolytech.features.base.koin.get
 import com.mospolytech.features.schedule.scheduleDataConversion
-import com.mospolytech.features.schedule.scheduleRoutesV1
+import com.mospolytech.features.schedule.scheduleRoutes
 import com.mospolytech.microservices.schedule.plugins.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
@@ -23,7 +24,8 @@ fun Application.module() {
 }
 
 fun Application.setRoutes() {
-    scheduleRoutesV1(get())
+    scheduleRoutes(get(), get())
+    authRoutesV1(get(), get())
 }
 
 fun Application.setDataConversions() {
