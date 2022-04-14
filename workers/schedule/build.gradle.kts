@@ -1,23 +1,13 @@
 plugins {
-    application
+    id("worker-base")
 }
 
-application {
-    mainClass.set("com.mospolytech.workers.schedule.ApplicationKt")
-}
 version = "0.0.1"
 
-kotlin {
-    sourceSets {
-        val main by getting
-        val test by getting
-    }
-}
-
 dependencies {
-    implementation(project(":data:base"))
-    implementation(project(":data:schedule"))
-    implementation(project(":domain:base"))
-    implementation(project(":domain:schedule"))
-    implementation(project(":features:schedule"))
+    implementation(project(Modules.Data.Base))
+    implementation(project(Modules.Data.Schedule))
+    implementation(project(Modules.Domain.Base))
+    implementation(project(Modules.Domain.Schedule))
+    implementation(project(Modules.Features.Schedule))
 }

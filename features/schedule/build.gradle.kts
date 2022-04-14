@@ -3,8 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":features:base"))
-    api(project(":data:schedule"))
-    api(project(":domain:schedule"))
-    implementation(project(":domain:personal"))
+    api(project(Modules.Features.Base))
+    api(project(Modules.Domain.Schedule))
+    implementation(project(Modules.Domain.Personal))
 }

@@ -3,7 +3,6 @@ plugins {
 }
 
 dependencies {
-    api(project(":features:base"))
-    api(project(":data:performance"))
-    api(project(":domain:performance"))
+    api(project(Modules.Features.Base))
+    api(project(Modules.Domain.Performance))
 }

@@ -11,7 +11,7 @@ object Libs {
         }
     }
 
-    
+
     object Other {
         const val jdkDesugar = "com.android.tools:desugar_jdk_libs:1.1.5"
         const val junit = "junit:junit:4.13"

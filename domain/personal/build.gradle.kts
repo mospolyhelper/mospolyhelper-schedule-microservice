@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api(project(":domain:base"))
+    api(project(Modules.Domain.Base))
 }
