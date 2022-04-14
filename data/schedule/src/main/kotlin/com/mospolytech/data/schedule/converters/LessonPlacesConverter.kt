@@ -4,31 +4,15 @@ import com.mospolytech.data.schedule.model.ApiLesson
 import com.mospolytech.domain.base.model.Location
 import com.mospolytech.domain.base.utils.capitalized
 import com.mospolytech.domain.schedule.model.place.PlaceInfo
+import org.intellij.lang.annotations.RegExp
 import kotlin.text.isLowerCase
 
 object LessonPlacesConverter {
-
-
     fun convertPlaces(auditoriums: List<ApiLesson.Auditory>, url: String = ""): List<PlaceInfo> {
-
         return auditoriums.map { processAuditorium(it.title, url) }
     }
 }
 
-//val Place.isOnline: Boolean
-//    get() =
-//        url.isNotEmpty() ||
-//                (AuditoriumTypes.values()
-//                    .firstOrNull { it.type == type }?.isOnline
-//                    ?: false)
-
-enum class AuditoriumTypes(val type: String, val isOnline: Boolean) {
-    Webinar("Вебинар", true),
-    Lms("LMS", true),
-    VideoConference("Видеоконф.", true),
-    OnlineCourse("Online курс", true),
-    Other("", false)
-}
 private val regex = Regex("""href="(.*?)".*?>(.*?)<""")
 
 
@@ -50,17 +34,16 @@ fun processAuditorium(auditorium: String, url: String): PlaceInfo {
     return parsePlace(title, finalUrl)
 }
 
+private fun processTitle(raw: String): String {
+    return fixTitle(raw.trim('_', '-'))
+}
+
 private fun fixTitle(raw: String): String {
     return when (raw) {
         "3301а" -> "М3301а"
         "2202а" -> "Пр2202а"
         else -> raw
     }
-}
-
-private fun processTitle(raw: String): String {
-
-    return fixTitle(raw.trim('_', '-'))
 }
 
 private val emojis = listOf(
@@ -98,7 +81,7 @@ data class PlaceParserPack(
 }
 
 private val otherMap = mapOf(
-    """^ИМАШ(\sРАН)?[\s_]*$""" to """Институт машиноведения имени А. А. Благонравова РАН""",
+    """^ИМАШ(\sРАН)?[\s_\.]*$""" to """Институт машиноведения имени А. А. Благонравова РАН""",
     """^ИОНХ(\sРАН)?[\s_]*$""" to """Институт общей и неорганической химии им. Н.С. Курнакова РАН""",
     """^(.*Биоинженерии.*(РАН)?)$""" to """$1""",
     """^(.*Техноград.*)$""" to """Техноград на ВДНХ""",
@@ -356,6 +339,20 @@ private val parserChain = listOf(
             )
         )
     },
+    PlaceParserPack("""^АВ[\s\p{P}]*Спортзал$""") {
+        PlaceInfo.Building.create(
+            title = "Ав Спортзал",
+            areaAlias = "Спорткомплекс «На Автозаводской»",
+            street = "Автозаводская улица, 16с2",
+            floor = "8",
+            location = Location(55.837495, 37.532223),
+            description = mapOf(
+                "Учебные и тренировочные занятия"
+                        to
+                        "Тренажерный зал, армрестлинг, аскетбол, дартс, настольный теннис, эстетическая гимнастика"
+            )
+        )
+    },
     PlaceParserPack("""^(.*Измайлово.*)$""") {
         PlaceInfo.Building.create(
             title = groupValues[1],
@@ -370,7 +367,7 @@ private val parserChain = listOf(
             )
         )
     },
-    PlaceParserPack("""^[_\s\.]*Ц?ПД[_\s\.1]*$""") {
+    PlaceParserPack("""^[_\s\.]*Ц?ПД[_\s\.\d]*$""", """^Проектная\sдеятельность$""") {
         PlaceInfo.Other.create("Проектная деятельность")
     },
     PlaceParserPack(

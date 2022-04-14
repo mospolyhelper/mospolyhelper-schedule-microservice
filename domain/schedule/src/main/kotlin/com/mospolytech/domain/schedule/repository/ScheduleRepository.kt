@@ -18,4 +18,5 @@ interface ScheduleRepository {
     suspend fun getLessonsReview(source: ScheduleSource): List<LessonTimesReview>
     suspend fun getPlaces(filters: PlaceFilters): Map<Place, List<LessonDateTimes>>
     suspend fun getSchedulePack(source: ScheduleSource): CompactSchedule
+    suspend fun getSchedulePack(): CompactSchedule
 }

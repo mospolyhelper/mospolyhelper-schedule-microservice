@@ -1,8 +1,5 @@
-kotlin {
-    sourceSets {
-        val main by getting
-        val test by getting
-    }
+plugins {
+    id("data-base")
 }
 
 dependencies {

@@ -195,6 +195,38 @@ class ScheduleRepositoryImpl(
         )
     }
 
+    override suspend fun getSchedulePack(): CompactSchedule {
+        val lessons = getLessons().map {
+            CompactLessonAndTimes(
+                lesson = CompactLessonFeatures(
+                    typeId = it.lesson.type.id,
+                    subjectId = it.lesson.subject.id,
+                    teachersId = it.lesson.teachers.map { it.id },
+                    groupsId = it.lesson.groups.map { it.id },
+                    placesId = it.lesson.places.map { it.id }
+                ),
+                times = it.time
+            )
+        }
+
+        val typesId = lessons.asSequence().map { it.lesson.typeId }.distinct()
+        val subjectsId = lessons.asSequence().map { it.lesson.subjectId }.distinct()
+        val teachersId = lessons.asSequence().flatMap { it.lesson.teachersId }.distinct()
+        val groupsId = lessons.asSequence().flatMap { it.lesson.groupsId }.distinct()
+        val placesId = lessons.asSequence().flatMap { it.lesson.placesId }.distinct()
+
+        return CompactSchedule(
+            lessons = lessons,
+            info = ScheduleInfo(
+                typesInfo = typesId.mapNotNull { LessonTypeInfo.map[it] }.toList(),
+                subjectsInfo = subjectsId.mapNotNull { LessonSubjectInfo.map[it] }.toList(),
+                teachersInfo = teachersId.mapNotNull { TeacherInfo.map[it] }.toList(),
+                groupsInfo = groupsId.mapNotNull { GroupInfo.map[it] }.toList(),
+                placesInfo = placesId.mapNotNull { PlaceInfo.map[it] }.toList()
+            )
+        )
+    }
+
     private fun arrangePlacesByLessons(
         lessons: List<LessonDateTimes>,
         dateTimeFrom: LocalDateTime,

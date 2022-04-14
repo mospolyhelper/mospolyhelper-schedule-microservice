@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.6.20"
-    kotlin("plugin.serialization") version "1.6.20"
+    kotlin("jvm")
+    kotlin("plugin.serialization")
 }
 
 buildscript {
@@ -8,9 +8,6 @@ buildscript {
         gradlePluginPortal()
         google()
         mavenCentral()
-    }
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.20")
     }
 }
 
