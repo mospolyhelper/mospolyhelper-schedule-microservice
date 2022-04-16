@@ -2,7 +2,7 @@ package com.mospolytech.microservices.auth
 
 import com.mospolytech.features.auth.authRoutesV1
 import com.mospolytech.features.base.koin.get
-import com.mospolytech.microservices.auth.plugins.*
+import com.mospolytech.features.base.plugins.*
 import io.ktor.server.application.*
 
 fun main(args: Array<String>): Unit =
@@ -15,7 +15,7 @@ fun Application.module() {
     configureSerialization()
     configureMonitoring()
     configureHTTP()
-    configureDi()
+    configureDi(appModules)
     setRoutes()
 }
 

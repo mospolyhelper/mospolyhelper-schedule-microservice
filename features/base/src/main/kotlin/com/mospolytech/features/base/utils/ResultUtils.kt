@@ -1,5 +1,6 @@
-package com.mospolytech.features.base
+package com.mospolytech.features.base.utils
 
+import com.mospolytech.features.base.respondError
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.util.logging.*

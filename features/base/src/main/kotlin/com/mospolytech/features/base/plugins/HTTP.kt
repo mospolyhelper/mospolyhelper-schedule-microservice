@@ -1,4 +1,4 @@
-package com.mospolytech.microservices.schedule.plugins
+package com.mospolytech.features.base.plugins
 
 import io.ktor.server.application.*
 

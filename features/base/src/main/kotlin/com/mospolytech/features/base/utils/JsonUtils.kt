@@ -1,4 +1,4 @@
-package com.mospolytech.features.base
+package com.mospolytech.features.base.utils
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json

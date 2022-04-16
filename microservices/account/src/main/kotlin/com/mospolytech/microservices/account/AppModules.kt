@@ -1,6 +1,7 @@
 package com.mospolytech.microservices.account
 
 import com.mospolytech.data.applications.applicationsDataModule
+import com.mospolytech.data.auth.authDataModule
 import com.mospolytech.data.base.baseDataModule
 import com.mospolytech.data.payments.paymentsDataModule
 import com.mospolytech.data.peoples.peoplesDataModule
@@ -19,6 +20,9 @@ import com.mospolytech.features.personal.personalFeaturesModule
 
 val appModules = listOf(
     baseDataModule,
+
+    authDataModule,
+
     applicationsDataModule,
     applicationsDomainModule,
     applicationsFeatureModule,

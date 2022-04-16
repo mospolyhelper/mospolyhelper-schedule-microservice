@@ -4,7 +4,7 @@ import com.mospolytech.domain.auth.AuthRepository
 import com.mospolytech.domain.personal.repository.PersonalRepository
 import com.mospolytech.features.base.AuthConfigs
 import com.mospolytech.features.base.MpuPrincipal
-import com.mospolytech.features.base.respondResult
+import com.mospolytech.features.base.utils.respondResult
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*

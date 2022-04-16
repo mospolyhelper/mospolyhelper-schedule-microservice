@@ -1,4 +1,4 @@
-package com.mospolytech.features.base
+package com.mospolytech.features.base.utils
 
 import kotlin.reflect.full.createType
 

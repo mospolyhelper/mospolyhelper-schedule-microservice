@@ -2,9 +2,9 @@ package com.mospolytech.microservices.schedule
 
 import com.mospolytech.features.auth.authRoutesV1
 import com.mospolytech.features.base.koin.get
+import com.mospolytech.features.base.plugins.*
 import com.mospolytech.features.schedule.scheduleDataConversion
 import com.mospolytech.features.schedule.scheduleRoutes
-import com.mospolytech.microservices.schedule.plugins.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
 
@@ -18,7 +18,7 @@ fun Application.module() {
     configureSerialization()
     configureMonitoring()
     configureHTTP()
-    configureDi()
+    configureDi(appModules)
     setDataConversions()
     setRoutes()
 }

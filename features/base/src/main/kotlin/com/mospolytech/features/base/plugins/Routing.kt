@@ -1,4 +1,4 @@
-package com.mospolytech.microservices.auth.plugins
+package com.mospolytech.features.base.plugins
 
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -9,6 +9,7 @@ import io.ktor.server.response.*
 fun Application.configureRouting() {
     install(Locations) {
     }
+
     install(StatusPages) {
         exception<AuthenticationException> { call, cause ->
             call.respond(HttpStatusCode.Unauthorized)

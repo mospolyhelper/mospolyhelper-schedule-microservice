@@ -1,6 +1,6 @@
-package com.mospolytech.microservices.schedule.plugins
+package com.mospolytech.features.base.plugins
 
-import com.mospolytech.features.base.OutputJsonConfig
+import com.mospolytech.features.base.utils.OutputJsonConfig
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
