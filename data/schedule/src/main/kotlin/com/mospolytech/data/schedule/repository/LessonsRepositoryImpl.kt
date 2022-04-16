@@ -1,0 +1,41 @@
+package com.mospolytech.data.schedule.repository
+
+import com.mospolytech.data.schedule.service.ScheduleService
+import com.mospolytech.data.schedule.converters.*
+import com.mospolytech.data.schedule.local.ScheduleCacheDS
+import com.mospolytech.domain.schedule.model.lesson.LessonDateTimes
+import com.mospolytech.domain.schedule.repository.LessonsRepository
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
+
+class LessonsRepositoryImpl(
+    private val service: ScheduleService,
+    private val converter: ApiScheduleConverter,
+    private val cacheDS: ScheduleCacheDS
+) : LessonsRepository {
+    private val updateScheduleLock = Any()
+
+    private suspend fun updateSchedule(): List<LessonDateTimes> {
+        val semester = service.getSchedules()
+        val lessonsSemester = converter.convertToLessons(semester)
+
+        val session = service.getSchedulesSession()
+
+        val lessonsSession = converter.convertToLessons(session)
+
+        val mergedLessons = mergeLessons(lessonsSemester, lessonsSession)
+        synchronized(updateScheduleLock) {
+            cacheDS.scheduleCache = mergedLessons
+            cacheDS.scheduleCacheUpdateDateTime = LocalDateTime.now()
+        }
+        return mergedLessons
+    }
+
+    override suspend fun getLessons(): List<LessonDateTimes> {
+        return if (cacheDS.scheduleCacheUpdateDateTime.until(LocalDateTime.now(), ChronoUnit.HOURS) > 24) {
+            updateSchedule()
+        } else {
+            cacheDS.scheduleCache
+        }
+    }
+}

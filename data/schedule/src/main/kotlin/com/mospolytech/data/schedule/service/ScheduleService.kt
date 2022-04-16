@@ -1,4 +1,4 @@
-package com.mospolytech.data.schedule
+package com.mospolytech.data.schedule.service
 
 import com.mospolytech.data.schedule.model.ScheduleResponse
 import com.mospolytech.data.schedule.model.ScheduleSessionResponse
@@ -14,7 +14,7 @@ class ScheduleService(
 
         private const val GetSchedule = "$BaseUrl/site/group"
         private const val GetScheduleAll = "$BaseUrl/semester.json"
-        private const val GetScheduleAllSessopn = "$BaseUrl/session-file.json"
+        private const val GetScheduleAllSession = "$BaseUrl/session-file.json"
 
         private const val BaseUrlTeacher = "https://kaf.dmami.ru"
         private const val GetScheduleTeacher = "$BaseUrlTeacher/lessons/teacher-html"
@@ -47,7 +47,7 @@ class ScheduleService(
     }
 
     suspend fun getSchedulesSession(): ScheduleSessionResponse {
-        return client.get(GetScheduleAllSessopn) {
+        return client.get(GetScheduleAllSession) {
             header("referer", BaseUrl)
             // For json error status if schedule is not ready instead html
             header("X-Requested-With", "XMLHttpRequest")

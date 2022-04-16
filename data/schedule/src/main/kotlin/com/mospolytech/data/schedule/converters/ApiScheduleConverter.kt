@@ -23,7 +23,9 @@ import java.time.format.DateTimeParseException
 import java.util.*
 import kotlin.collections.ArrayList
 
-class ApiScheduleConverter {
+class ApiScheduleConverter(
+    private val teachersConverter: LessonTeachersConverter
+) {
     companion object {
         private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
     }
@@ -149,7 +151,7 @@ class ApiScheduleConverter {
     private fun convertLesson(apiLesson: ApiLesson, apiGroups: List<ApiGroup>): Lesson {
         val subject = LessonSubjectConverter.convertTitle(apiLesson.sbj)
         val type = LessonTypeConverter.convertType(apiLesson.type, apiLesson.sbj)
-        val teachers = LessonTeachersConverter.convertTeachers(apiLesson.teacher)
+        val teachers = teachersConverter.convertTeachers(apiLesson.teacher)
         val groups = LessonGroupsConverter.convertGroups(apiGroups)
         val places = LessonPlacesConverter.convertPlaces(apiLesson.auditories)
 
@@ -257,30 +259,6 @@ fun getDateRange(lessons: List<LocalDate>): Pair<LocalDate, LocalDate> {
         if (dateTime > maxDate) {
             maxDate = dateTime
         }
-    }
-
-    return minDate to maxDate
-}
-
-fun getLessonDateRange(lessons: List<LessonDateTimes>): Pair<LocalDate, LocalDate> {
-    var minDate = LocalDate.MAX
-    var maxDate = LocalDate.MIN
-
-    for (lessonDateTimes in lessons) {
-        for (dateTime in lessonDateTimes.time) {
-            if (dateTime.startDate < minDate) {
-                minDate = dateTime.startDate
-            }
-
-            if (dateTime.startDate > maxDate) {
-                maxDate = dateTime.startDate
-            }
-        }
-    }
-
-    if (minDate == LocalDate.MAX && maxDate == LocalDate.MIN) {
-        minDate = LocalDate.now()
-        maxDate = LocalDate.now()
     }
 
     return minDate to maxDate

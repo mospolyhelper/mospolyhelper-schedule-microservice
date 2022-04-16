@@ -2,7 +2,7 @@ package com.mospolytech.features.schedule.routes
 
 import com.mospolytech.domain.schedule.model.source.ScheduleSource
 import com.mospolytech.domain.schedule.repository.ScheduleRepository
-import com.mospolytech.features.schedule.ScheduleRequest
+import com.mospolytech.features.schedule.routes.model.ScheduleRequest
 import io.ktor.server.application.*
 import io.ktor.server.locations.*
 import io.ktor.server.response.*

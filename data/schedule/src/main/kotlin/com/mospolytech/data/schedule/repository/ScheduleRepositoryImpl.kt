@@ -1,4 +1,4 @@
-package com.mospolytech.data.schedule
+package com.mospolytech.data.schedule.repository
 
 import com.mospolytech.data.schedule.converters.*
 import com.mospolytech.domain.schedule.model.group.GroupInfo
@@ -24,26 +24,46 @@ import com.mospolytech.domain.schedule.model.source.ScheduleSource
 import com.mospolytech.domain.schedule.model.source.ScheduleSourceFull
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import com.mospolytech.domain.schedule.model.teacher.TeacherInfo
+import com.mospolytech.domain.schedule.repository.LessonsRepository
 import com.mospolytech.domain.schedule.repository.ScheduleRepository
-import com.mospolytech.domain.schedule.utils.filterByGroup
-import com.mospolytech.domain.schedule.utils.filterByPlace
-import com.mospolytech.domain.schedule.utils.filterByPlaces
-import com.mospolytech.domain.schedule.utils.filterByTeacher
-import io.ktor.util.*
+import com.mospolytech.domain.schedule.repository.TeachersRepository
+import com.mospolytech.domain.schedule.utils.*
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 class ScheduleRepositoryImpl(
-    private val service: ScheduleService,
-    private val converter: ApiScheduleConverter
+    private val lessonsRepository: LessonsRepository,
+    private val teachersRepository: TeachersRepository
 ) : ScheduleRepository {
-    private var scheduleCache: List<LessonDateTimes> = emptyList()
-    private var scheduleCacheUpdateDateTime: LocalDateTime = LocalDateTime.MIN
+
+    private fun getLessonDateRange(lessons: List<LessonDateTimes>): Pair<LocalDate, LocalDate> {
+        var minDate = LocalDate.MAX
+        var maxDate = LocalDate.MIN
+
+        for (lessonDateTimes in lessons) {
+            for (dateTime in lessonDateTimes.time) {
+                if (dateTime.startDate < minDate) {
+                    minDate = dateTime.startDate
+                }
+
+                if (dateTime.startDate > maxDate) {
+                    maxDate = dateTime.startDate
+                }
+            }
+        }
+
+        if (minDate == LocalDate.MAX && maxDate == LocalDate.MIN) {
+            minDate = LocalDate.now()
+            maxDate = LocalDate.now()
+        }
+
+        return minDate to maxDate
+    }
 
     override suspend fun getSchedule(): List<ScheduleDay> {
-        val lessons = getLessons()
+        val lessons = lessonsRepository.getLessons()
         val (minDate, maxDate) = getLessonDateRange(lessons)
 
         return buildSchedule(lessons, minDate, maxDate)
@@ -55,23 +75,16 @@ class ScheduleRepositoryImpl(
         return buildSchedule(lessons, minDate, maxDate)
     }
 
-    override suspend fun getLessons(): List<LessonDateTimes> {
-        return if (scheduleCacheUpdateDateTime.until(LocalDateTime.now(), ChronoUnit.HOURS) > 24) {
-            updateSchedule()
-        } else {
-            scheduleCache
-        }
-    }
 
     private suspend fun getLessons(source: ScheduleSource): List<LessonDateTimes> {
-        val lessons = getLessons()
+        val lessons = lessonsRepository.getLessons()
 
         return when (source.type) {
             ScheduleSources.Group -> lessons.filterByGroup(source.key)
             ScheduleSources.Teacher -> lessons.filterByTeacher(source.key)
             ScheduleSources.Student -> lessons
             ScheduleSources.Place -> lessons.filterByPlace(source.key)
-            ScheduleSources.Subject -> lessons
+            ScheduleSources.Subject -> lessons.filterBySubject(source.key)
             ScheduleSources.Complex -> lessons
         }
     }
@@ -79,31 +92,31 @@ class ScheduleRepositoryImpl(
     override suspend fun getSourceList(sourceType: ScheduleSources): List<ScheduleSourceFull> {
         return when (sourceType) {
             ScheduleSources.Group -> {
-                getLessons()
+                lessonsRepository.getLessons()
                     .flatMap { it.lesson.groups }
                     .toSortedSet()
                     .map { ScheduleSourceFull(sourceType, it.id, it.title, "", "") }
             }
             ScheduleSources.Teacher -> {
-                getLessons()
+                lessonsRepository.getLessons()
                     .flatMap { it.lesson.teachers }
                     .toSortedSet()
                     .map { ScheduleSourceFull(sourceType, it.id, it.name, "", "") }
             }
             ScheduleSources.Student -> {
-                getLessons()
+                lessonsRepository.getLessons()
                     .flatMap { it.lesson.teachers }
                     .toSortedSet()
                     .map { ScheduleSourceFull(sourceType, it.id, it.name, "", "") }
             }
             ScheduleSources.Place -> {
-                getLessons()
+                lessonsRepository.getLessons()
                     .flatMap { it.lesson.places }
                     .toSortedSet()
                     .map { ScheduleSourceFull(sourceType, it.id, it.title, "", "") }
             }
             ScheduleSources.Subject -> {
-                getLessons()
+                lessonsRepository.getLessons()
                     .map { it.lesson.subject }
                     .toSortedSet()
                     .map { ScheduleSourceFull(sourceType, it.id, it.title, "", "") }
@@ -156,13 +169,6 @@ class ScheduleRepositoryImpl(
         return resList
     }
 
-    override suspend fun getPlaces(filters: PlaceFilters): Map<Place, List<LessonDateTimes>> {
-        val ids = filters.ids
-        val lessons = getLessons().let { if (ids != null) it.filterByPlaces(ids) else it }
-
-        return arrangePlacesByLessons(lessons, filters.dateTimeFrom, filters.dateTimeTo)
-    }
-
     override suspend fun getSchedulePack(source: ScheduleSource): CompactSchedule {
         val lessons = getLessons(source).map {
             CompactLessonAndTimes(
@@ -188,7 +194,7 @@ class ScheduleRepositoryImpl(
             info = ScheduleInfo(
                 typesInfo = typesId.mapNotNull { LessonTypeInfo.map[it] }.toList(),
                 subjectsInfo = subjectsId.mapNotNull { LessonSubjectInfo.map[it] }.toList(),
-                teachersInfo = teachersId.mapNotNull { TeacherInfo.map[it] }.toList(),
+                teachersInfo = teachersId.mapNotNull { teachersRepository.get(it) }.toList(),
                 groupsInfo = groupsId.mapNotNull { GroupInfo.map[it] }.toList(),
                 placesInfo = placesId.mapNotNull { PlaceInfo.map[it] }.toList()
             )
@@ -196,7 +202,7 @@ class ScheduleRepositoryImpl(
     }
 
     override suspend fun getSchedulePack(): CompactSchedule {
-        val lessons = getLessons().map {
+        val lessons = lessonsRepository.getLessons().map {
             CompactLessonAndTimes(
                 lesson = CompactLessonFeatures(
                     typeId = it.lesson.type.id,
@@ -220,60 +226,15 @@ class ScheduleRepositoryImpl(
             info = ScheduleInfo(
                 typesInfo = typesId.mapNotNull { LessonTypeInfo.map[it] }.toList(),
                 subjectsInfo = subjectsId.mapNotNull { LessonSubjectInfo.map[it] }.toList(),
-                teachersInfo = teachersId.mapNotNull { TeacherInfo.map[it] }.toList(),
+                teachersInfo = teachersId.mapNotNull { teachersRepository.get(it) }.toList(),
                 groupsInfo = groupsId.mapNotNull { GroupInfo.map[it] }.toList(),
                 placesInfo = placesId.mapNotNull { PlaceInfo.map[it] }.toList()
             )
         )
     }
 
-    private fun arrangePlacesByLessons(
-        lessons: List<LessonDateTimes>,
-        dateTimeFrom: LocalDateTime,
-        dateTimeTo: LocalDateTime
-    ): Map<Place, List<LessonDateTimes>> {
-        return lessons.flatMap { it.lesson.places }
-            .toSortedSet()
-            .associateWith { getLessonsForPlace(it, lessons, dateTimeFrom, dateTimeTo) }
-    }
-
-    private fun getLessonsForPlace(
-        place: Place,
-        lessons: List<LessonDateTimes>,
-        dateTimeFrom: LocalDateTime,
-        dateTimeTo: LocalDateTime
-    ): List<LessonDateTimes> {
-        return lessons.filter { it.lesson.places.any { it.id == place.id } && it.time.any { it in dateTimeFrom..dateTimeTo } }
-    }
-
-    operator fun ClosedRange<LocalDateTime>.contains(lessonDateTime: LessonDateTime): Boolean {
-        val lessonDateTimeRanges = lessonDateTime.toDateTimeRanges()
-
-        return lessonDateTimeRanges.any {
-            it.start in this || it.endInclusive in this
-        }
-    }
-
     data class DayReviewUnit(
         val dayOfWeek: DayOfWeek,
         val lessonTime: LessonTime
     )
-
-    private val updateScheduleLock = Any()
-
-    private suspend fun updateSchedule(): List<LessonDateTimes> {
-        val semester = service.getSchedules()
-        val lessonsSemester = converter.convertToLessons(semester)
-
-        val session = service.getSchedulesSession()
-
-        val lessonsSession = converter.convertToLessons(session)
-
-        val mergedLessons = mergeLessons(lessonsSemester, lessonsSession)
-        synchronized(updateScheduleLock) {
-            scheduleCache = mergedLessons
-            scheduleCacheUpdateDateTime = LocalDateTime.now()
-        }
-        return mergedLessons
-    }
 }

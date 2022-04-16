@@ -16,13 +16,11 @@ import com.mospolytech.domain.schedule.model.source.ScheduleSourceFull
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import com.mospolytech.domain.schedule.model.teacher.TeacherInfo
 
-interface ScheduleRepository {
-    suspend fun getSchedule(): List<ScheduleDay>
-    suspend fun getSchedule(source: ScheduleSource): List<ScheduleDay>
-
-    suspend fun getSchedulePack(source: ScheduleSource): CompactSchedule
-    suspend fun getSchedulePack(): CompactSchedule
-
-    suspend fun getSourceList(sourceType: ScheduleSources): List<ScheduleSourceFull>
-    suspend fun getLessonsReview(source: ScheduleSource): List<LessonTimesReview>
+interface ScheduleInfoRepository {
+    suspend fun getTeacherInfo(id: String): Result<TeacherInfo>
+    suspend fun getGroupInfo(id: String): Result<GroupInfo>
+    suspend fun getPlaceInfo(id: String): Result<PlaceInfo>
+    suspend fun getSubjectInfo(id: String): Result<LessonSubjectInfo>
+    suspend fun getLessonTypeInfo(id: String): Result<LessonTypeInfo>
+    suspend fun getStudentInfo(id: String): Result<String>
 }

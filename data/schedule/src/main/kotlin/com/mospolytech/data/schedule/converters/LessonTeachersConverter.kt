@@ -1,14 +1,17 @@
 package com.mospolytech.data.schedule.converters
 
 import com.mospolytech.domain.schedule.model.teacher.TeacherInfo
+import com.mospolytech.domain.schedule.repository.TeachersRepository
 
-object LessonTeachersConverter {
+class LessonTeachersConverter(
+    private val teachersRepository: TeachersRepository
+) {
     fun convertTeachers(teachers: String): List<TeacherInfo> {
         return teachers.split(", ").mapNotNull {
             if (it.isEmpty()) {
                 null
             } else {
-                TeacherInfo.create(
+                teachersRepository.add(
                     name = it,
                     description = "Описание преподавателя"
                 )

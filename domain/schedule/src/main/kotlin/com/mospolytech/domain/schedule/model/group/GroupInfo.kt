@@ -7,18 +7,24 @@ import kotlinx.serialization.Serializable
 data class GroupInfo(
     val id: String,
     val title: String,
-    val description: String
+    val description: String,
+    val course: String,
+    val isEvening: Boolean
 ) {
     companion object {
         val map = mutableMapOf<String, GroupInfo>()
 
         fun create(
             title: String,
-            description: String
+            description: String,
+            course: String,
+            isEvening: Boolean
         ) = GroupInfo(
             id = title,
             title = title,
-            description = description
+            description = description,
+            course = course,
+            isEvening = isEvening
         ).run {
             map.getOrPut(id) { this }
         }

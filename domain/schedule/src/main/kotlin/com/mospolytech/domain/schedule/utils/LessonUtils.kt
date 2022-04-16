@@ -1,7 +1,6 @@
 package com.mospolytech.domain.schedule.utils
 
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTimes
-import java.time.LocalDateTime
 
 fun List<LessonDateTimes>.filterByGroup(groupId: String): List<LessonDateTimes> {
     return this.filter { it.lesson.groups.any { it.title == groupId } }
@@ -17,4 +16,8 @@ fun List<LessonDateTimes>.filterByTeacher(teacherId: String): List<LessonDateTim
 
 fun List<LessonDateTimes>.filterByPlaces(placeIds: List<String>): List<LessonDateTimes> {
     return this.filter { it.lesson.places.any { it.id in placeIds } }
+}
+
+fun List<LessonDateTimes>.filterBySubject(subjectId: String): List<LessonDateTimes> {
+    return this.filter { it.lesson.subject.id == subjectId }
 }

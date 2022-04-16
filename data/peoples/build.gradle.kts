@@ -4,5 +4,5 @@ plugins {
 
 dependencies {
     api(project(Modules.Data.Base))
-    api(project(Modules.Domain.Personal))
+    api(project(Modules.Domain.Peoples))
 }

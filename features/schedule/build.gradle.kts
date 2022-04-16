@@ -1,5 +1,6 @@
 plugins {
     id("feature-base")
+    kotlin("plugin.serialization")
 }
 
 dependencies {
