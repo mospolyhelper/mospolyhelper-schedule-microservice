@@ -1,16 +1,15 @@
 package com.mospolytech.features.schedule.routes
 
 import com.mospolytech.domain.schedule.model.schedule_info.ScheduleInfoObject
-import com.mospolytech.domain.schedule.repository.ScheduleRepository
+import com.mospolytech.domain.schedule.repository.ScheduleInfoRepository
 import com.mospolytech.features.base.respondResult
 import com.mospolytech.features.schedule.routes.model.ScheduleInfoRequest
 import io.ktor.server.application.*
 import io.ktor.server.locations.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Routing.scheduleInfoRoutesV1(
-    repository: ScheduleRepository
+    repository: ScheduleInfoRepository
 ) {
     route("/schedule") {
         route("/info") {

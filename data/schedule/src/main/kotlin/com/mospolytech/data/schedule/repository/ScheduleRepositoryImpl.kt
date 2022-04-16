@@ -1,41 +1,36 @@
 package com.mospolytech.data.schedule.repository
 
-import com.mospolytech.data.schedule.converters.*
-import com.mospolytech.domain.schedule.model.group.GroupInfo
-import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
+import com.mospolytech.data.schedule.converters.buildSchedule
+import com.mospolytech.data.schedule.converters.getDateRange
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTimes
 import com.mospolytech.domain.schedule.model.lesson.LessonTime
-import com.mospolytech.domain.schedule.model.lesson.toDateTimeRanges
-import com.mospolytech.domain.schedule.model.lesson_subject.LessonSubjectInfo
 import com.mospolytech.domain.schedule.model.lesson_type.LessonType
-import com.mospolytech.domain.schedule.model.lesson_type.LessonTypeInfo
 import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
 import com.mospolytech.domain.schedule.model.pack.CompactLessonFeatures
-import com.mospolytech.domain.schedule.model.place.Place
-import com.mospolytech.domain.schedule.model.place.PlaceInfo
-import com.mospolytech.domain.schedule.model.place.PlaceFilters
+import com.mospolytech.domain.schedule.model.pack.CompactSchedule
+import com.mospolytech.domain.schedule.model.pack.ScheduleInfo
 import com.mospolytech.domain.schedule.model.review.LessonReviewDay
 import com.mospolytech.domain.schedule.model.review.LessonTimesReview
 import com.mospolytech.domain.schedule.model.review.LessonTimesReviewByType
 import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
-import com.mospolytech.domain.schedule.model.pack.ScheduleInfo
-import com.mospolytech.domain.schedule.model.pack.CompactSchedule
 import com.mospolytech.domain.schedule.model.source.ScheduleSource
 import com.mospolytech.domain.schedule.model.source.ScheduleSourceFull
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
-import com.mospolytech.domain.schedule.model.teacher.TeacherInfo
-import com.mospolytech.domain.schedule.repository.LessonsRepository
-import com.mospolytech.domain.schedule.repository.ScheduleRepository
-import com.mospolytech.domain.schedule.repository.TeachersRepository
-import com.mospolytech.domain.schedule.utils.*
+import com.mospolytech.domain.schedule.repository.*
+import com.mospolytech.domain.schedule.utils.filterByGroup
+import com.mospolytech.domain.schedule.utils.filterByPlace
+import com.mospolytech.domain.schedule.utils.filterBySubject
+import com.mospolytech.domain.schedule.utils.filterByTeacher
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 
 class ScheduleRepositoryImpl(
     private val lessonsRepository: LessonsRepository,
-    private val teachersRepository: TeachersRepository
+    private val lessonSubjectsRepository: LessonSubjectsRepository,
+    private val lessonTypesRepository: LessonTypesRepository,
+    private val teachersRepository: TeachersRepository,
+    private val groupsRepository: GroupsRepository,
+    private val placesRepository: PlacesRepository
 ) : ScheduleRepository {
 
     private fun getLessonDateRange(lessons: List<LessonDateTimes>): Pair<LocalDate, LocalDate> {
@@ -170,39 +165,15 @@ class ScheduleRepositoryImpl(
     }
 
     override suspend fun getSchedulePack(source: ScheduleSource): CompactSchedule {
-        val lessons = getLessons(source).map {
-            CompactLessonAndTimes(
-                lesson = CompactLessonFeatures(
-                    typeId = it.lesson.type.id,
-                    subjectId = it.lesson.subject.id,
-                    teachersId = it.lesson.teachers.map { it.id },
-                    groupsId = it.lesson.groups.map { it.id },
-                    placesId = it.lesson.places.map { it.id }
-                ),
-                times = it.time
-            )
-        }
-
-        val typesId = lessons.asSequence().map { it.lesson.typeId }.distinct()
-        val subjectsId = lessons.asSequence().map { it.lesson.subjectId }.distinct()
-        val teachersId = lessons.asSequence().flatMap { it.lesson.teachersId }.distinct()
-        val groupsId = lessons.asSequence().flatMap { it.lesson.groupsId }.distinct()
-        val placesId = lessons.asSequence().flatMap { it.lesson.placesId }.distinct()
-
-        return CompactSchedule(
-            lessons = lessons,
-            info = ScheduleInfo(
-                typesInfo = typesId.mapNotNull { LessonTypeInfo.map[it] }.toList(),
-                subjectsInfo = subjectsId.mapNotNull { LessonSubjectInfo.map[it] }.toList(),
-                teachersInfo = teachersId.mapNotNull { teachersRepository.get(it) }.toList(),
-                groupsInfo = groupsId.mapNotNull { GroupInfo.map[it] }.toList(),
-                placesInfo = placesId.mapNotNull { PlaceInfo.map[it] }.toList()
-            )
-        )
+        return getSchedulePackFromLessons(getLessons(source))
     }
 
     override suspend fun getSchedulePack(): CompactSchedule {
-        val lessons = lessonsRepository.getLessons().map {
+        return getSchedulePackFromLessons(lessonsRepository.getLessons())
+    }
+
+    private fun getSchedulePackFromLessons(lessons: List<LessonDateTimes>): CompactSchedule {
+        val lessons = lessons.map {
             CompactLessonAndTimes(
                 lesson = CompactLessonFeatures(
                     typeId = it.lesson.type.id,
@@ -224,11 +195,11 @@ class ScheduleRepositoryImpl(
         return CompactSchedule(
             lessons = lessons,
             info = ScheduleInfo(
-                typesInfo = typesId.mapNotNull { LessonTypeInfo.map[it] }.toList(),
-                subjectsInfo = subjectsId.mapNotNull { LessonSubjectInfo.map[it] }.toList(),
+                typesInfo = typesId.mapNotNull { lessonTypesRepository.get(it) }.toList(),
+                subjectsInfo = subjectsId.mapNotNull { lessonSubjectsRepository.get(it) }.toList(),
                 teachersInfo = teachersId.mapNotNull { teachersRepository.get(it) }.toList(),
-                groupsInfo = groupsId.mapNotNull { GroupInfo.map[it] }.toList(),
-                placesInfo = placesId.mapNotNull { PlaceInfo.map[it] }.toList()
+                groupsInfo = groupsId.mapNotNull { groupsRepository.get(it) }.toList(),
+                placesInfo = placesId.mapNotNull { placesRepository.get(it) }.toList()
             )
         )
     }

@@ -1,13 +1,14 @@
 package com.mospolytech.microservices.auth.plugins
 
-import io.ktor.server.plugins.*
-import io.micrometer.prometheus.*
-import io.ktor.server.metrics.micrometer.*
-import org.slf4j.event.*
 import io.ktor.server.application.*
-import io.ktor.server.response.*
+import io.ktor.server.metrics.micrometer.*
+import io.ktor.server.plugins.*
 import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.micrometer.prometheus.PrometheusConfig
+import io.micrometer.prometheus.PrometheusMeterRegistry
+import org.slf4j.event.Level
 
 fun Application.configureMonitoring() {
     val appMicrometerRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)

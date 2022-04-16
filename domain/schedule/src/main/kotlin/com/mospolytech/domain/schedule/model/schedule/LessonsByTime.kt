@@ -1,8 +1,8 @@
 package com.mospolytech.domain.schedule.model.schedule
 
 import com.mospolytech.domain.schedule.model.lesson.Lesson
-import kotlinx.serialization.Serializable
 import com.mospolytech.domain.schedule.model.lesson.LessonTime
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class LessonsByTime(

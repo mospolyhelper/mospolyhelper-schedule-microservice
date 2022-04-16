@@ -1,6 +1,5 @@
 package com.mospolytech.domain.schedule.model.source
 
-import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import kotlinx.serialization.Serializable
 
 @Serializable

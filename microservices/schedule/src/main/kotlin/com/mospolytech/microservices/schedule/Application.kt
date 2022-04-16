@@ -24,7 +24,7 @@ fun Application.module() {
 }
 
 fun Application.setRoutes() {
-    scheduleRoutes(get(), get())
+    scheduleRoutes(get(), get(), get(), get(), get())
     authRoutesV1(get(), get())
 }
 

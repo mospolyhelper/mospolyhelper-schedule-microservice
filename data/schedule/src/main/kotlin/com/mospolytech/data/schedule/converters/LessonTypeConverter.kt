@@ -1,145 +1,173 @@
 package com.mospolytech.data.schedule.converters
 
 import com.mospolytech.domain.schedule.model.lesson_type.LessonTypeInfo
+import com.mospolytech.domain.schedule.repository.LessonTypesRepository
 
-object LessonTypeConverter {
+class LessonTypeConverter(
+    private val lessonTypesRepository: LessonTypesRepository
+) {
     fun convertType(type: String, title: String): LessonTypeInfo {
         return fixType(type, title)
     }
 
 
-    enum class LessonTypes(
-        val info: LessonTypeInfo
-    ) {
-        CourseProject(
-            LessonTypeInfo.create(
+    enum class LessonTypes {
+        CourseProject,
+        Exam,
+        Credit,
+        CreditWithMark,
+        ExaminationReview,
+        ExaminationDepartmentalReview,
+        Consultation,
+        LaboratoryWork,
+        Practice,
+        Lecture,
+        KeyLecture,
+        LectureAndPracticeAndLaboratory,
+        LectureAndPractice,
+        LectureAndLaboratory,
+        PracticeAndLaboratory,
+        Other
+    }
+
+    private val LessonTypes.info
+    get() = tempMap[this] ?: lessonTypesRepository.add(
+        title = "Другое",
+        shortTitle = "Другое",
+        description = "",
+        isImportant = false
+    )
+
+    private val tempMap = mapOf(
+        LessonTypes.CourseProject to (
+            lessonTypesRepository.add(
                 title = "Курсовой проект",
                 shortTitle = "Курсовой проект",
                 description = "",
                 isImportant = true
             )
         ),
-        Exam(
-            LessonTypeInfo.create(
+        LessonTypes.Exam to (
+            lessonTypesRepository.add(
                 title = "Экзамен",
                 shortTitle = "Экзамен",
                 description = "",
                 isImportant = true
             )
         ),
-        Credit(
-            LessonTypeInfo.create(
+        LessonTypes.Credit to (
+            lessonTypesRepository.add(
                 title = "Зачёт",
                 shortTitle = "Зачёт",
                 description = "",
                 isImportant = true
             )
         ),
-        CreditWithMark(
-            LessonTypeInfo.create(
+        LessonTypes.CreditWithMark to (
+            lessonTypesRepository.add(
                 title = "Зачёт с оценкой",
                 shortTitle = "Зачёт с оценкой",
                 description = "",
                 isImportant = true
             )
         ),
-        ExaminationReview(
-            LessonTypeInfo.create(
+        LessonTypes.ExaminationReview to (
+            lessonTypesRepository.add(
                 title = "Экзаменационный просмотр",
                 shortTitle = "Экз. просмотр",
                 description = "",
                 isImportant = true
             )
         ),
-        ExaminationDepartmentalReview(
-            LessonTypeInfo.create(
+        LessonTypes. ExaminationDepartmentalReview to (
+            lessonTypesRepository.add(
                 title = "Экзаменационный кафедральный просмотр",
                 shortTitle = "Экз. каф. просмотр",
                 description = "",
                 isImportant = true
             )
         ),
-        Consultation(
-            LessonTypeInfo.create(
+        LessonTypes.Consultation to (
+            lessonTypesRepository.add(
                 title = "Консультация",
                 shortTitle = "Консультация",
                 description = "",
                 isImportant = false
             )
         ),
-        LaboratoryWork(
-            LessonTypeInfo.create(
+        LessonTypes.LaboratoryWork to (
+            lessonTypesRepository.add(
                 title = "Лабораторная работа",
                 shortTitle = "Лаб. работа",
                 description = "",
                 isImportant = false
             )
         ),
-        Practice(
-            LessonTypeInfo.create(
+        LessonTypes.Practice to (
+            lessonTypesRepository.add(
                 title = "Практика",
                 shortTitle = "Практика",
                 description = "",
                 isImportant = false
             )
         ),
-        Lecture(
-            LessonTypeInfo.create(
+        LessonTypes.Lecture to (
+            lessonTypesRepository.add(
                 title = "Лекция",
                 shortTitle = "Лекция",
                 description = "",
                 isImportant = false
             )
         ),
-        KeyLecture(
-            LessonTypeInfo.create(
+        LessonTypes.KeyLecture to (
+            lessonTypesRepository.add(
                 title = "Установочная лекция",
                 shortTitle = "Установочная лекция",
                 description = "",
                 isImportant = false
             )
         ),
-        LectureAndPracticeAndLaboratory(
-            LessonTypeInfo.create(
+        LessonTypes.LectureAndPracticeAndLaboratory to(
+            lessonTypesRepository.add(
                 title = "Лекция, практика, лабораторная работа",
                 shortTitle = "Лекц., практ., лаб.",
                 description = "",
                 isImportant = false
             )
         ),
-        LectureAndPractice(
-            LessonTypeInfo.create(
+        LessonTypes.LectureAndPractice to (
+            lessonTypesRepository.add(
                 title = "Лекция и практика",
                 shortTitle = "Лекц. и практ.",
                 description = "",
                 isImportant = false
             )
         ),
-        LectureAndLaboratory(
-            LessonTypeInfo.create(
+        LessonTypes.LectureAndLaboratory to (
+            lessonTypesRepository.add(
                 title = "Лекция и лабораторная работа",
                 shortTitle = "Лекц. и лаб.",
                 description = "",
                 isImportant = false
             )
         ),
-        PracticeAndLaboratory(
-            LessonTypeInfo.create(
+        LessonTypes.PracticeAndLaboratory to (
+            lessonTypesRepository.add(
                 title = "Практика и лабораторная работа",
                 shortTitle = "Практ. и лаб.",
                 description = "",
                 isImportant = false
             )
         ),
-        Other(
-            LessonTypeInfo.create(
+        LessonTypes.Other to (
+            lessonTypesRepository.add(
                 title = "Другое",
                 shortTitle = "Другое",
                 description = "",
                 isImportant = false
             )
         )
-    }
+    )
 
     class LessonTypeParserPack(
         val sourceGroupType: String,
@@ -163,9 +191,9 @@ object LessonTypeConverter {
         LessonTypeParserPack("Другое", "Дру", LessonTypes.Other)
     )
 
-    private const val PRACTICE_SHORT = "Пр"
-    private const val LECTURE_SHORT = "Лек"
-    private const val LABORATORY_SHORT = "Лаб"
+    private val PRACTICE_SHORT = "Пр"
+    private val LECTURE_SHORT = "Лек"
+    private val LABORATORY_SHORT = "Лаб"
 
     private val regex = Regex("\\(.*?\\)")
 
@@ -175,7 +203,7 @@ object LessonTypeConverter {
             return fixOtherType(type, lessonTitle)
         }
         return fixedType?.fixedType?.info
-            ?: LessonTypeInfo.create(
+            ?: lessonTypesRepository.add(
                 title = type,
                 shortTitle = type,
                 description = "",
@@ -188,15 +216,15 @@ object LessonTypeConverter {
         if (fixedType?.fixedType == LessonTypes.Other) {
             return fixOtherType(type, lessonTitle)
         }
-        return fixedType?.fixedType?.info ?: LessonTypeInfo.create(title = type, type, "", false)
+        return fixedType?.fixedType?.info ?: lessonTypesRepository.add(title = type, type, "", false)
     }
 
     private fun fixOtherType(type: String, lessonTitle: String): LessonTypeInfo {
         val res = regex.findAll(lessonTitle).joinToString { it.value }
         return if (res.isNotEmpty()) {
-            findCombinedShortTypeOrNull(res) ?: LessonTypeInfo.create(type, type, "", false)
+            findCombinedShortTypeOrNull(res) ?: lessonTypesRepository.add(type, type, "", false)
         } else {
-            LessonTypeInfo.create(title = type, type, "", false)
+            lessonTypesRepository.add(title = type, type, "", false)
         }
     }
 

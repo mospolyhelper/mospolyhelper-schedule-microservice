@@ -1,9 +1,7 @@
 package com.mospolytech.data.personal
 
-import com.mospolytech.domain.base.model.EducationType
 import com.mospolytech.domain.personal.model.Order
 import com.mospolytech.domain.personal.model.Personal
-import com.mospolytech.domain.personal.model.Subdivision
 import com.mospolytech.domain.personal.repository.PersonalRepository
 import java.time.LocalDate
 

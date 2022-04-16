@@ -16,14 +16,13 @@
 package com.mospolytech.features.base.koin
 
 import io.ktor.server.application.*
-import io.ktor.util.AttributeKey
-import io.ktor.util.pipeline.ContextDsl
+import io.ktor.util.*
+import io.ktor.util.pipeline.*
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.core.module.Module
 import org.koin.dsl.KoinAppDeclaration
-import kotlin.jvm.internal.Intrinsics
 
 /**
  * @author Arnaud Giuliani

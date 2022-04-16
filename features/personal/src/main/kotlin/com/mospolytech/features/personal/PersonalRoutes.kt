@@ -3,7 +3,6 @@ package com.mospolytech.features.personal
 import com.mospolytech.domain.personal.repository.PersonalRepository
 import com.mospolytech.features.base.toResponse
 import io.ktor.server.application.*
-import io.ktor.server.locations.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 

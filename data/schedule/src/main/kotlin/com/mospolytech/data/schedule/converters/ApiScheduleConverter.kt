@@ -21,10 +21,13 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.*
-import kotlin.collections.ArrayList
 
 class ApiScheduleConverter(
-    private val teachersConverter: LessonTeachersConverter
+    private val lessonSubjectsConverter: LessonSubjectConverter,
+    private val lessonTypeConverter: LessonTypeConverter,
+    private val teachersConverter: LessonTeachersConverter,
+    private val groupsConverter: LessonGroupsConverter,
+    private val placesConverter: LessonPlacesConverter
 ) {
     companion object {
         private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
@@ -149,11 +152,11 @@ class ApiScheduleConverter(
     }
 
     private fun convertLesson(apiLesson: ApiLesson, apiGroups: List<ApiGroup>): Lesson {
-        val subject = LessonSubjectConverter.convertTitle(apiLesson.sbj)
-        val type = LessonTypeConverter.convertType(apiLesson.type, apiLesson.sbj)
+        val subject = lessonSubjectsConverter.convertTitle(apiLesson.sbj)
+        val type = lessonTypeConverter.convertType(apiLesson.type, apiLesson.sbj)
         val teachers = teachersConverter.convertTeachers(apiLesson.teacher)
-        val groups = LessonGroupsConverter.convertGroups(apiGroups)
-        val places = LessonPlacesConverter.convertPlaces(apiLesson.auditories)
+        val groups = groupsConverter.convertGroups(apiGroups)
+        val places = placesConverter.convertPlaces(apiLesson.auditories)
 
         return Lesson(
             type = LessonType.from(type),

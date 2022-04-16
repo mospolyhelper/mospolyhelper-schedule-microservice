@@ -1,6 +1,5 @@
 package com.mospolytech.data.personal
 
-import com.mospolytech.domain.personal.model.Personal
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*

@@ -2,10 +2,8 @@ package com.mospolytech.domain.schedule.model.lesson
 
 import com.mospolytech.domain.schedule.model.group.Group
 import com.mospolytech.domain.schedule.model.lesson_subject.LessonSubject
-import com.mospolytech.domain.schedule.model.lesson_subject.LessonSubjectInfo
 import com.mospolytech.domain.schedule.model.lesson_type.LessonType
 import com.mospolytech.domain.schedule.model.place.Place
-import com.mospolytech.domain.schedule.model.place.PlaceInfo
 import com.mospolytech.domain.schedule.model.teacher.Teacher
 import kotlinx.serialization.Serializable
 

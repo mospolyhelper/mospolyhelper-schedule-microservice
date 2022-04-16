@@ -2,7 +2,8 @@ package com.mospolytech.data.payments
 
 import com.mospolytech.domain.payments.model.Payment
 import com.mospolytech.domain.payments.model.PaymentType
-import com.mospolytech.domain.payments.model.PaymentType.*
+import com.mospolytech.domain.payments.model.PaymentType.Dormitory
+import com.mospolytech.domain.payments.model.PaymentType.Education
 import com.mospolytech.domain.payments.model.Payments
 import com.mospolytech.domain.payments.repository.PaymentsRepository
 import java.time.LocalDate

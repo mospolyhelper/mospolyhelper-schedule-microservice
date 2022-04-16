@@ -7,7 +7,7 @@ import com.mospolytech.domain.schedule.model.place.Place
 import com.mospolytech.domain.schedule.model.place.PlaceFilters
 import com.mospolytech.domain.schedule.repository.FreePlacesRepository
 import com.mospolytech.domain.schedule.repository.LessonsRepository
-import com.mospolytech.domain.schedule.utils.*
+import com.mospolytech.domain.schedule.utils.filterByPlaces
 import java.time.LocalDateTime
 
 class FreePlacesRepositoryImpl(
