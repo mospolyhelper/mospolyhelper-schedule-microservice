@@ -4,7 +4,7 @@ import com.mospolytech.data.schedule.converters.ApiScheduleConverter
 import com.mospolytech.data.schedule.converters.mergeLessons
 import com.mospolytech.data.schedule.local.ScheduleCacheDS
 import com.mospolytech.data.schedule.service.ScheduleService
-import com.mospolytech.domain.schedule.model.lesson.LessonDateTimes
+import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
 import com.mospolytech.domain.schedule.repository.LessonsRepository
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -16,7 +16,7 @@ class LessonsRepositoryImpl(
 ) : LessonsRepository {
     private val updateScheduleLock = Any()
 
-    private suspend fun updateSchedule(): List<LessonDateTimes> {
+    private suspend fun updateSchedule(): List<CompactLessonAndTimes> {
         val semester = service.getSchedules()
         val lessonsSemester = converter.convertToLessons(semester)
 
@@ -32,7 +32,7 @@ class LessonsRepositoryImpl(
         return mergedLessons
     }
 
-    override suspend fun getLessons(): List<LessonDateTimes> {
+    override suspend fun getLessons(): List<CompactLessonAndTimes> {
         return if (cacheDS.scheduleCacheUpdateDateTime.until(LocalDateTime.now(), ChronoUnit.HOURS) > 24) {
             updateSchedule()
         } else {

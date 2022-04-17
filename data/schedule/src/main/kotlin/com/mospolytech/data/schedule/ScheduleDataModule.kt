@@ -22,8 +22,8 @@ val scheduleDataModule = module {
 
     single<LessonsRepository> { LessonsRepositoryImpl(get(), get(), get()) }
     single<ScheduleRepository> { ScheduleRepositoryImpl(get(), get(), get(), get(), get(), get()) }
-    single<ScheduleInfoRepository> { ScheduleInfoRepositoryImpl(get()) }
-    single<FreePlacesRepository> { FreePlacesRepositoryImpl(get()) }
+    single<ScheduleInfoRepository> { ScheduleInfoRepositoryImpl(get(), get(), get(), get(), get()) }
+    single<FreePlacesRepository> { FreePlacesRepositoryImpl(get(), get()) }
 
     single<LessonSubjectsRepository> { LessonSubjectsRepositoryImpl() }
     single<LessonTypesRepository> { LessonTypesRepositoryImpl() }

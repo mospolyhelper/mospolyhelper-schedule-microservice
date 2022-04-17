@@ -5,9 +5,27 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class PlaceInfo {
+sealed class PlaceInfo : Comparable<PlaceInfo> {
     abstract val id: String
     abstract val title: String
+
+    private fun getTypeNumber(): Int {
+        return when (this) {
+            is Building -> 0
+            is Online -> 1
+            is Other -> 2
+            is Unclassified -> 3
+        }
+    }
+
+    override fun compareTo(other: PlaceInfo): Int {
+        val compareTypes = getTypeNumber().compareTo(other.getTypeNumber())
+        if (compareTypes != 0) {
+            return compareTypes
+        } else {
+            return title.compareTo(other.title)
+        }
+    }
 
     @Serializable
     @SerialName("building")

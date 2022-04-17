@@ -4,23 +4,15 @@ import com.mospolytech.data.schedule.model.ApiGroup
 import com.mospolytech.data.schedule.model.ApiLesson
 import com.mospolytech.data.schedule.model.ScheduleResponse
 import com.mospolytech.data.schedule.model.ScheduleSessionResponse
-import com.mospolytech.domain.schedule.model.group.Group
-import com.mospolytech.domain.schedule.model.lesson.Lesson
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
-import com.mospolytech.domain.schedule.model.lesson.LessonDateTimes
 import com.mospolytech.domain.schedule.model.lesson.LessonTime
-import com.mospolytech.domain.schedule.model.lesson_subject.LessonSubject
-import com.mospolytech.domain.schedule.model.lesson_type.LessonType
-import com.mospolytech.domain.schedule.model.place.Place
-import com.mospolytech.domain.schedule.model.schedule.LessonsByTime
-import com.mospolytech.domain.schedule.model.schedule.ScheduleDay
-import com.mospolytech.domain.schedule.model.teacher.Teacher
+import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
+import com.mospolytech.domain.schedule.model.pack.CompactLessonFeatures
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
-import java.util.*
 
 class ApiScheduleConverter(
     private val lessonSubjectsConverter: LessonSubjectConverter,
@@ -33,7 +25,7 @@ class ApiScheduleConverter(
         private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
     }
 
-    fun convertToLessons(scheduleResponse: ScheduleResponse): List<LessonDateTimes> {
+    fun convertToLessons(scheduleResponse: ScheduleResponse): List<CompactLessonAndTimes> {
         val lessons = scheduleResponse.contents.values.flatMap {
             convertLessons(
                 it.grid.toList(),
@@ -44,7 +36,7 @@ class ApiScheduleConverter(
         return lessons
     }
 
-    fun convertToLessons(scheduleResponse: ScheduleSessionResponse): List<LessonDateTimes> {
+    fun convertToLessons(scheduleResponse: ScheduleSessionResponse): List<CompactLessonAndTimes> {
         val lessons = scheduleResponse.contents.flatMap {
             convertLessons(
                 it.grid.toList(),
@@ -59,7 +51,7 @@ class ApiScheduleConverter(
         days: List<Pair<String, Map<String, List<ApiLesson>>>>,
         groups: List<ApiGroup>,
         isByDate: Boolean
-    ): List<LessonDateTimes> {
+    ): List<CompactLessonAndTimes> {
         val groupIsEvening = (groups.firstOrNull()?.evening ?: 0) != 0
 
         val convertedDays = days.flatMap { (day, dailyLessons) ->
@@ -125,13 +117,13 @@ class ApiScheduleConverter(
         dates: Pair<LocalDate, LocalDate?>,
         timeStart: LocalTime,
         timeEnd: LocalTime
-    ): LessonDateTimes {
+    ): CompactLessonAndTimes {
         val lesson = convertLesson(apiLesson, groups)
         val dateTimes = convertLessonDateTime(dates, timeStart, timeEnd)
 
-        return LessonDateTimes(
+        return CompactLessonAndTimes(
             lesson = lesson,
-            time = listOf(dateTimes)
+            times = listOf(dateTimes)
         )
     }
 
@@ -151,19 +143,19 @@ class ApiScheduleConverter(
         )
     }
 
-    private fun convertLesson(apiLesson: ApiLesson, apiGroups: List<ApiGroup>): Lesson {
+    private fun convertLesson(apiLesson: ApiLesson, apiGroups: List<ApiGroup>): CompactLessonFeatures {
         val subject = lessonSubjectsConverter.convertTitle(apiLesson.sbj)
         val type = lessonTypeConverter.convertType(apiLesson.type, apiLesson.sbj)
         val teachers = teachersConverter.convertTeachers(apiLesson.teacher)
         val groups = groupsConverter.convertGroups(apiGroups)
         val places = placesConverter.convertPlaces(apiLesson.auditories)
 
-        return Lesson(
-            type = LessonType.from(type),
-            subject = LessonSubject.from(subject),
-            teachers = teachers.map { Teacher.from(it) },
-            groups = groups.map { Group.from(it) },
-            places = places.map { Place.from(it) },
+        return CompactLessonFeatures(
+            typeId = type.id,
+            subjectId = subject.id,
+            teachersId = teachers.map { it.id },
+            groupsId = groups.map { it.id },
+            placesId = places.map { it.id },
         )
     }
 
@@ -178,10 +170,10 @@ class ApiScheduleConverter(
     }
 }
 
-fun mergeLessons(vararg lessonsList: List<LessonDateTimes>): List<LessonDateTimes> {
+fun mergeLessons(vararg lessonsList: List<CompactLessonAndTimes>): List<CompactLessonAndTimes> {
     val countTotal = lessonsList.sumOf { it.size }
     val suggestedNewCount = (countTotal * 0.85).toInt()
-    val resList: MutableList<LessonDateTimes> = ArrayList(suggestedNewCount)
+    val resList: MutableList<CompactLessonAndTimes> = ArrayList(suggestedNewCount)
 
     for (lessons in lessonsList) {
         for (lessonDateTimes in lessons) {
@@ -193,76 +185,21 @@ fun mergeLessons(vararg lessonsList: List<LessonDateTimes>): List<LessonDateTime
             }
         }
     }
-    resList.sort()
+    //resList.sort()
     return resList
 }
 
-fun LessonDateTimes.mergeByGroup(other: LessonDateTimes): LessonDateTimes {
-    return this.copy(lesson = lesson.copy(groups = (lesson.groups + other.lesson.groups).sorted()))
+fun CompactLessonAndTimes.mergeByGroup(other: CompactLessonAndTimes): CompactLessonAndTimes {
+    return this.copy(lesson = lesson.copy(groupsId = (lesson.groupsId + other.lesson.groupsId).sorted()))
 }
 
-fun LessonDateTimes.canMergeByGroup(other: LessonDateTimes): Boolean {
+fun CompactLessonAndTimes.canMergeByGroup(other: CompactLessonAndTimes): Boolean {
     return lesson.canMergeByGroup(other.lesson) &&
-            time == other.time
+            times == other.times
 }
 
-fun Lesson.canMergeByGroup(other: Lesson): Boolean {
-    return subject == other.subject &&
-            places == other.places &&
-            teachers == other.teachers
-}
-
-fun buildSchedule(
-    lessons: List<LessonDateTimes>,
-    dateFrom: LocalDate,
-    dateTo: LocalDate
-): List<ScheduleDay> {
-    val resMap: MutableMap<LocalDate, MutableMap<LessonTime, MutableList<Lesson>>> = TreeMap()
-
-    var currentDay = dateFrom
-    do {
-        resMap[currentDay] = TreeMap<LessonTime, MutableList<Lesson>>()
-        currentDay = currentDay.plusDays(1)
-    } while (currentDay <= dateTo)
-
-    for (lessonDateTimes in lessons) {
-        for (dateTime in lessonDateTimes.time) {
-            val timeToLessonsMap = resMap.getOrPut(dateTime.startDate) { TreeMap<LessonTime, MutableList<Lesson>>() }
-            val lessonList = timeToLessonsMap.getOrPut(dateTime.time) { mutableListOf() }
-            lessonList.add(lessonDateTimes.lesson)
-        }
-    }
-
-    val lessons = resMap.map { (key, value) ->
-        val l1 = value.map { (key2, value2) ->
-            LessonsByTime(
-                time = key2,
-                value2
-            )
-        }
-
-        ScheduleDay(
-            date = key,
-            lessons = l1
-        )
-    }
-
-    return lessons
-}
-
-fun getDateRange(lessons: List<LocalDate>): Pair<LocalDate, LocalDate> {
-    var minDate = LocalDate.MAX
-    var maxDate = LocalDate.MIN
-
-    for (dateTime in lessons) {
-        if (dateTime < minDate) {
-            minDate = dateTime
-        }
-
-        if (dateTime > maxDate) {
-            maxDate = dateTime
-        }
-    }
-
-    return minDate to maxDate
+fun CompactLessonFeatures.canMergeByGroup(other: CompactLessonFeatures): Boolean {
+    return subjectId == other.subjectId &&
+            placesId == other.placesId &&
+            teachersId == other.teachersId
 }

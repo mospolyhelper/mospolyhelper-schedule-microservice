@@ -1,7 +1,7 @@
 package com.mospolytech.domain.schedule.repository
 
-import com.mospolytech.domain.schedule.model.lesson.LessonDateTimes
+import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
 
 interface LessonsRepository {
-    suspend fun getLessons(): List<LessonDateTimes>
+    suspend fun getLessons(): List<CompactLessonAndTimes>
 }

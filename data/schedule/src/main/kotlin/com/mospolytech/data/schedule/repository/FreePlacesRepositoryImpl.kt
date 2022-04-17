@@ -1,43 +1,46 @@
 package com.mospolytech.data.schedule.repository
 
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
-import com.mospolytech.domain.schedule.model.lesson.LessonDateTimes
 import com.mospolytech.domain.schedule.model.lesson.toDateTimeRanges
-import com.mospolytech.domain.schedule.model.place.Place
+import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
 import com.mospolytech.domain.schedule.model.place.PlaceFilters
+import com.mospolytech.domain.schedule.model.place.PlaceInfo
 import com.mospolytech.domain.schedule.repository.FreePlacesRepository
 import com.mospolytech.domain.schedule.repository.LessonsRepository
+import com.mospolytech.domain.schedule.repository.PlacesRepository
 import com.mospolytech.domain.schedule.utils.filterByPlaces
 import java.time.LocalDateTime
 
 class FreePlacesRepositoryImpl(
-    private val lessonsRepository: LessonsRepository
+    private val lessonsRepository: LessonsRepository,
+    private val placesRepository: PlacesRepository
 ) : FreePlacesRepository {
 
-    override suspend fun getPlaces(filters: PlaceFilters): Map<Place, List<LessonDateTimes>> {
+    override suspend fun getPlaces(filters: PlaceFilters): Map<PlaceInfo, List<CompactLessonAndTimes>> {
         val ids = filters.ids
         val lessons = lessonsRepository.getLessons().let { if (ids != null) it.filterByPlaces(ids) else it }
 
         return arrangePlacesByLessons(lessons, filters.dateTimeFrom, filters.dateTimeTo)
+            .mapKeys { placesRepository.get(it.key) }.filterKeys { it != null }.mapKeys { it as PlaceInfo }
     }
 
     private fun arrangePlacesByLessons(
-        lessons: List<LessonDateTimes>,
+        lessons: List<CompactLessonAndTimes>,
         dateTimeFrom: LocalDateTime,
         dateTimeTo: LocalDateTime
-    ): Map<Place, List<LessonDateTimes>> {
-        return lessons.flatMap { it.lesson.places }
+    ): Map<String, List<CompactLessonAndTimes>> {
+        return lessons.flatMap { it.lesson.placesId }
             .toSortedSet()
             .associateWith { getLessonsForPlace(it, lessons, dateTimeFrom, dateTimeTo) }
     }
 
     private fun getLessonsForPlace(
-        place: Place,
-        lessons: List<LessonDateTimes>,
+        placeId: String,
+        lessons: List<CompactLessonAndTimes>,
         dateTimeFrom: LocalDateTime,
         dateTimeTo: LocalDateTime
-    ): List<LessonDateTimes> {
-        return lessons.filter { it.lesson.places.any { it.id == place.id } && it.time.any { it in dateTimeFrom..dateTimeTo } }
+    ): List<CompactLessonAndTimes> {
+        return lessons.filter { it.lesson.placesId.any { it == placeId } && it.times.any { it in dateTimeFrom..dateTimeTo } }
     }
 
     operator fun ClosedRange<LocalDateTime>.contains(lessonDateTime: LessonDateTime): Boolean {

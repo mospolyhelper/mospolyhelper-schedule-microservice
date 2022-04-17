@@ -9,4 +9,8 @@ data class GroupInfo(
     val description: String,
     val course: String,
     val isEvening: Boolean
-)
+) : Comparable<GroupInfo> {
+    override fun compareTo(other: GroupInfo): Int {
+        return title.compareTo(other.title)
+    }
+}

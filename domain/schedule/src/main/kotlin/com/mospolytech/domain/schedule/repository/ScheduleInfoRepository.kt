@@ -7,10 +7,10 @@ import com.mospolytech.domain.schedule.model.place.PlaceInfo
 import com.mospolytech.domain.schedule.model.teacher.TeacherInfo
 
 interface ScheduleInfoRepository {
-    suspend fun getTeacherInfo(id: String): Result<TeacherInfo>
-    suspend fun getGroupInfo(id: String): Result<GroupInfo>
-    suspend fun getPlaceInfo(id: String): Result<PlaceInfo>
-    suspend fun getSubjectInfo(id: String): Result<LessonSubjectInfo>
-    suspend fun getLessonTypeInfo(id: String): Result<LessonTypeInfo>
-    suspend fun getStudentInfo(id: String): Result<String>
+    suspend fun getTeacherInfo(id: String): Result<TeacherInfo?>
+    suspend fun getGroupInfo(id: String): Result<GroupInfo?>
+    suspend fun getPlaceInfo(id: String): Result<PlaceInfo?>
+    suspend fun getSubjectInfo(id: String): Result<LessonSubjectInfo?>
+    suspend fun getLessonTypeInfo(id: String): Result<LessonTypeInfo?>
+    suspend fun getStudentInfo(id: String): Result<String?>
 }

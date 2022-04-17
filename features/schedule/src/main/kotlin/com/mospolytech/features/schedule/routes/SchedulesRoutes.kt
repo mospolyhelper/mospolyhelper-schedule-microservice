@@ -1,13 +1,13 @@
 package com.mospolytech.features.schedule.routes
 
 import com.mospolytech.domain.personal.repository.PersonalRepository
+import com.mospolytech.domain.schedule.model.ScheduleComplexFilter
 import com.mospolytech.domain.schedule.model.source.ScheduleSource
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import com.mospolytech.domain.schedule.repository.ScheduleRepository
 import com.mospolytech.features.base.AuthConfigs
 import com.mospolytech.features.base.utils.getTokenOrRespondError
 import com.mospolytech.features.base.utils.respondResult
-import com.mospolytech.features.schedule.routes.model.ScheduleComplexRequest
 import com.mospolytech.features.schedule.routes.model.ScheduleRequest
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -21,22 +21,16 @@ fun Routing.scheduleRoutesV1(
     userRepository: PersonalRepository
 ) {
     route("/schedules") {
-        get {
-            call.respond(repository.getSchedule())
-        }
-        post("/complex") {
-            call.receive<ScheduleComplexRequest>()
-            call.respond(repository.getSchedule())
-        }
-        get<ScheduleRequest> {
-            call.respond(repository.getSchedule(ScheduleSource(it.type, it.key)))
-        }
-        route("/pack") {
+        route("/compact") {
             get {
-                call.respond(repository.getSchedulePack())
+                call.respond(repository.getCompactSchedule())
             }
             get<ScheduleRequest> {
-                call.respond(repository.getSchedulePack(ScheduleSource(it.type, it.key)))
+                call.respond(repository.getCompactSchedule(ScheduleSource(it.type, it.key)))
+            }
+            post("/complex") {
+                val filter = call.receive<ScheduleComplexFilter>()
+                call.respond(repository.getCompactSchedule(filter))
             }
         }
         authenticate(AuthConfigs.Mpu, optional = true) {
@@ -45,7 +39,7 @@ fun Routing.scheduleRoutesV1(
 
                 call.respondResult(
                     userRepository.getPersonalInfo(token).map {
-                        repository.getSchedulePack(ScheduleSource(ScheduleSources.Group, it.group))
+                        repository.getCompactSchedule(ScheduleSource(ScheduleSources.Group, it.group))
                     }
                 )
             }

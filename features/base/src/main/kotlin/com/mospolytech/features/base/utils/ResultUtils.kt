@@ -9,9 +9,13 @@ import org.slf4j.LoggerFactory
 
 val ErrorLogger: Logger = LoggerFactory.getLogger("Application")
 
-suspend inline fun <reified T : Any> ApplicationCall.respondResult(result: Result<T>) {
+suspend inline fun <reified T : Any?> ApplicationCall.respondResult(result: Result<T>) {
     result.onSuccess {
-        respond(it)
+        if (it == null) {
+            respond("")
+        } else {
+            respond(it)
+        }
     }.onFailure {
         ErrorLogger.error(it)
         respondError(it)
