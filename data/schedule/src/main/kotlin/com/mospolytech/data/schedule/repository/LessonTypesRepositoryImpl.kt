@@ -26,5 +26,4 @@ class LessonTypesRepositoryImpl : LessonTypesRepository {
     override fun get(id: String): LessonTypeInfo? {
         return map[id]
     }
-
 }

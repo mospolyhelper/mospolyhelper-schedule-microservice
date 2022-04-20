@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 @Serializable
 data class PlaceFilters(
-    val ids: List<String>? = null,
+    val ids: List<String>,
     @Serializable(with = LocalDateTimeConverter::class)
     val dateTimeFrom: LocalDateTime,
     @Serializable(with = LocalDateTimeConverter::class)

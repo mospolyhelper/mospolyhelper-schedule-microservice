@@ -68,7 +68,7 @@ class LessonPlacesConverter(
                 null
             else
                 it.placeFactory(matchResult, listOf(url))
-        } ?: placesRepository.Unclassified(place)
+        } ?: placesRepository.addUnclassified(place)
     }
 
 
@@ -93,7 +93,7 @@ class LessonPlacesConverter(
 
     private val parserChain = listOf(
         PlaceParserPack("""^ав\s*((\d)(\d)(.+))$""") {
-            placesRepository.Building(
+            placesRepository.addBuilding(
                 title = groupValues[0],
                 areaAlias = "Автозаводская",
                 street = "Автозаводская улица, 16",
@@ -112,7 +112,7 @@ class LessonPlacesConverter(
             )
         },
         PlaceParserPack("""^пр\s*((\d)(\d).+)$""") {
-            placesRepository.Building(
+            placesRepository.addBuilding(
                 title = groupValues[0],
                 areaAlias = "Прянишникова",
                 street = "улица Прянишникова, 2А",
@@ -129,7 +129,7 @@ class LessonPlacesConverter(
         PlaceParserPack("""^пр\s*ВЦ\s*\d+\s*\(((\d)(\d).+)\)$""") {
             val building = groupValues[2]
 
-            placesRepository.Building(
+            placesRepository.addBuilding(
                 title = groupValues[0],
                 areaAlias = "Прянишникова",
                 street = "улица Прянишникова, 2А",
@@ -144,7 +144,7 @@ class LessonPlacesConverter(
             )
         },
         PlaceParserPack("""^пр\s(ФО[\s-]*\d+)$""") {
-            placesRepository.Building(
+            placesRepository.addBuilding(
                 title = groupValues[0],
                 areaAlias = "Прянишникова",
                 street = "улица Прянишникова, 2А",
@@ -157,7 +157,7 @@ class LessonPlacesConverter(
         PlaceParserPack("""^м\s*((\d)(\d).+)$""") {
             val building = groupValues[2]
 
-            placesRepository.Building(
+            placesRepository.addBuilding(
                 title = groupValues[0],
                 areaAlias = "Михалковская",
                 street = "Михалковская улица, 7",
@@ -171,7 +171,7 @@ class LessonPlacesConverter(
             )
         },
         PlaceParserPack("""^м\s*(эстамп)$""") {
-            placesRepository.Building(
+            placesRepository.addBuilding(
                 title = groupValues[0],
                 areaAlias = "Михалковская",
                 street = "Михалковская улица, 7",
@@ -181,7 +181,7 @@ class LessonPlacesConverter(
         PlaceParserPack("""^(\d)пк\s*((\d).+)$""") {
             val building = groupValues[1]
 
-            placesRepository.Building(
+            placesRepository.addBuilding(
                 title = groupValues[0],
                 areaAlias = "Павла Корчагина",
                 street = "улица Павла Корчагина, 22",
@@ -196,7 +196,7 @@ class LessonPlacesConverter(
             )
         },
         PlaceParserPack("""^пк\s*((\d).+)$""") {
-            placesRepository.Building(
+            placesRepository.addBuilding(
                 title = groupValues[0],
                 areaAlias = "Павла Корчагина",
                 street = "улица Павла Корчагина, 22",
@@ -209,7 +209,7 @@ class LessonPlacesConverter(
         PlaceParserPack("""^([АБВНH]|Нд)\s*(\d).+$""") {
             val building = groupValues[1].replace('H', 'Н').lowercase().capitalized()
 
-            placesRepository.Building(
+            placesRepository.addBuilding(
                 title = groupValues[0],
                 areaAlias = "Б. Семёновская",
                 street = "Большая Семёновская улица, 38",
@@ -230,7 +230,7 @@ class LessonPlacesConverter(
         PlaceParserPack("""^(А)[\s-]?ОМД$""") {
             val building = groupValues[1].lowercase().capitalized()
 
-            placesRepository.Building(
+            placesRepository.addBuilding(
                 title = groupValues[0],
                 areaAlias = "Б. Семёновская",
                 street = "Большая Семёновская улица, 38",
@@ -301,7 +301,7 @@ class LessonPlacesConverter(
             else
                 mapOf()
 
-            placesRepository.Building(
+            placesRepository.addBuilding(
                 title = "Спортзал №${gymNumber}",
                 areaAlias = "Спортивный зал №${gymNumber}",
                 street = street,
@@ -310,7 +310,7 @@ class LessonPlacesConverter(
             )
         },
         PlaceParserPack("""^м[\s\p{P}]*спорт[\s\p{P}]*зал[\p{P}]*$""") {
-            placesRepository.Building(
+            placesRepository.addBuilding(
                 title = "М Спортзал",
                 areaAlias = "Михалковская",
                 street = "Михалковская улица, 7с2",
@@ -326,7 +326,7 @@ class LessonPlacesConverter(
         PlaceParserPack("""^Автозаводская\s+(\d)$""") {
             val gymNumber = groupValues[1]
 
-            placesRepository.Building(
+            placesRepository.addBuilding(
                 title = "Ав Спортзал №${gymNumber}",
                 areaAlias = "Спорткомплекс №${gymNumber} «На Автозаводской»",
                 street = "Автозаводская улица, 16с2",
@@ -340,7 +340,7 @@ class LessonPlacesConverter(
             )
         },
         PlaceParserPack("""^АВ[\s\p{P}]*Спортзал$""") {
-            placesRepository.Building(
+            placesRepository.addBuilding(
                 title = "Ав Спортзал",
                 areaAlias = "Спорткомплекс «На Автозаводской»",
                 street = "Автозаводская улица, 16с2",
@@ -354,7 +354,7 @@ class LessonPlacesConverter(
             )
         },
         PlaceParserPack("""^(.*Измайлово.*)$""") {
-            placesRepository.Building(
+            placesRepository.addBuilding(
                 title = groupValues[1],
                 areaAlias = "Спорткомплекс «Измайлово»",
                 street = "11-я Парковая улица, 36с2",
@@ -368,38 +368,38 @@ class LessonPlacesConverter(
             )
         },
         PlaceParserPack("""^[_\s\.]*Ц?ПД[_\s\.\d]*$""", """^Проектная\sдеятельность$""") {
-            placesRepository.Other("Проектная деятельность")
+            placesRepository.addOther("Проектная деятельность")
         },
         PlaceParserPack(
             """^[_-]*(LMS|ЛМС)[_-]*$""",
             """^Обучение\s+в\s+(LMS|ЛМС)$""",
             """^Обучение\s+(LMS|ЛМС)$"""
         ) {
-            placesRepository.Online(
+            placesRepository.addOnline(
                 title = "Обучение в ЛМС",
                 url = it.firstOrNull()
             )
         },
         PlaceParserPack("""^Webex$""") {
-            placesRepository.Online(
+            placesRepository.addOnline(
                 title = "Видеоконференция в Webex",
                 url = it.firstOrNull()
             )
         },
         PlaceParserPack("""^Webinar$""") {
-            placesRepository.Online(
+            placesRepository.addOnline(
                 title = "Онлайн лекция в Webinar",
                 url = it.firstOrNull()
             )
         },
         PlaceParserPack("""^Online\sкурс$""") {
-            placesRepository.Online(
+            placesRepository.addOnline(
                 title = "Онлайн курс",
                 url = it.firstOrNull()
             )
         },
         PlaceParserPack("""^Онлайн$""") {
-            placesRepository.Online(
+            placesRepository.addOnline(
                 title = "Онлайн курс",
                 url = it.firstOrNull()
             )
@@ -415,7 +415,7 @@ class LessonPlacesConverter(
                     null
             }
 
-            placesRepository.Other(
+            placesRepository.addOther(
                 title = title,
                 description = mapOf("" to description1)
             )

@@ -4,7 +4,7 @@ import com.mospolytech.domain.base.model.Location
 import com.mospolytech.domain.schedule.model.place.PlaceInfo
 
 interface PlacesRepository {
-    fun Building(
+    fun addBuilding(
         title: String,
         areaAlias: String? = null,
         street: String? = null,
@@ -15,18 +15,18 @@ interface PlacesRepository {
         description: Map<String, String>? = null
     ): PlaceInfo
 
-    fun Online(
+    fun addOnline(
         title: String,
         url: String? = null,
         description: Map<String, String>? = null
     ): PlaceInfo
 
-    fun Other(
+    fun addOther(
         title: String,
         description: Map<String, String>? = null
     ): PlaceInfo
 
-    fun Unclassified(
+    fun addUnclassified(
         title: String,
         description: Map<String, String>? = null
     ): PlaceInfo

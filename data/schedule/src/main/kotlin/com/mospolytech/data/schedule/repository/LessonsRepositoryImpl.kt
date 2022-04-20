@@ -21,10 +21,10 @@ class LessonsRepositoryImpl(
         val lessonsSemester = converter.convertToLessons(semester)
 
         val session = service.getSchedulesSession()
-
         val lessonsSession = converter.convertToLessons(session)
 
         val mergedLessons = mergeLessons(lessonsSemester, lessonsSession)
+
         synchronized(updateScheduleLock) {
             cacheDS.scheduleCache = mergedLessons
             cacheDS.scheduleCacheUpdateDateTime = LocalDateTime.now()

@@ -9,9 +9,15 @@ import io.ktor.server.routing.*
 
 fun Routing.freePlaceRoutesV1(repository: FreePlacesRepository) {
     route("/schedule") {
-        post("/free-place") {
-            val filters = call.receive<PlaceFilters>()
-            call.respond(repository.getPlaces(filters))
+        route("/places") {
+            post("/free") {
+                val filters = call.receive<PlaceFilters>()
+                call.respond(repository.getPlaces(filters))
+            }
+            get("/occupancy/{placeId}") {
+                val placeId = call.parameters["placeId"]!!
+                call.respond(repository.getPlaceOccupancy(placeId))
+            }
         }
     }
 }

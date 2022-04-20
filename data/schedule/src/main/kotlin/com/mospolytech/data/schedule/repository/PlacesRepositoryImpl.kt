@@ -7,7 +7,7 @@ import com.mospolytech.domain.schedule.repository.PlacesRepository
 class PlacesRepositoryImpl : PlacesRepository {
     private val map = mutableMapOf<String, PlaceInfo>()
     
-    override fun Building(
+    override fun addBuilding(
         title: String,
         areaAlias: String?,
         street: String?,
@@ -32,7 +32,7 @@ class PlacesRepositoryImpl : PlacesRepository {
         }
     }
 
-    override fun Online(
+    override fun addOnline(
         title: String, 
         url: String?, 
         description: Map<String, String>?
@@ -47,7 +47,7 @@ class PlacesRepositoryImpl : PlacesRepository {
         }
     }
 
-    override fun Other(
+    override fun addOther(
         title: String, 
         description: Map<String, String>?
     ): PlaceInfo {
@@ -60,7 +60,7 @@ class PlacesRepositoryImpl : PlacesRepository {
         }
     }
 
-    override fun Unclassified(
+    override fun addUnclassified(
         title: String, 
         description: Map<String, String>?
     ): PlaceInfo {
