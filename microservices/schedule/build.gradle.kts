@@ -2,7 +2,7 @@ plugins {
     id("microservice-base")
 }
 
-version = "0.0.1"
+version = "0.0.2"
 
 dependencies {
     implementation(project(Modules.Data.Base))
