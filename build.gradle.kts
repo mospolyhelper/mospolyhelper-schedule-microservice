@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.6.0"
-    kotlin("plugin.serialization") version "1.6.0"
+    kotlin("jvm")
+    kotlin("plugin.serialization")
 }
 
 buildscript {
@@ -8,9 +8,6 @@ buildscript {
         gradlePluginPortal()
         google()
         mavenCentral()
-    }
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.0")
     }
 }
 
@@ -49,19 +46,22 @@ subprojects {
         implementation("io.ktor:ktor-server-call-logging:$ktor_version")
         implementation("io.ktor:ktor-server-cors:$ktor_version")
         implementation("io.ktor:ktor-server-netty:$ktor_version")
-        implementation("io.ktor:ktor-locations:$ktor_version")
+        implementation("io.ktor:ktor-server-locations:$ktor_version")
+        implementation("io.ktor:ktor-server-auth:$ktor_version")
+        implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
 
 
         implementation("io.ktor:ktor-client-core:$ktor_version")
         implementation("io.ktor:ktor-client-core-jvm:$ktor_version")
         implementation("io.ktor:ktor-client-apache:$ktor_version")
         implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+        implementation("io.ktor:ktor-client-logging:$ktor_version")
 
 
         implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
-        implementation("io.ktor:ktor-metrics-micrometer:$ktor_version")
+        implementation("io.ktor:ktor-server-metrics:$ktor_version")
+        implementation("io.ktor:ktor-server-metrics-micrometer:$ktor_version")
         implementation("io.micrometer:micrometer-registry-prometheus:$prometeus_version")
-        implementation("io.ktor:ktor-metrics:$ktor_version")
         implementation("io.insert-koin:koin-core:$koin_version")
         implementation("io.insert-koin:koin-ktor:$koin_version")
         implementation("ch.qos.logback:logback-classic:$logback_version")

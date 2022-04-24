@@ -1,11 +1,20 @@
 package com.mospolytech.data.schedule.converters
 
 import com.mospolytech.data.schedule.model.ApiGroup
-import com.mospolytech.domain.schedule.model.Group
-import com.mospolytech.domain.schedule.model.Teacher
+import com.mospolytech.domain.schedule.model.group.GroupInfo
+import com.mospolytech.domain.schedule.repository.GroupsRepository
 
-object LessonGroupsConverter {
-    fun convertGroups(groups: List<ApiGroup>): List<Group> {
-        return groups.map { Group(it.title) }
+class LessonGroupsConverter(
+    private val groupsRepository: GroupsRepository
+) {
+    fun convertGroups(groups: List<ApiGroup>): List<GroupInfo> {
+        return groups.map {
+            groupsRepository.add(
+                title = it.title,
+                description = "Описание группы",
+                course = it.course.toString(),
+                isEvening = it.evening != 0
+            )
+        }
     }
 }

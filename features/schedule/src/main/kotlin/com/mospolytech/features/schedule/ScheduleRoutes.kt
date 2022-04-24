@@ -1,65 +1,27 @@
 package com.mospolytech.features.schedule
 
-import com.mospolytech.domain.schedule.model.ScheduleSource
-import com.mospolytech.domain.schedule.model.ScheduleSources
+import com.mospolytech.domain.personal.repository.PersonalRepository
+import com.mospolytech.domain.schedule.repository.FreePlacesRepository
+import com.mospolytech.domain.schedule.repository.LessonsRepository
+import com.mospolytech.domain.schedule.repository.ScheduleInfoRepository
 import com.mospolytech.domain.schedule.repository.ScheduleRepository
-import io.ktor.http.*
+import com.mospolytech.features.schedule.routes.*
 import io.ktor.server.application.*
-import io.ktor.server.locations.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 
-fun Application.scheduleRoutesV1(repository: ScheduleRepository) {
+fun Application.scheduleRoutes(
+    lessonsRepository: LessonsRepository,
+    scheduleRepository: ScheduleRepository,
+    scheduleInfoRepository: ScheduleInfoRepository,
+    freePlacesRepository: FreePlacesRepository,
+    personalRepository: PersonalRepository
+) {
     routing {
-        route("/schedule") {
-            route("/sources") {
-                get {
-                    call.respond(ScheduleSources.values().map { it.name.lowercase() })
-                }
-                get<ScheduleSourceListRequest> {
-                    call.respond(repository.getSourceList(it.type))
-                }
-            }
-
-        }
-
-
-        route("schedules") {
-            get {
-                call.respond(repository.getSchedule())
-            }
-            get("/complex") {
-                call.respond(mapOf("Cant" to "do this"))
-            }
-            get<ScheduleRequest> {
-                call.respond(repository.getSchedule(ScheduleSource(it.type, it.key)))
-            }
-        }
-
-        route("lessons") {
-            get {
-                call.respond(repository.getLessons())
-            }
-            route("/review") {
-                get("/complex") {
-                    call.respond(mapOf("Cant" to "do this"))
-                }
-                get<ScheduleRequest> {
-                    call.respond(repository.getLessonsReview(ScheduleSource(it.type, it.key)))
-                }
-            }
-        }
+        sourcesRoutesV1(scheduleRepository)
+        scheduleRoutesV1(scheduleRepository, personalRepository)
+        scheduleInfoRoutesV1(scheduleInfoRepository)
+        lessonsRoutesV1(lessonsRepository, scheduleRepository)
+        freePlaceRoutesV1(freePlacesRepository)
     }
 }
-
-@Location("/{type}/{key}")
-data class ScheduleRequest(
-    val type: ScheduleSources,
-    val key: String
-)
-
-@Location("/{type}")
-data class ScheduleSourceListRequest(
-    val type: ScheduleSources
-)

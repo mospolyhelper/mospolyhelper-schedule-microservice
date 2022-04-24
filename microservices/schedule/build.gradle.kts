@@ -1,25 +1,19 @@
 plugins {
-    application
+    id("microservice-base")
 }
 
-application {
-    mainClass.set("io.ktor.server.netty.EngineMain")
-    applicationDefaultJvmArgs = listOf("-Xmx300m", "-Xss512k", "-XX:CICompilerCount=2")
-}
-
-version = "0.0.1"
-
-kotlin {
-    sourceSets {
-        val main by getting
-        val test by getting
-    }
-}
+version = "0.0.2"
 
 dependencies {
-    implementation(project(":data:base"))
-    implementation(project(":data:schedule"))
-    implementation(project(":domain:base"))
-    implementation(project(":domain:schedule"))
-    implementation(project(":features:schedule"))
+    implementation(project(Modules.Data.Base))
+    implementation(project(Modules.Data.Auth))
+    implementation(project(Modules.Data.Schedule))
+    implementation(project(Modules.Data.Personal))
+
+    implementation(project(Modules.Domain.Base))
+    implementation(project(Modules.Domain.Auth))
+    implementation(project(Modules.Domain.Schedule))
+
+    implementation(project(Modules.Features.Auth))
+    implementation(project(Modules.Features.Schedule))
 }

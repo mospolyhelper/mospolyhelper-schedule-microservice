@@ -1,11 +1,9 @@
 package com.mospolytech.microservices.auth
 
+import com.mospolytech.features.auth.authRoutesV1
 import com.mospolytech.features.base.koin.get
-import com.mospolytech.features.schedule.scheduleDataConversion
-import com.mospolytech.features.schedule.scheduleRoutesV1
-import com.mospolytech.microservices.auth.plugins.*
+import com.mospolytech.features.base.plugins.*
 import io.ktor.server.application.*
-import io.ktor.server.plugins.*
 
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)
@@ -17,17 +15,10 @@ fun Application.module() {
     configureSerialization()
     configureMonitoring()
     configureHTTP()
-    configureDi()
-    setDataConversions()
+    configureDi(appModules)
     setRoutes()
 }
 
 fun Application.setRoutes() {
-    scheduleRoutesV1(get())
-}
-
-fun Application.setDataConversions() {
-    install(DataConversion) {
-        scheduleDataConversion()
-    }
+    authRoutesV1(get(), get())
 }

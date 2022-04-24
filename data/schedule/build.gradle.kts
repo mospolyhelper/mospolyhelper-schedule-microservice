@@ -1,11 +1,9 @@
-kotlin {
-    sourceSets {
-        val main by getting
-        val test by getting
-    }
+plugins {
+    id("data-base")
+    kotlin("plugin.serialization")
 }
 
 dependencies {
-    api(project(":data:base"))
-    api(project(":domain:schedule"))
+    api(project(Modules.Data.Base))
+    api(project(Modules.Domain.Schedule))
 }

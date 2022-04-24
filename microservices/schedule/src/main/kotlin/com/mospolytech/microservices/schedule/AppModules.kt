@@ -1,7 +1,10 @@
 package com.mospolytech.microservices.schedule
 
+import com.mospolytech.data.auth.authDataModule
 import com.mospolytech.data.base.baseDataModule
+import com.mospolytech.data.personal.personalDataModule
 import com.mospolytech.data.schedule.scheduleDataModule
+import com.mospolytech.domain.personal.personalDomainModule
 import com.mospolytech.domain.schedule.scheduleDomainModule
 import com.mospolytech.features.schedule.scheduleFeatureModule
 
@@ -14,4 +17,8 @@ val appModules = listOf(
 
 
     scheduleFeatureModule,
+
+    authDataModule,
+    personalDomainModule,
+    personalDataModule
 )

@@ -1,0 +1,48 @@
+package com.mospolytech.features.schedule.routes
+
+import com.mospolytech.domain.personal.repository.PersonalRepository
+import com.mospolytech.domain.schedule.model.ScheduleComplexFilter
+import com.mospolytech.domain.schedule.model.source.ScheduleSource
+import com.mospolytech.domain.schedule.model.source.ScheduleSources
+import com.mospolytech.domain.schedule.repository.ScheduleRepository
+import com.mospolytech.features.base.AuthConfigs
+import com.mospolytech.features.base.utils.getTokenOrRespondError
+import com.mospolytech.features.base.utils.respondResult
+import com.mospolytech.features.schedule.routes.model.ScheduleRequest
+import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.locations.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+
+fun Routing.scheduleRoutesV1(
+    repository: ScheduleRepository,
+    userRepository: PersonalRepository
+) {
+    route("/schedules") {
+        route("/compact") {
+            get {
+                call.respond(repository.getCompactSchedule())
+            }
+            get<ScheduleRequest> {
+                call.respond(repository.getCompactSchedule(ScheduleSource(it.type, it.key)))
+            }
+            post("/complex") {
+                val filter = call.receive<ScheduleComplexFilter>()
+                call.respond(repository.getCompactSchedule(filter))
+            }
+        }
+        authenticate(AuthConfigs.Mpu, optional = true) {
+            get("my") {
+                val token = call.getTokenOrRespondError() ?: return@get
+
+                call.respondResult(
+                    userRepository.getPersonalInfo(token).map {
+                        repository.getCompactSchedule(ScheduleSource(ScheduleSources.Group, it.group))
+                    }
+                )
+            }
+        }
+    }
+}

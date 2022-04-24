@@ -1,9 +1,10 @@
 package com.mospolytech.microservices.schedule
 
-import com.mospolytech.microservices.schedule.plugins.configureRouting
+import com.mospolytech.features.base.plugins.configureRouting
 import io.ktor.http.*
-import kotlin.test.*
 import io.ktor.server.testing.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class ApplicationTest {
     @Test

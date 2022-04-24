@@ -1,12 +1,8 @@
-kotlin {
-    sourceSets {
-        val main by getting
-        val test by getting
-    }
+plugins {
+    id("feature-base")
 }
 
 dependencies {
-    api(project(":features:base"))
-    api(project(":data:performance"))
-    api(project(":domain:performance"))
+    api(project(Modules.Features.Base))
+    api(project(Modules.Domain.Performance))
 }
