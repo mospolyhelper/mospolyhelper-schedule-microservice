@@ -1,27 +1,27 @@
 package com.mospolytech.data.performance
 
-import com.mospolytech.domain.perfomance.model.Marks
+import com.mospolytech.domain.perfomance.model.Performance
 import com.mospolytech.domain.perfomance.repository.PerformanceRepository
 
-class PerformanceRepositoryImpl: PerformanceRepository {
+class PerformanceRepositoryImpl(private val service: PerformanceService): PerformanceRepository {
 
-    override fun getCourses(): List<Int> {
-        return getMarks().map { it.course }.toHashSet().toList()
+    override suspend fun getCourses(token: String): Result<List<Int>> {
+        return runCatching {
+            listOf(1,2,3,4)
+        }
     }
 
-    override fun getSemesters(): List<Int> {
-        return getMarks().map { it.semester }
+    override suspend fun getSemesters(token: String): Result<List<Int>> {
+        return runCatching {
+            listOf(1,2,3,4,5,6,7,8)
+        }
     }
 
-    override fun getMarksByCourse(course: Int): List<Marks> {
-        return getMarks().filter { it.course == course }
-    }
 
-    override fun getMarksBySemester(semester: Int): Marks {
-        return getMarks().first { it.semester == semester }
-    }
-
-    override fun getMarks(): List<Marks> {
-        return getMarksList()
+    override suspend fun getPerformance(semester: Int, token: String): Result<List<Performance>> {
+        return runCatching {
+            val performanceResponse = service.getPerformanceInfo(token, semester)
+            performanceResponse.academicPerformance.map { it.toModel() }
+        }
     }
 }

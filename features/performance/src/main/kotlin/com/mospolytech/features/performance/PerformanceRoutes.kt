@@ -1,31 +1,34 @@
 package com.mospolytech.features.performance
 
 import com.mospolytech.domain.perfomance.repository.PerformanceRepository
+import com.mospolytech.features.base.AuthConfigs
+import com.mospolytech.features.base.utils.getTokenOrRespondError
+import com.mospolytech.features.base.utils.respondResult
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.locations.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.performanceRoutesV1(repository: PerformanceRepository) {
     routing {
-        route("/performance") {
-            get {
-                call.respond(repository.getMarks())
-            }
-            route("/semesters") {
-                get<SemesterRequest> {
-                    call.respond(repository.getMarksBySemester(it.semester))
+        authenticate(AuthConfigs.Mpu, optional = true) {
+            route("/performance") {
+                route("/semesters") {
+                    get<SemesterRequest> {
+                        val token = call.getTokenOrRespondError() ?: return@get
+                        call.respondResult(repository.getPerformance(it.semester, token))
+                    }
+                    get {
+                        val token = call.getTokenOrRespondError() ?: return@get
+                        call.respond(repository.getSemesters(token))
+                    }
                 }
-                get {
-                    call.respond(repository.getSemesters())
-                }
-            }
-            route("/courses") {
-                get<CourseRequest> {
-                    call.respond(repository.getMarksByCourse(it.course))
-                }
-                get {
-                    call.respond(repository.getCourses())
+                route("/courses") {
+                    get {
+                        val token = call.getTokenOrRespondError() ?: return@get
+                        call.respondResult(repository.getCourses(token))
+                    }
                 }
             }
         }
@@ -35,8 +38,4 @@ fun Application.performanceRoutesV1(repository: PerformanceRepository) {
 @Location("/{semester}")
 data class SemesterRequest(
     val semester: Int
-)
-@Location("/{course}")
-data class CourseRequest(
-    val course: Int
 )

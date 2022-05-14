@@ -4,5 +4,6 @@ import com.mospolytech.domain.perfomance.repository.PerformanceRepository
 import org.koin.dsl.module
 
 val performanceDataModule = module {
-    single<PerformanceRepository> { PerformanceRepositoryImpl() }
+    single<PerformanceRepository> { PerformanceRepositoryImpl(get()) }
+    single { PerformanceService(get()) }
 }
