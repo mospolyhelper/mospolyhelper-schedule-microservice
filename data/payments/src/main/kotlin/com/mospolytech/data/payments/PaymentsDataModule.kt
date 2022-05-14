@@ -4,5 +4,6 @@ import com.mospolytech.domain.payments.repository.PaymentsRepository
 import org.koin.dsl.module
 
 val paymentsDataModule = module {
-    single<PaymentsRepository> { PaymentsRepositoryImpl() }
+    single<PaymentsRepository> { PaymentsRepositoryImpl(get()) }
+    single { PaymentsService(get()) }
 }
