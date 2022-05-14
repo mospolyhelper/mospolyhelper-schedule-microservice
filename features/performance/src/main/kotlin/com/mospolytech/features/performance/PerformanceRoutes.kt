@@ -7,7 +7,6 @@ import com.mospolytech.features.base.utils.respondResult
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.locations.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.performanceRoutesV1(repository: PerformanceRepository) {
@@ -21,7 +20,7 @@ fun Application.performanceRoutesV1(repository: PerformanceRepository) {
                     }
                     get {
                         val token = call.getTokenOrRespondError() ?: return@get
-                        call.respond(repository.getSemesters(token))
+                        call.respondResult(repository.getSemesters(token))
                     }
                 }
                 route("/courses") {
