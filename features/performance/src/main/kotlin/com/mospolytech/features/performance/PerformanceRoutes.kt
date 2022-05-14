@@ -18,6 +18,10 @@ fun Application.performanceRoutesV1(repository: PerformanceRepository) {
                         val token = call.getTokenOrRespondError() ?: return@get
                         call.respondResult(repository.getPerformance(it.semester, token))
                     }
+                    get<AllSemesters> {
+                        val token = call.getTokenOrRespondError() ?: return@get
+                        call.respondResult(repository.getPerformance(null, token))
+                    }
                     get {
                         val token = call.getTokenOrRespondError() ?: return@get
                         call.respondResult(repository.getSemesters(token))
@@ -36,5 +40,8 @@ fun Application.performanceRoutesV1(repository: PerformanceRepository) {
 
 @Location("/{semester}")
 data class SemesterRequest(
-    val semester: Int
+    val semester: String? = null
 )
+
+@Location("/")
+object AllSemesters

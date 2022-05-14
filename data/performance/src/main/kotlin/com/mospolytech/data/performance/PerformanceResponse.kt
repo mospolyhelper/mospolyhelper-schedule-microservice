@@ -3,7 +3,10 @@ package com.mospolytech.data.performance
 import com.mospolytech.domain.perfomance.model.Performance
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.time.LocalDateTime
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 @Serializable
 data class PerformanceResponseDto(
@@ -14,7 +17,7 @@ data class PerformanceResponseDto(
 data class PerformanceResponse(
     val id : Int,
     @SerialName("bill_num")
-    val billNum : Int,
+    val billNum : String,
     @SerialName("bill_type")
     val billType : String,
     @SerialName("doc_type")
@@ -41,7 +44,8 @@ fun PerformanceResponse.toModel(): Performance {
         billType = billType,
         docType = docType,
         name = name,
-        dateTime = dateTimeToLocal(examDate, examTime),
+        date = examDate.toDate(),
+        time = examTime.toTime(),
         grade = grade,
         ticketNum = ticketNum.ifEmpty { null },
         teacher = teacher,
@@ -51,6 +55,17 @@ fun PerformanceResponse.toModel(): Performance {
     )
 }
 
-fun dateTimeToLocal(date: String, time: String): LocalDateTime {
-    return LocalDateTime.MAX
+fun String.toDate(): LocalDate? {
+    return try {
+        LocalDate.parse(this, DateTimeFormatter.ofPattern("MMMM d',' yyyy", Locale.US))
+    } catch (e: Throwable) {
+        null
+    }
+}
+fun String.toTime(): LocalTime? {
+    return try {
+        LocalTime.parse(this)
+    } catch (e: Throwable) {
+        null
+    }
 }

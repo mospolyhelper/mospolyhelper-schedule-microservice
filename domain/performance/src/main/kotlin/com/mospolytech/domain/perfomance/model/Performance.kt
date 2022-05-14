@@ -1,18 +1,22 @@
 package com.mospolytech.domain.perfomance.model
 
-import com.mospolytech.domain.base.utils.converters.LocalDateTimeConverter
+import com.mospolytech.domain.base.utils.converters.LocalDateConverter
+import com.mospolytech.domain.base.utils.converters.LocalTimeConverter
 import kotlinx.serialization.Serializable
-import java.time.LocalDateTime
+import java.time.LocalDate
+import java.time.LocalTime
 
 @Serializable
 data class Performance(
     val id : Int,
-    val billNum : Int,
+    val billNum : String,
     val billType : String,
     val docType : String,
     val name : String,
-    @Serializable(with = LocalDateTimeConverter::class)
-    val dateTime : LocalDateTime,
+    @Serializable(with = LocalDateConverter::class)
+    val date : LocalDate?,
+    @Serializable(with = LocalTimeConverter::class)
+    val time: LocalTime?,
     val grade : String,
     val ticketNum : String?,
     val teacher : String,
