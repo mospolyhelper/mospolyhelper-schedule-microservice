@@ -24,7 +24,7 @@ data class Personal(
     val finance: String,
     val degreeLevel: String,
     val enterYear: String,
-    val orders: List<String>,
+    val orders: List<Order>,
     val subdivisions: List<Subdivision>? = null
 )
 
@@ -35,6 +35,13 @@ data class Subdivision(
     val status: String? = null,
     val subdivision: String? = null,
     val wage: String? = null,
+)
+
+@Serializable
+data class Order(
+    val date: String,
+    val name: String,
+    val description: String
 )
 
 //data class Personal(

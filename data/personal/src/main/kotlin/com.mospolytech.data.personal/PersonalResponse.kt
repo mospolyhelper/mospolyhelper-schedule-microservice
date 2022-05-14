@@ -1,5 +1,6 @@
 package com.mospolytech.data.personal
 
+import com.mospolytech.domain.personal.model.Order
 import com.mospolytech.domain.personal.model.Personal
 import com.mospolytech.domain.personal.model.Subdivision
 import kotlinx.serialization.SerialName
@@ -57,23 +58,55 @@ fun PersonalResponse.toModel(): Personal {
         patronymic = this.user.patronymic,
         avatar = this.user.avatar,
         birthday = this.user.birthday,
-        sex = this.user.sex,
+        sex = this.user.sex.getSex(),
         code = this.user.code,
         faculty = this.user.faculty,
         group = this.user.group,
         specialty = this.user.specialty,
         specialization = this.user.specialization,
-        degreeLength = this.user.degreeLength,
+        degreeLength = this.user.degreeLength.filter{ it.isDigit() },
         educationForm = this.user.educationForm,
         finance = this.user.finance,
         degreeLevel = this.user.degreeLevel,
         enterYear = this.user.enterYear,
-        orders = this.user.orders,
+        orders = this.user.orders.map { it.toModel() },
         subdivisions = this.user.subdivisions?.map { it.toModel() }
     )
 }
 
-fun PersonalResponse.Subdivision.toModel(): Subdivision {
+private fun String.getSex() =
+    when {
+        contains("female", ignoreCase = true) -> "Женский"
+        contains("male", ignoreCase = true) -> "Мужской"
+        else -> this
+    }
+private fun String.toModel(): Order {
+    val dateRegex = "от.*г\\.".toRegex()
+    val nameRegex = "^.* от".toRegex()
+    val descriptionRegex = "«.*»".toRegex()
+
+    val description = descriptionRegex
+        .find(this)
+        ?.value
+        ?.replace("«", "")
+        ?.replace("»", "")
+        ?.trim()
+        .orEmpty()
+    val name = nameRegex.find(this)
+        ?.value
+        ?.replace("от", "")
+        ?.trim()
+        .orEmpty()
+    val date = dateRegex.find(this)
+        ?.value
+        ?.replace("от", "")
+        ?.trim()
+        .orEmpty()
+
+    return Order(date, name, description)
+}
+
+private fun PersonalResponse.Subdivision.toModel(): Subdivision {
     return Subdivision(
         category = this.categoty,
         jobType = this.jobType,
