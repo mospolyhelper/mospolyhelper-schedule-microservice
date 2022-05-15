@@ -20,7 +20,7 @@ data class Personal(
     val faculty: String,
     val group: String,
     val specialty: String,
-    val specialization: String,
+    val specialization: String?,
     val degreeLength: String,
     val educationForm: String,
     val finance: String,
@@ -46,22 +46,3 @@ data class Order(
     val name: String,
     val description: String
 )
-
-//data class Personal(
-//    val name: String,
-//    val type: EducationType,
-//    val avatarUrl: String?,
-//    val course: Int,
-//    val group: String,
-//    val direction: String?,
-//    val faculty: String,
-//    val dormitory: String?,
-//    val dormitoryRoom: String?,
-//    val isPaid: Boolean,
-//    val startYear: Int?,
-//    val endYear: Int?,
-//    @Serializable(LocalDateConverter::class)
-//    val startDate: LocalDate?,
-//    @Serializable(LocalDateConverter::class)
-//    val endDate: LocalDate?
-//)
