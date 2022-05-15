@@ -41,7 +41,7 @@ fun PerformanceResponse.toModel(): Performance {
     return Performance(
         id = id,
         billNum = billNum,
-        billType = billType,
+        billType = billType.ifEmpty { null },
         docType = docType,
         name = name,
         date = examDate.toDate(),

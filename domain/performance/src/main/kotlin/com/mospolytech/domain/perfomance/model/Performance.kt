@@ -10,7 +10,7 @@ import java.time.LocalTime
 data class Performance(
     val id : Int,
     val billNum : String,
-    val billType : String,
+    val billType : String?,
     val docType : String,
     val name : String,
     @Serializable(with = LocalDateConverter::class)
