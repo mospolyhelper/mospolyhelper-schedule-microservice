@@ -1,6 +1,7 @@
 package com.mospolytech.data.payments
 
 import com.mospolytech.data.payments.response.ContractsResponse
+import com.mospolytech.data.payments.response.Response
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -15,7 +16,7 @@ class PaymentsService(
         private const val GetPayments = "$ApiUrl?getPayments="
     }
 
-    suspend fun getPayments(token: String): ContractsResponse {
+    suspend fun getPayments(token: String): Response {
         return client.get(GetPayments) {
             parameter("token", token)
         }.body()

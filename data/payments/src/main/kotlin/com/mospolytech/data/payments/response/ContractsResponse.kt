@@ -11,6 +11,11 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Serializable
+data class Response(
+	val contracts: ContractsResponse
+)
+
+@Serializable
 data class ContractsResponse (
 	val education : List<PaymentsResponse>,
 	val dormitory : List<PaymentsResponse>
@@ -126,9 +131,8 @@ fun PaymentsResponse.toModel(): Payments {
 	)
 }
 
+fun PaymentResponse.toModel() = Payment(date.toDate(), value)
+
 fun String.toDate(): LocalDate {
 	return LocalDate.parse(this, DateTimeFormatter.ofPattern("MMMM d',' yyyy", Locale.US))
 }
-
-fun PaymentResponse.toModel() = Payment(date, value)
-

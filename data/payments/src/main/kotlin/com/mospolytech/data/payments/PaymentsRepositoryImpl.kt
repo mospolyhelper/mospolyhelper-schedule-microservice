@@ -11,7 +11,7 @@ class PaymentsRepositoryImpl(private val service: PaymentsService): PaymentsRepo
 
     override suspend fun getPaymentTypes(token: String): Result<List<PaymentType>> {
         return runCatching {
-            val paymentsResponse = service.getPayments(token)
+            val paymentsResponse = service.getPayments(token).contracts
             mutableListOf<PaymentType>().apply {
                 if (paymentsResponse.dormitory.isNotEmpty()) add(Dormitory)
                 if (paymentsResponse.education.isNotEmpty()) add(Education)
@@ -21,7 +21,7 @@ class PaymentsRepositoryImpl(private val service: PaymentsService): PaymentsRepo
 
     override suspend fun getPayments(token: String, paymentType: PaymentType?): Result<Contracts> {
         return runCatching {
-            val paymentsResponse = service.getPayments(token)
+            val paymentsResponse = service.getPayments(token).contracts
             paymentsResponse.toModel()
         }
     }
