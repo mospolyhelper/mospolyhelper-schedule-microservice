@@ -117,7 +117,7 @@ fun PaymentsResponse.toModel(): Payments {
 		number = number,
 		name = name,
 		type = type,
-		level = level,
+		level = level.ifEmpty { null },
 		dormNum = dormNum.ifEmpty { null },
 		dormRoom = dormRoom.ifEmpty { null },
 		startDate = startDate.toDate(),

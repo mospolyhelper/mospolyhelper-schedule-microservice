@@ -8,7 +8,6 @@ import com.mospolytech.features.base.utils.respondResult
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.locations.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.paymentsRoutesV1(repository: PaymentsRepository) {
@@ -23,7 +22,7 @@ fun Application.paymentsRoutesV1(repository: PaymentsRepository) {
                     val token = call.getTokenOrRespondError() ?: return@get
                     call.respondResult(repository.getPayments(token))
                 }
-                route("/types") {
+                route("/types/") {
                     get {
                         val token = call.getTokenOrRespondError() ?: return@get
                         call.respondResult(repository.getPaymentTypes(token))
