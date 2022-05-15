@@ -5,6 +5,8 @@ import com.mospolytech.domain.personal.model.Personal
 import com.mospolytech.domain.personal.model.Subdivision
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Serializable
 data class PersonalResponse(
@@ -99,11 +101,17 @@ private fun String.toModel(): Order {
         .orEmpty()
     val date = dateRegex.find(this)
         ?.value
-        ?.replace("от", "")
-        ?.trim()
-        .orEmpty()
+        ?.toDate()
 
     return Order(date, name, description)
+}
+
+fun String.toDate(): LocalDate? {
+    return try {
+        LocalDate.parse(this, DateTimeFormatter.ofPattern("'от' d MMMM yyyy 'г.'"))
+    } catch (e: Throwable) {
+        null
+    }
 }
 
 private fun PersonalResponse.Subdivision.toModel(): Subdivision {

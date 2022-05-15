@@ -1,6 +1,8 @@
 package com.mospolytech.domain.personal.model
 
+import com.mospolytech.domain.base.utils.converters.LocalDateConverter
 import kotlinx.serialization.Serializable
+import java.time.LocalDate
 
 @Serializable
 data class Personal(
@@ -39,7 +41,8 @@ data class Subdivision(
 
 @Serializable
 data class Order(
-    val date: String,
+    @Serializable(LocalDateConverter::class)
+    val date: LocalDate?,
     val name: String,
     val description: String
 )
