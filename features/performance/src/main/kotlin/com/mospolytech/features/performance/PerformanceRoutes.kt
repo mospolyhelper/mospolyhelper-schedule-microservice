@@ -33,6 +33,12 @@ fun Application.performanceRoutesV1(repository: PerformanceRepository) {
                         call.respondResult(repository.getCourses(token))
                     }
                 }
+                route("/courses_semesters") {
+                    get {
+                        val token = call.getTokenOrRespondError() ?: return@get
+                        call.respondResult(repository.getCoursesWithSemesters(token))
+                    }
+                }
             }
         }
     }

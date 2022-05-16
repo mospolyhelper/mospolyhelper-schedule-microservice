@@ -5,6 +5,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.Month
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -38,6 +39,8 @@ data class PerformanceResponse(
 )
 
 fun PerformanceResponse.toModel(): Performance {
+    val examMonth = examDate.toDate()?.month ?: Month.JANUARY
+    val semester = if (examMonth.value > Month.FEBRUARY.value && examMonth.value < Month.SEPTEMBER.value) course * 2 else course * 2 - 1
     return Performance(
         id = id,
         billNum = billNum,
@@ -50,6 +53,7 @@ fun PerformanceResponse.toModel(): Performance {
         ticketNum = ticketNum.ifEmpty { null },
         teacher = teacher,
         course = course,
+        semester = semester,
         examType = examType,
         chair = chair
     )
