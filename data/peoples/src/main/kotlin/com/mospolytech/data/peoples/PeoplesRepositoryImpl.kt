@@ -60,7 +60,10 @@ class PeoplesRepositoryImpl: PeoplesRepository {
 
     override fun getTeachers(): String {
         val xml = XML()
-        val inputStream: InputStream = File("data/peoples/src/main/resources/raw/peoples.xml").inputStream()
+        //val inputStream: InputStream = File("data/peoples/src/main/resources/raw/peoples.xml").inputStream()
+        val inputStream = javaClass.getResource("/raw/peoples.xml")?.openStream()
+        checkNotNull(inputStream)
+
         val inputString = inputStream
             .bufferedReader()
             .let {
