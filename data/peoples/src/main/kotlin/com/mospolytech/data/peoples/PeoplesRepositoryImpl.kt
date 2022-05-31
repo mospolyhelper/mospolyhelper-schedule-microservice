@@ -7,16 +7,45 @@ import com.mospolytech.domain.peoples.model.EducationForm
 import com.mospolytech.domain.peoples.model.Student
 import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.peoples.repository.PeoplesRepository
-import kotlinx.serialization.decodeFromString
-import nl.adaptivity.xmlutil.serialization.XML
-import java.io.File
-import java.io.InputStream
 import kotlin.random.Random
 
-class PeoplesRepositoryImpl: PeoplesRepository {
+class PeoplesRepositoryImpl(
+    private val service: TeachersService
+): PeoplesRepository {
+    private val teachersLocalCache = service.getTeachers()
+        .asSequence()
+        .map { it.toModel() }
+        .distinctBy { it.id }
+        .toList()
 
     override fun getTeachers(name: String, page: Int, pageSize: Int): PagingDTO<Teacher> {
-        return TeachersService.getTeachers(name, pageSize, page).map { it.toModel() }
+        val pages = teachersLocalCache
+            .asSequence()
+            .filter { it.name.contains(name, ignoreCase = true) }
+            .windowed(pageSize, pageSize, partialWindows = true)
+            .toList()
+
+        val fixedPage = (page - 1).let {
+            when {
+                pages.isEmpty() -> null
+                it < 1 -> 0
+                it > pages.lastIndex -> null
+                else -> it
+            }
+        }
+
+        val data = if (fixedPage == null) emptyList() else pages[fixedPage]
+
+        return PagingDTO(
+            count = data.size,
+            previousPage = if (fixedPage == 0) null else fixedPage ?: pages.size,
+            nextPage = fixedPage?.let { if (fixedPage == pages.lastIndex) null else it + 2 },
+            data = data
+        )
+    }
+
+    override fun getTeachers(): List<Teacher> {
+        return teachersLocalCache
     }
 
     override fun getStudents(name: String, page: Int, pageSize: Int): PagingDTO<Student> {
@@ -56,30 +85,5 @@ class PeoplesRepositoryImpl: PeoplesRepository {
             )
         }
         return list.filter { it.name.contains(name, ignoreCase = true) }
-    }
-
-    override fun getTeachers(): String {
-        val xml = XML()
-        //val inputStream: InputStream = File("data/peoples/src/main/resources/raw/peoples.xml").inputStream()
-        val inputStream = javaClass.getResource("/raw/peoples.xml")?.openStream()
-        checkNotNull(inputStream)
-
-        val inputString = inputStream
-            .bufferedReader()
-            .let {
-                val string = it.readText()
-                it.close()
-                string
-            }
-            .replaceBefore("<m:ДанныеОРаботнике>", "")
-            .replaceAfterLast("</m:ДанныеОРаботнике>", "")
-            .replace("\t\t\t\t", "")
-            .replace("\t<m:Паспорт>[^*]*?</m:ДанныеОРаботнике>".toRegex(), "</m:ДанныеОРаботнике>")
-            .replace("m:", "")
-        val teachers = "<ДанныеОРаботнике>[^*]*?</ДанныеОРаботнике>".toRegex()
-            .findAll(inputString)
-            .map { xml.decodeFromString<ДанныеОРаботнике>(it.value) }
-            .toList()
-        return teachers.toString()
     }
 }

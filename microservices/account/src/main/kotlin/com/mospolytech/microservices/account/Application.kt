@@ -3,7 +3,6 @@ package com.mospolytech.microservices.account
 
 import com.mospolytech.features.applications.applicationsRoutesV1
 import com.mospolytech.features.auth.authRoutesV1
-import com.mospolytech.features.base.koin.get
 import com.mospolytech.features.base.plugins.*
 import com.mospolytech.features.payments.paymentsDataConversion
 import com.mospolytech.features.payments.paymentsRoutesV1
@@ -12,6 +11,8 @@ import com.mospolytech.features.performance.performanceRoutesV1
 import com.mospolytech.features.personal.personalRoutesV1
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
+import io.ktor.server.plugins.dataconversion.*
+import org.koin.ktor.ext.get
 
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)

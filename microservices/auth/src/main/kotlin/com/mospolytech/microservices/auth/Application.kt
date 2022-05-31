@@ -1,7 +1,7 @@
 package com.mospolytech.microservices.auth
 
 import com.mospolytech.features.auth.authRoutesV1
-import com.mospolytech.features.base.koin.get
+import org.koin.ktor.ext.get
 import com.mospolytech.features.base.plugins.*
 import io.ktor.server.application.*
 

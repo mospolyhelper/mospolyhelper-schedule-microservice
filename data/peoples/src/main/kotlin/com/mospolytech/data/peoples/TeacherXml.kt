@@ -1,57 +1,105 @@
 package com.mospolytech.data.peoples
 
+import com.mospolytech.domain.base.model.Department
 import com.mospolytech.domain.peoples.model.Teacher
+import kotlinx.serialization.SerialName
 import nl.adaptivity.xmlutil.serialization.XmlElement
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @kotlinx.serialization.Serializable
-data class ДанныеОРаботнике(
+@SerialName("ДанныеОРаботнике")
+data class EmployeeInfo(
     @XmlElement(true)
-    val ГУИДФизЛица: String,
+    @SerialName("ГУИДФизЛица")
+    val guid: String,
     @XmlElement(true)
-    val ГУИДСотрудника: String,
+    @SerialName("ГУИДСотрудника")
+    val guidStaff: String,
     @XmlElement(true)
-    val СотрудникНаименование: String,
+    @SerialName("СотрудникНаименование")
+    val name: String,
     @XmlElement(true)
-    val ТабельныйНомер: String,
+    @SerialName("ДатаРождения")
+    val birthDate: String,
     @XmlElement(true)
-    val ДатаРождения: String,
+    @SerialName("КатегорияПерсонала")
+    val stuffType: String,
     @XmlElement(true)
-    val КатегорияПерсонала: String,
-    @XmlElement(true)
+    @SerialName("Состояние")
     val Состояние: String,
     @XmlElement(true)
+    @SerialName("СтраховойНомерПФР")
     val СтраховойНомерПФР: String,
     @XmlElement(true)
-    val ПодразделениеРодитель: String,
+    @SerialName("Должность")
+    val post: String,
     @XmlElement(true)
-    val ГУИДПодразделенияРодитель: String,
-    @XmlElement(true)
-    val Должность: String,
-    @XmlElement(true)
+    @SerialName("ВидЗанятости")
     val ВидЗанятости: String,
     @XmlElement(true)
+    @SerialName("Ставка")
     val Ставка: String,
+    @SerialName("Пол")
     @XmlElement(true)
-    val Пол: String
+    val Sex: String,
+    @SerialName("ЭлПочтаСлужебная")
+    @XmlElement(true)
+    val email: String?,
+    @XmlElement(true)
+    @SerialName("ПодразделениеРодитель")
+    val departmentParent: String,
+    @XmlElement(true)
+    @SerialName("ГУИДПодразделенияРодитель")
+    val departmentParentGuid: String,
+    @SerialName("Подразделение")
+    @XmlElement(true)
+    val department: String?,
+    @SerialName("ГУИДПодразделения")
+    @XmlElement(true)
+    val departmentGuid: String?,
 )
 
-fun ДанныеОРаботнике.toModel() =
-    Teacher(
-        id = ГУИДСотрудника,
-        name = СотрудникНаименование,
+private val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+
+fun EmployeeInfo.toModel(): Teacher {
+    val stuffType = when (stuffType) {
+        "ППС" -> "Профессорско-преподавательский состав"
+        "АУП" -> "Административно-управленческий персонал"
+        "УВП" -> "Учебно-вспомогательный персонал"
+        "ПОП" -> "Прочий обслуживающий персонал"
+        "МОП" -> "Младший обслуживающий персонал"
+        "ИПР" -> "Инной педагогический работник"
+        "НТР" -> "Научно-технический работник"
+        "НР" -> "Научный работник"
+        else -> stuffType
+    }
+
+    return Teacher(
+        id = guid,
+        name = name,
         avatar = "https://e.mospolytech.ru/old/img/no_avatar.jpg",
         dialogId = null,
+        stuffType = stuffType,
         birthday = try {
-            LocalDate.parse(ДатаРождения, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+            LocalDate.parse(birthDate, dateFormatter)
         } catch (e: Throwable) {
             null
         },
-        grade = Должность,
-        department = ПодразделениеРодитель,
-        sex = Пол,
+        grade = post,
+        departmentParent = Department(
+            id = departmentParentGuid,
+            title = departmentParent
+        ),
+        department = if (department != null && departmentGuid != null) Department(
+            id = departmentGuid,
+            title = department
+        ) else null,
+        sex = Sex,
+        email = email,
         additionalInfo = null
     )
+}
+
 
 

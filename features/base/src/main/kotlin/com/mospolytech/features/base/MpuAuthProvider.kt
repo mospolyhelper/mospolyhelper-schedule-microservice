@@ -44,7 +44,7 @@ class MpuAuthenticationProvider(config: Configuration) : AuthenticationProvider(
     /**
      * JWT auth provider configuration
      */
-    class Configuration(name: String?) : AuthenticationProvider.Configuration(name) {
+    class Configuration(name: String?) : AuthenticationProvider.Config(name) {
         internal var authenticationFunction: AuthenticationFunction<MpuCredential> = {
             throw NotImplementedError(
                 "JWT auth validate function is not specified. Use jwt { validate { ... } } to fix."
@@ -71,34 +71,28 @@ class MpuAuthenticationProvider(config: Configuration) : AuthenticationProvider(
 
         internal fun build() = MpuAuthenticationProvider(this)
     }
-}
 
-fun Authentication.Configuration.mpuAuth(
-    name: String? = null,
-    configure: MpuAuthenticationProvider.Configuration.() -> Unit
-) {
-    val provider = MpuAuthenticationProvider.Configuration(name).apply(configure).build()
-    val authenticate = provider.authenticationFunction
+    override suspend fun onAuthenticate(context: AuthenticationContext) {
+        val call = context.call
 
-    provider.pipeline.intercept(AuthenticationPipeline.RequestAuthentication) { context ->
-        val token = provider.authHeader(call)
+        val token = authHeader(call)
         if (token == null) {
-            context.bearerChallenge(AuthenticationFailedCause.NoCredentials, provider.challengeFunction)
-            return@intercept
+            context.bearerChallenge(AuthenticationFailedCause.NoCredentials, challengeFunction)
+            return
         }
 
         try {
             val principal = verifyAndValidate(call, token) {
-                authenticate(this, MpuCredential(token.getBlob()!!))
+                authenticationFunction(this, MpuCredential(token.getBlob()!!))
             }
             if (principal != null) {
                 context.principal(principal)
-                return@intercept
+                return
             }
 
             context.bearerChallenge(
                 AuthenticationFailedCause.InvalidCredentials,
-                provider.challengeFunction
+                challengeFunction
             )
         } catch (cause: Throwable) {
             val message = cause.message ?: cause.javaClass.simpleName
@@ -106,6 +100,13 @@ fun Authentication.Configuration.mpuAuth(
             context.error(CustomAuthKey, AuthenticationFailedCause.Error(message))
         }
     }
+}
+
+fun AuthenticationConfig.mpuAuth(
+    name: String? = null,
+    configure: MpuAuthenticationProvider.Configuration.() -> Unit
+) {
+    val provider = MpuAuthenticationProvider.Configuration(name).apply(configure).build()
     register(provider)
 }
 
@@ -113,16 +114,20 @@ fun Authentication.Configuration.mpuAuth(
  * Specifies what to send back if session authentication fails.
  */
 typealias MpuAuthChallengeFunction =
-        suspend PipelineContext<*, ApplicationCall>.(defaultScheme: String) -> Unit
+        suspend MpuAuthChallengeContext.(defaultScheme: String) -> Unit
+
+class MpuAuthChallengeContext(
+    val call: ApplicationCall
+)
 
 private fun AuthenticationContext.bearerChallenge(
     cause: AuthenticationFailedCause,
     challengeFunction: MpuAuthChallengeFunction
 ) {
-    challenge(CustomAuthKey, cause) {
-        challengeFunction(this, "Bearer")
-        if (!it.completed && call.response.status() != null) {
-            it.complete()
+    challenge(CustomAuthKey, cause) { challenge, call ->
+        challengeFunction(MpuAuthChallengeContext(call), "Bearer")
+        if (!challenge.completed && call.response.status() != null) {
+            challenge.complete()
         }
     }
 }

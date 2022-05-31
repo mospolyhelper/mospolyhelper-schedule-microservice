@@ -58,7 +58,7 @@ data class NameRequest(
     val name: String = ""
 )
 
-@Location("/")
+@Location("")
 data class DtoRequest(
     val page: Int = 1,
     val count: Int = 100
