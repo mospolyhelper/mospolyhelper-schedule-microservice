@@ -70,6 +70,9 @@ subprojects {
         implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
         implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
 
+        implementation("io.github.pdvrieze.xmlutil:core:0.84.2")
+        implementation("io.github.pdvrieze.xmlutil:serialization:0.84.2")
+
 
         testImplementation("io.ktor:ktor-server-tests:$ktor_version")
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")

@@ -8,4 +8,5 @@ interface PeoplesRepository {
     fun getTeachers(name: String = "", page: Int = 1, pageSize: Int = 100): PagingDTO<Teacher>
     fun getStudents(name: String = "", page: Int = 1, pageSize: Int = 100): PagingDTO<Student>
     fun getClassmates(name: String = ""): List<Student>
+    fun getTeachers(): String
 }

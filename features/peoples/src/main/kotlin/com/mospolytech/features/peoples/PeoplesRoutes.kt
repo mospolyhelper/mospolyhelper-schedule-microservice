@@ -9,6 +9,9 @@ import io.ktor.server.routing.*
 fun Application.peoplesRoutesV1(repository: PeoplesRepository) {
     routing {
         route("/peoples") {
+            get {
+                call.respond(repository.getTeachers())
+            }
             route("/students") {
                 get<NameDtoRequest> {
                     call.respond(repository.getStudents(it.name, it.page, it.count))

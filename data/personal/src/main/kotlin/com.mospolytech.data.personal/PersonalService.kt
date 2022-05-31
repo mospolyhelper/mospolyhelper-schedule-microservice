@@ -9,7 +9,7 @@ class PersonalService(
 ) {
     companion object {
         private const val BaseUrl = "https://e.mospolytech.ru"
-        private const val ApiUrl = "$BaseUrl/old/lk_api.php"
+        private const val ApiUrl = "$BaseUrl/#/lk_api.php"
 
         private const val GetPersonal = "$ApiUrl?getUser="
     }
