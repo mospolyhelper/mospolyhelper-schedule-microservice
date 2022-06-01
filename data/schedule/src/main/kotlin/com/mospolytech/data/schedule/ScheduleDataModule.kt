@@ -5,29 +5,29 @@ import com.mospolytech.data.schedule.local.ScheduleCacheDS
 import com.mospolytech.data.schedule.repository.*
 import com.mospolytech.data.schedule.service.ScheduleService
 import com.mospolytech.domain.schedule.repository.*
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val scheduleDataModule = module {
-    single { ScheduleService(get()) }
-    single { ScheduleCacheDS() }
+    singleOf(::ScheduleService)
+    singleOf(::ScheduleCacheDS)
 
-    single { ApiScheduleConverter(get(), get(), get(), get(), get()) }
-    single { LessonSubjectConverter(get()) }
-    single { LessonTypeConverter(get()) }
-    single { LessonTeachersConverter(get()) }
-    single { LessonGroupsConverter(get()) }
-    single { LessonPlacesConverter(get()) }
+    singleOf(::ApiScheduleConverter)
+    singleOf(::LessonSubjectConverter)
+    singleOf(::LessonTypeConverter)
+    singleOf(::LessonTeachersConverter)
+    singleOf(::LessonGroupsConverter)
+    singleOf(::LessonPlacesConverter)
 
+    singleOf(::LessonsRepositoryImpl) { bind<LessonsRepository>() }
+    singleOf(::ScheduleRepositoryImpl) { bind<ScheduleRepository>() }
+    singleOf(::ScheduleInfoRepositoryImpl) { bind<ScheduleInfoRepository>() }
+    singleOf(::FreePlacesRepositoryImpl) { bind<FreePlacesRepository>() }
 
-
-    single<LessonsRepository> { LessonsRepositoryImpl(get(), get(), get()) }
-    single<ScheduleRepository> { ScheduleRepositoryImpl(get(), get(), get(), get(), get(), get()) }
-    single<ScheduleInfoRepository> { ScheduleInfoRepositoryImpl(get(), get(), get(), get(), get()) }
-    single<FreePlacesRepository> { FreePlacesRepositoryImpl(get(), get()) }
-
-    single<LessonSubjectsRepository> { LessonSubjectsRepositoryImpl() }
-    single<LessonTypesRepository> { LessonTypesRepositoryImpl() }
-    single<TeachersRepository> { TeachersRepositoryImpl() }
-    single<GroupsRepository> { GroupsRepositoryImpl() }
-    single<PlacesRepository> { PlacesRepositoryImpl() }
+    singleOf(::LessonSubjectsRepositoryImpl) { bind<LessonSubjectsRepository>() }
+    singleOf(::LessonTypesRepositoryImpl) { bind<LessonTypesRepository>() }
+    singleOf(::TeachersRepositoryImpl) { bind<TeachersRepository>() }
+    singleOf(::GroupsRepositoryImpl) { bind<GroupsRepository>() }
+    singleOf(::PlacesRepositoryImpl) { bind<PlacesRepository>() }
 }

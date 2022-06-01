@@ -6,4 +6,5 @@ plugins {
 dependencies {
     api(project(Modules.Data.Base))
     api(project(Modules.Domain.Schedule))
+    api(project(Modules.Domain.Peoples))
 }

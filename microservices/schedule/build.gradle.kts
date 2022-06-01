@@ -9,6 +9,7 @@ dependencies {
     implementation(project(Modules.Data.Auth))
     implementation(project(Modules.Data.Schedule))
     implementation(project(Modules.Data.Personal))
+    implementation(project(Modules.Data.Peoples))
 
     implementation(project(Modules.Domain.Base))
     implementation(project(Modules.Domain.Auth))
