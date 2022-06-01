@@ -4,11 +4,18 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class EducationForm {
+enum class EducationForm(val type: String) {
     @SerialName("full_time")
-    FullTime,
+    FullTime("Очно-заочная"),
     @SerialName("evening")
-    Evening,
+    Evening("Очно-заочная"),
     @SerialName("correspondence")
-    Correspondence
+    Correspondence("Заочная")
+}
+
+fun String.toForm(): EducationForm? {
+    EducationForm.values().forEach {
+        if (it.type == this) return it
+    }
+    return null
 }

@@ -7,6 +7,8 @@ import kotlinx.serialization.Serializable
 enum class EducationType {
     @SerialName("bachelor")
     Bachelor,
+    @SerialName("bachelor")
+    Specialist,
     @SerialName("magistrate")
     Magistrate,
     @SerialName("aspirant")

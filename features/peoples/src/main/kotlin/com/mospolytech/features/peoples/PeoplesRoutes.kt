@@ -1,7 +1,11 @@
 package com.mospolytech.features.peoples
 
 import com.mospolytech.domain.peoples.repository.PeoplesRepository
+import com.mospolytech.features.base.AuthConfigs
+import com.mospolytech.features.base.utils.getTokenOrRespondError
+import com.mospolytech.features.base.utils.respondResult
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
 import io.ktor.server.locations.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -14,13 +18,13 @@ fun Application.peoplesRoutesV1(repository: PeoplesRepository) {
             }
             route("/students") {
                 get<NameDtoRequest> {
-                    call.respond(repository.getStudents(it.name, it.page, it.count))
+                    call.respond(repository.getStudents(it.name, it.page))
                 }
                 get<DtoRequest> {
-                    call.respond(repository.getStudents("", it.page, it.count))
+                    call.respond(repository.getStudents("", it.page))
                 }
                 get {
-                    call.respond(repository.getStudents())
+                    call.respondResult(repository.getStudents())
                 }
             }
             route("/teachers") {
@@ -35,11 +39,11 @@ fun Application.peoplesRoutesV1(repository: PeoplesRepository) {
                 }
             }
             route("/classmates") {
-                get<NameRequest> {
-                    call.respond(repository.getClassmates(it.name))
-                }
-                get {
-                    call.respond(repository.getClassmates())
+                authenticate(AuthConfigs.Mpu, optional = true) {
+                    get {
+                        val token = call.getTokenOrRespondError() ?: return@get
+                        call.respondResult(repository.getClassmates(token))
+                    }
                 }
             }
         }
