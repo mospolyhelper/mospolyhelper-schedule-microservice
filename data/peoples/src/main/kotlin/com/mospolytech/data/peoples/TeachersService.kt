@@ -13,7 +13,6 @@ class TeachersService {
         val xml = XML {
             unknownChildHandler = UnknownChildHandler { _, _, _, _, _ -> emptyList() }
         }
-        //val inputStream: InputStream = File("data/peoples/src/main/resources/raw/peoples.xml").inputStream()
         val inputStream = javaClass.getResource("/raw/peoples.xml")?.openStream()
         checkNotNull(inputStream)
         val inputString = inputStream

@@ -8,5 +8,6 @@ import org.koin.dsl.module
 
 val peoplesDataModule = module {
     singleOf(::TeachersService)
+    singleOf(::StudentsService)
     singleOf(::PeoplesRepositoryImpl) { bind<PeoplesRepository>() }
 }
