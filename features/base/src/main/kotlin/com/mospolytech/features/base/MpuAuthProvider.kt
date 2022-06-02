@@ -1,21 +1,17 @@
 package com.mospolytech.features.base
 
-import com.auth0.jwk.*
 import com.auth0.jwt.*
+import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.*
 import com.auth0.jwt.impl.*
 import com.auth0.jwt.interfaces.*
 import io.ktor.http.auth.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.util.*
-import io.ktor.util.pipeline.*
 import org.slf4j.*
-import java.util.*
-import kotlin.reflect.*
 
 private val CustomAuthKey: Any = "MpuAuth"
 
@@ -26,7 +22,7 @@ private val CustomLogger: Logger = LoggerFactory.getLogger("com.mospolytech.micr
  * @param payload JWT
  * @see Payload
  */
-class MpuCredential(val token: String) : Credential
+class MpuCredential(val payload: Payload) : Credential
 
 /**
  * Represents a JWT principal consist of the specified [String]
@@ -135,7 +131,7 @@ private fun AuthenticationContext.bearerChallenge(
 private suspend fun verifyAndValidate(
     call: ApplicationCall,
     token: HttpAuthHeader,
-    validate: suspend ApplicationCall.(String) -> Principal?
+    validate: suspend ApplicationCall.(Payload) -> Principal?
 ): Principal? {
     val jwt = try {
         // There is no check
@@ -149,9 +145,21 @@ private suspend fun verifyAndValidate(
 }
 
 private fun HttpAuthHeader.getBlob() = when {
-    this is HttpAuthHeader.Single && authScheme == "Bearer" -> blob.decodeBase64String()
+    this is HttpAuthHeader.Single && authScheme == "Bearer" -> {
+        blob.decodeJwtToken().parse()
+    }
     else -> null
 }
+
+private fun String.decodeJwtToken() = JWT
+    .require(Algorithm.HMAC256("secret_key")) //todo move secret key
+    .build()
+    .verify(this)
+
+private fun DecodedJWT.parse() =
+    payload
+        .decodeBase64String()
+        .let { JWTParser().parsePayload(it) }
 
 private fun ApplicationRequest.parseAuthorizationHeaderOrNull() = try {
     parseAuthorizationHeader()

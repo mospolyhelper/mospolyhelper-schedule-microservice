@@ -19,7 +19,7 @@ fun Application.authRoutesV1(
     routing {
         post("login") {
             val loginRequest = call.receive<LoginRequest>()
-            val token = repository.getToken(loginRequest.login, loginRequest.password).map { TokenResponse(it.encodeBase64()) }
+            val token = repository.getToken(loginRequest.login, loginRequest.password)
             call.respondResult(token)
         }
 

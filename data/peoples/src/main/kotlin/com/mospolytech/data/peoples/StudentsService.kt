@@ -7,6 +7,9 @@ import com.mospolytech.domain.peoples.model.toForm
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import kotlinx.serialization.decodeFromString
+import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
+import nl.adaptivity.xmlutil.serialization.XML
 
 class StudentsService(
     private val client: HttpClient
@@ -18,6 +21,34 @@ class StudentsService(
         private const val GetStudents = "$ApiUrl?p=portfolio"
         private const val GetPersonal = "$BaseUrl/#/lk_api.php?getUser="
     }
+
+//    @OptIn(ExperimentalXmlUtilApi::class)
+//    fun getStudents(): List<EmployeeInfo> {
+//        val xml = XML {
+//            unknownChildHandler = UnknownChildHandler { _, _, _, _, _ -> emptyList() }
+//        }
+//        val inputStream = javaClass.getResource("/raw/peoples.xml")?.openStream()
+//        checkNotNull(inputStream)
+//        val inputString = inputStream
+//            .bufferedReader()
+//            .let {
+//                val string = it.readText()
+//                it.close()
+//                string
+//            }
+//            .replaceBefore("<m:ДанныеОРаботнике>", "")
+//            .replaceAfterLast("</m:ДанныеОРаботнике>", "")
+//            .replace("\t\t\t\t", "")
+//            //.replace("""\t<m:Паспорт>[^*]*?</m:ДанныеОРаботнике>""".toRegex(), "</m:ДанныеОРаботнике>")
+//            .replace("m:", "")
+//
+//        val teachers = "<ДанныеОРаботнике>[^*]*?</ДанныеОРаботнике>".toRegex()
+//            .findAll(inputString)
+//            .map { xml.decodeFromString<EmployeeInfo>(it.value) }
+//            .filter { it.Состояние == "Работа" }
+//            .toList()
+//        return teachers
+//    }
 
     suspend fun getClassmates(token: String): List<Student> {
         val personal = client.get(GetPersonal) {
