@@ -9,5 +9,5 @@ interface PeoplesRepository {
     suspend fun getStudents(name: String = "", page: Int = 1): Result<PagingDTO<Student>>
     suspend fun getClassmates(token: String): Result<List<Student>>
     fun getTeachers(): List<Teacher>
-    suspend fun getStudents(): Result<String>
+    suspend fun getStudents(): Result<List<String>>
 }

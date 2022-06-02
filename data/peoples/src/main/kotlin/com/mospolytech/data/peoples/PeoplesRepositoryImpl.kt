@@ -47,12 +47,12 @@ class PeoplesRepositoryImpl(
     }
 
     override suspend fun getStudents(name: String, page: Int) = kotlin.runCatching {
-        studentsService.getStudents(name, page)
+        PagingDTO(1,1,1,emptyList<Student>())
     }
 
-    override suspend fun getStudents(): Result<String> = kotlin.runCatching { studentsService.getStudentsHtml("", 1) }
+    override suspend fun getStudents(): Result<List<String>> = kotlin.runCatching { studentsService.getStudents() }
 
     override suspend fun getClassmates(token: String): Result<List<Student>> {
-        return kotlin.runCatching { studentsService.getClassmates(token) }
+        return kotlin.runCatching { emptyList() }
     }
 }
