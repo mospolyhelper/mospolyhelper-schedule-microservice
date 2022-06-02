@@ -16,11 +16,13 @@ class AuthRepositoryImpl(
 
     override suspend fun getToken(login: String, password: String): Result<String> {
         return runCatching {
-            val lkToken = service.getToken(login, password).token
-            JWT.create()
-                .withClaim(LK_TOKEN, lkToken)
-                .withExpiresAt(Date(Long.MAX_VALUE))
-                .sign(Algorithm.HMAC256(SECRET))
+            service.getToken(login, password).token.createJwt()
         }
     }
+
+    private fun String.createJwt() = JWT
+        .create()
+        .withClaim(LK_TOKEN, this)
+        .withExpiresAt(Date(Long.MAX_VALUE))
+        .sign(Algorithm.HMAC256(SECRET))
 }
