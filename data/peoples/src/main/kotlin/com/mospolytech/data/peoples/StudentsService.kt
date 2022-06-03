@@ -24,7 +24,7 @@ class StudentsService(
     }
 
     @OptIn(ExperimentalXmlUtilApi::class)
-    fun getStudents(): List<String> {
+    fun getStudents(): List<StudentData> {
         val xml = XML {
             unknownChildHandler = UnknownChildHandler { _, _, _, _, _ -> emptyList() }
         }
@@ -43,7 +43,8 @@ class StudentsService(
             .replace("m:", "")
         val students = "<Состав>[^*]*?</Состав>".toRegex()
             .findAll(inputString)
-            .map { it.value }
+            .map { xml.decodeFromString<StudentData>(it.value) }
+            .filter { it.studentStatus.name == "Является студентом" }
             .toList()
         return students
     }

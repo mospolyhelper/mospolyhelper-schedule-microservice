@@ -24,7 +24,7 @@ fun Application.peoplesRoutesV1(repository: PeoplesRepository) {
                     call.respond(repository.getStudents("", it.page))
                 }
                 get {
-                    call.respondResult(repository.getStudents())
+                    call.respond(repository.getStudents())
                 }
             }
             route("/teachers") {
@@ -42,7 +42,7 @@ fun Application.peoplesRoutesV1(repository: PeoplesRepository) {
                 authenticate(AuthConfigs.Mpu, optional = true) {
                     get {
                         val token = call.getTokenOrRespondError() ?: return@get
-                        call.respondResult(repository.getClassmates(token))
+                        call.respond(repository.getClassmates(""))
                     }
                 }
             }

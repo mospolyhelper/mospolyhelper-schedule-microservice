@@ -6,11 +6,17 @@ import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.peoples.repository.PeoplesRepository
 
 class PeoplesRepositoryImpl(
-    private val studentsService: StudentsService,
-    private val teachersService: TeachersService
+    studentsService: StudentsService,
+    teachersService: TeachersService
 ): PeoplesRepository {
 
     private val teachersLocalCache = teachersService.getTeachers()
+        .asSequence()
+        .map { it.toModel() }
+        .distinctBy { it.id }
+        .toList()
+
+    private val studentsLocalCache = studentsService.getStudents()
         .asSequence()
         .map { it.toModel() }
         .distinctBy { it.id }
@@ -46,13 +52,35 @@ class PeoplesRepositoryImpl(
         return teachersLocalCache
     }
 
-    override suspend fun getStudents(name: String, page: Int) = kotlin.runCatching {
-        PagingDTO(1,1,1,emptyList<Student>())
+    override fun getStudents(name: String, page: Int, pageSize: Int): PagingDTO<Student> {
+        val pages = studentsLocalCache
+            .asSequence()
+            .filter { it.getFullName().contains(name, ignoreCase = true) }
+            .windowed(pageSize, pageSize, partialWindows = true)
+            .toList()
+
+        val fixedPage = (page - 1).let {
+            when {
+                pages.isEmpty() -> null
+                it < 1 -> 0
+                it > pages.lastIndex -> null
+                else -> it
+            }
+        }
+
+        val data = if (fixedPage == null) emptyList() else pages[fixedPage]
+
+        return PagingDTO(
+            count = data.size,
+            previousPage = if (fixedPage == 0) null else fixedPage ?: pages.size,
+            nextPage = fixedPage?.let { if (fixedPage == pages.lastIndex) null else it + 2 },
+            data = data
+        )
     }
 
-    override suspend fun getStudents(): Result<List<String>> = kotlin.runCatching { studentsService.getStudents() }
+    override fun getStudents(): List<Student> = studentsLocalCache
 
-    override suspend fun getClassmates(token: String): Result<List<Student>> {
-        return kotlin.runCatching { emptyList() }
+    override fun getClassmates(group: String): List<Student> {
+        return studentsLocalCache.filter { it.group == group }
     }
 }
