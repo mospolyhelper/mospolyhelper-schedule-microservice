@@ -9,6 +9,9 @@ buildscript {
         google()
         mavenCentral()
     }
+    dependencies {
+        classpath("com.squareup.sqldelight:gradle-plugin:1.5.3")
+    }
 }
 
 val ktor_version: String by project
@@ -35,6 +38,7 @@ allprojects {
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
+    apply(plugin = "com.squareup.sqldelight")
 
     dependencies {
         implementation("io.ktor:ktor-server-auth:$ktor_version")
