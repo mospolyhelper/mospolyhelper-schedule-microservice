@@ -8,13 +8,13 @@ import com.mospolytech.domain.base.utils.converters.LocalDateConverter.encode
 import com.mospolytech.domain.peoples.model.EducationForm
 import com.mospolytech.domain.peoples.model.Student
 import com.mospolytech.domain.peoples.model.Teacher
-import com.mospolytech.domain.peoples.model.toForm
 import io.ktor.server.config.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import kotlin.math.ceil
 
 class PeoplesDb(config: ApplicationConfig) {
 
@@ -53,7 +53,7 @@ class PeoplesDb(config: ApplicationConfig) {
         transaction {
             val count = Teachers.select { Teachers.name.lowerCase() like "%${query.lowercase()}%" }.count().toInt()
             val lastPageSize = if (count % pageSize != 0) count % pageSize else page
-            val pagesCount = count / pageSize + 1
+            val pagesCount = count / pageSize + ceil(count.toDouble() / pageSize).toInt()
             val offset = when {
                 count < 0 -> 0
                 count < pageSize * page -> count - lastPageSize
@@ -61,6 +61,7 @@ class PeoplesDb(config: ApplicationConfig) {
             }.toLong()
             val previousPage = when {
                 page <= 1 -> null
+                pagesCount <= 1 -> null
                 page > pagesCount -> pagesCount - 1
                 else -> page - 1
             }
@@ -85,7 +86,7 @@ class PeoplesDb(config: ApplicationConfig) {
         transaction {
             val count = Students.select { (Students.group like query) or (Students.secondName.lowerCase() like "%${query.lowercase()}%") }.count().toInt()
             val lastPageSize = if (count % pageSize != 0) count % pageSize else page
-            val pagesCount = count / pageSize + 1
+            val pagesCount = count / pageSize + ceil(count.toDouble() / pageSize).toInt()
             val offset = when {
                 count < 0 -> 0
                 count < pageSize * page -> count - lastPageSize
@@ -93,12 +94,13 @@ class PeoplesDb(config: ApplicationConfig) {
             }.toLong()
             val previousPage = when {
                 page <= 1 -> null
+                pagesCount <= 1 -> null
                 page > pagesCount -> pagesCount - 1
                 else -> page - 1
             }
             val nextPage = when {
-                page <= 1 -> 2
                 page >= pagesCount -> null
+                page <= 1 -> 2
                 else -> page + 1
             }
             val list = Students.select { (Students.group like query) or (Students.secondName.lowerCase() like "%${query.lowercase()}%") }

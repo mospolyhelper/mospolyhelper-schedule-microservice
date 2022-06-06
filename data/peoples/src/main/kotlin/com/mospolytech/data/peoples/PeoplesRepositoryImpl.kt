@@ -4,6 +4,7 @@ import com.mospolytech.domain.base.model.PagingDTO
 import com.mospolytech.domain.peoples.model.Student
 import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.peoples.repository.PeoplesRepository
+import com.mospolytech.domain.personal.repository.PersonalRepository
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.exposed.dao.id.IntIdTable
@@ -13,7 +14,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 class PeoplesRepositoryImpl(
     studentsService: StudentsService,
     teachersService: TeachersService,
-    private val peoplesDb: PeoplesDb
+    private val peoplesDb: PeoplesDb,
+    private val personalRepository: PersonalRepository
 ): PeoplesRepository {
 
     private val teachersLocalCache by lazy {
@@ -42,8 +44,10 @@ class PeoplesRepositoryImpl(
 
     override suspend fun getStudents() = peoplesDb.getStudents()
 
-    override suspend fun getClassmates(group: String): List<Student> {
-        return studentsLocalCache.filter { it.group == group }
+    override suspend fun getClassmates(token: String): Result<List<Student>> {
+        return personalRepository.getPersonalInfo(token).mapCatching {
+            getStudents(it.group, 1, 10000).data
+        }
     }
 
     override suspend fun updateData() {

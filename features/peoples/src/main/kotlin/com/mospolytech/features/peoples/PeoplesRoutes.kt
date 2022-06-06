@@ -16,36 +16,48 @@ fun Application.peoplesRoutesV1(repository: PeoplesRepository) {
             route("/peoples") {
                 route("/students") {
                     get<NameRequest> {
+                        call.getTokenOrRespondError() ?: return@get
                         call.respond(repository.getStudents(it.name, it.page, it.pageSize))
                     }
                     get<NoNameRequest> {
+                        call.getTokenOrRespondError() ?: return@get
                         call.respond(repository.getStudents(it.name, it.page, it.pageSize))
                     }
                     get<Empty> {
+                        call.getTokenOrRespondError() ?: return@get
                         call.respond(repository.getStudents())
                     }
                     get {
+                        call.getTokenOrRespondError() ?: return@get
                         call.respond(repository.getStudents())
                     }
                 }
                 route("/teachers") {
                     get<NameRequest> {
+                        call.getTokenOrRespondError() ?: return@get
                         call.respond(repository.getTeachers(it.name, it.page, it.pageSize))
                     }
                     get<NoNameRequest> {
+                        call.getTokenOrRespondError() ?: return@get
                         call.respond(repository.getTeachers(it.name, it.page, it.pageSize))
                     }
                     get<Empty> {
+                        call.getTokenOrRespondError() ?: return@get
                         call.respond(repository.getTeachers())
                     }
                     get {
+                        call.getTokenOrRespondError() ?: return@get
                         call.respond(repository.getTeachers())
                     }
                 }
                 route("/classmates") {
                     get {
                         val token = call.getTokenOrRespondError() ?: return@get
-                        call.respond(repository.getClassmates(token))
+                        call.respondResult(repository.getClassmates(token))
+                    }
+                    get<Empty> {
+                        val token = call.getTokenOrRespondError() ?: return@get
+                        call.respondResult(repository.getClassmates(token))
                     }
                 }
                 route("/update") {

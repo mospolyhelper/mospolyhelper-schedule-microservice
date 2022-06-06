@@ -7,7 +7,7 @@ import com.mospolytech.domain.peoples.model.Teacher
 interface PeoplesRepository {
     suspend fun getTeachers(name: String = "", page: Int = 1, pageSize: Int = 100): PagingDTO<Teacher>
     suspend fun getStudents(name: String = "", page: Int = 1, pageSize: Int = 100): PagingDTO<Student>
-    suspend fun getClassmates(group: String): List<Student>
+    suspend fun getClassmates(token: String): Result<List<Student>>
     suspend fun getTeachers(): List<Teacher>
     suspend fun getStudents(): List<Student>
     suspend fun updateData()
