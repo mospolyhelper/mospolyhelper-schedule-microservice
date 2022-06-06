@@ -53,40 +53,63 @@ class PeoplesDb(config: ApplicationConfig) {
         transaction {
             val count = Teachers.select { Teachers.name.lowerCase() like "%${query.lowercase()}%" }.count().toInt()
             val lastPageSize = if (count % pageSize != 0) count % pageSize else page
-            val pagesCount = count / pageSize
+            val pagesCount = count / pageSize + 1
             val offset = when {
                 count < 0 -> 0
                 count < pageSize * page -> count - lastPageSize
                 else -> (page - 1) * pageSize
             }.toLong()
+            val previousPage = when {
+                page <= 1 -> null
+                page > pagesCount -> pagesCount - 1
+                else -> page - 1
+            }
+            val nextPage = when {
+                page <= 1 -> 2
+                page >= pagesCount -> null
+                else -> page + 1
+            }
             val list = Teachers.select { Teachers.name.lowerCase() like "%${query.lowercase()}%" }
-                    .limit(pageSize, offset)
-                    .map { it.toTeacher() }
+                .orderBy(Teachers.guid, SortOrder.DESC)
+                .limit(pageSize, offset)
+                .map { it.toTeacher() }
             PagingDTO(
                 count = list.size,
-                previousPage = if (page <= 1) null else page - 1,
-                nextPage = if (page < pagesCount) page + 1 else null,
+                previousPage = previousPage,
+                nextPage = nextPage,
                 data = list
             )
         }
     }
     suspend fun getStudentsPaging(query: String, pageSize: Int, page: Int) = withContext(Dispatchers.IO) {
         transaction {
-            val count = Students.select { (Students.group like query) or (Students.secondName like "%$query%") }.count().toInt()
+            val count = Students.select { (Students.group like query) or (Students.secondName.lowerCase() like "%${query.lowercase()}%") }.count().toInt()
             val lastPageSize = if (count % pageSize != 0) count % pageSize else page
-            val pagesCount = count / pageSize
+            val pagesCount = count / pageSize + 1
             val offset = when {
                 count < 0 -> 0
                 count < pageSize * page -> count - lastPageSize
                 else -> (page - 1) * pageSize
             }.toLong()
-            val list = Students.select { (Students.group like query) or (Students.secondName like "%$query%") }
+            val previousPage = when {
+                page <= 1 -> null
+                page > pagesCount -> pagesCount - 1
+                else -> page - 1
+            }
+            val nextPage = when {
+                page <= 1 -> 2
+                page >= pagesCount -> null
+                else -> page + 1
+            }
+            val list = Students.select { (Students.group like query) or (Students.secondName.lowerCase() like "%${query.lowercase()}%") }
+                .orderBy(Students.secondName, SortOrder.ASC)
                 .limit(pageSize, offset)
                 .map { it.toStudent() }
+                .sortedBy { it.secondName }
             PagingDTO(
                 count = list.size,
-                previousPage = if (page <= 1) null else page - 1,
-                nextPage = if (page < pagesCount) page + 1 else null,
+                previousPage = previousPage,
+                nextPage = nextPage,
                 data = list
             )
         }
