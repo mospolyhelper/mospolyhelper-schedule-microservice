@@ -1,12 +1,16 @@
 package com.mospolytech.data.peoples
 
+import com.mospolytech.domain.base.model.Department
+import com.mospolytech.domain.base.model.EducationType
+import com.mospolytech.domain.base.model.PagingDTO
+import com.mospolytech.domain.base.utils.converters.LocalDateConverter.decode
 import com.mospolytech.domain.base.utils.converters.LocalDateConverter.encode
+import com.mospolytech.domain.peoples.model.EducationForm
 import com.mospolytech.domain.peoples.model.Student
 import com.mospolytech.domain.peoples.model.Teacher
+import com.mospolytech.domain.peoples.model.toForm
 import io.ktor.server.config.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.*
@@ -38,14 +42,53 @@ class PeoplesDb(config: ApplicationConfig) {
     }
 
     suspend fun getStudents() = withContext(Dispatchers.IO) {
-        transaction {
-            Students.selectAll().toList()
-        }
+        transaction { Students.selectAll().map { it.toStudent() } }
     }
 
     suspend fun getTeachers() = withContext(Dispatchers.IO) {
+        transaction { Teachers.selectAll().map { it.toTeacher() } }
+    }
+
+    suspend fun getTeachersPaging(query: String, pageSize: Int, page: Int) = withContext(Dispatchers.IO) {
         transaction {
-            Teachers.selectAll().toList()
+            val count = Teachers.select { Teachers.name.lowerCase() like "%${query.lowercase()}%" }.count().toInt()
+            val lastPageSize = if (count % pageSize != 0) count % pageSize else page
+            val pagesCount = count / pageSize
+            val offset = when {
+                count < 0 -> 0
+                count < pageSize * page -> count - lastPageSize
+                else -> (page - 1) * pageSize
+            }.toLong()
+            val list = Teachers.select { Teachers.name.lowerCase() like "%${query.lowercase()}%" }
+                    .limit(pageSize, offset)
+                    .map { it.toTeacher() }
+            PagingDTO(
+                count = list.size,
+                previousPage = if (page <= 1) null else page - 1,
+                nextPage = if (page < pagesCount) page + 1 else null,
+                data = list
+            )
+        }
+    }
+    suspend fun getStudentsPaging(query: String, pageSize: Int, page: Int) = withContext(Dispatchers.IO) {
+        transaction {
+            val count = Students.select { (Students.group like query) or (Students.secondName like "%$query%") }.count().toInt()
+            val lastPageSize = if (count % pageSize != 0) count % pageSize else page
+            val pagesCount = count / pageSize
+            val offset = when {
+                count < 0 -> 0
+                count < pageSize * page -> count - lastPageSize
+                else -> (page - 1) * pageSize
+            }.toLong()
+            val list = Students.select { (Students.group like query) or (Students.secondName like "%$query%") }
+                .limit(pageSize, offset)
+                .map { it.toStudent() }
+            PagingDTO(
+                count = list.size,
+                previousPage = if (page <= 1) null else page - 1,
+                nextPage = if (page < pagesCount) page + 1 else null,
+                data = list
+            )
         }
     }
 
@@ -70,7 +113,7 @@ class PeoplesDb(config: ApplicationConfig) {
                 it[direction] = student.direction
                 it[specialization] = student.specialization
                 it[educationType] = student.educationType?.name
-                it[educationForm] = student.educationType?.name
+                it[educationForm] = student.educationForm?.name
                 it[payment] = student.payment
                 it[course] = student.course
                 it[group] = student.group
@@ -103,55 +146,51 @@ class PeoplesDb(config: ApplicationConfig) {
     }
 
 
-//    private fun ResultRow.toTeacher(): Teacher {
-//        return Teacher(
-//            id = this.fieldIndex,
-//            name = name,
-//            avatar = "https://e.mospolytech.ru/old/img/no_avatar.jpg",
-//            dialogId = null,
-//            stuffType = stuffType,
-//            birthday = try {
-//                LocalDate.parse(birthDate, dateFormatter)
-//            } catch (e: Throwable) {
-//                null
-//            },
-//            grade = post,
-//            departmentParent = Department(
-//                id = departmentParentGuid,
-//                title = departmentParent
-//            ),
-//            department = if (department != null && departmentGuid != null) Department(
-//                id = departmentGuid,
-//                title = department
-//            ) else null,
-//            sex = Sex,
-//            email = email,
-//            additionalInfo = null
-//        )
-//    }
-//
-//    private fun ResultRow.toStudent(): Student {
-//        return Student(
-//            id = studentInfo.id,
-//            firstName = studentInfo.firstName,
-//            secondName = studentInfo.secondName,
-//            surname = studentInfo.surname,
-//            sex = studentInfo.sex,
-//            avatar = "https://e.mospolytech.ru/old/img/no_avatar.jpg",
-//            birthday = date,
-//            faculty = studentFacult.name,
-//            direction = studentDir.name,
-//            specialization = studentSpec.name.ifEmpty { null },
-//            educationForm = educationForm,
-//            educationType = educationType,
-//            payment = payment,
-//            course = studentEducationCourse.name.toIntOrNull(),
-//            group = studentEducationGroup.name.ifEmpty { null },
-//            years = studentEducationYear.name,
-//            dialogId = null,
-//            additionalInfo = null,
-//        )
-//    }
+    private fun ResultRow.toTeacher(): Teacher {
+        val departmentParent = this[Teachers.departmentParentId]?.let {
+            Department(this[Teachers.departmentParentId]!!, this[Teachers.departmentParent]!!)
+        }
+        val department = this[Teachers.departmentId]?.let {
+            Department(this[Teachers.departmentId]!!, this[Teachers.department]!!)
+        }
+        return Teacher(
+            id = this[Teachers.guid],
+            name = this[Teachers.name],
+            avatar = this[Teachers.avatar],
+            dialogId = this[Teachers.dialogId],
+            stuffType = this[Teachers.stuffType],
+            birthday = this[Teachers.birthday]?.decode(),
+            grade = this[Teachers.grade],
+            departmentParent = departmentParent,
+            department = department,
+            sex = this[Teachers.sex],
+            email = this[Teachers.email],
+            additionalInfo = this[Teachers.additionalInfo]
+        )
+    }
+
+    private fun ResultRow.toStudent(): Student {
+        return Student(
+            id = this[Students.guid],
+            firstName = this[Students.firstName],
+            secondName = this[Students.secondName],
+            surname = this[Students.surname],
+            sex = this[Students.sex],
+            avatar = this[Students.avatar],
+            birthday = this[Students.birthday]?.decode(),
+            faculty = this[Students.faculty],
+            direction = this[Students.direction],
+            specialization = this[Students.specialization],
+            educationForm = this[Students.educationForm]?.let(EducationForm::valueOf),
+            educationType = this[Students.educationType]?.let(EducationType::valueOf),
+            payment = this[Students.payment],
+            course = this[Students.course],
+            group = this[Students.group],
+            years = this[Students.years],
+            dialogId =  this[Students.dialogId],
+            additionalInfo =  this[Students.additionalInfo],
+        )
+    }
 
     private object Students : IntIdTable() {
         val guid = text("guid")

@@ -17,9 +17,9 @@ object LocalDateConverter: KSerializer<LocalDate> {
 
     override fun deserialize(decoder: Decoder): LocalDate {
         val string = decoder.decodeString()
-        return LocalDate.from(dateFormatter.parse(string))
+        return string.decode()
     }
 
-    fun LocalDate.encode() = dateFormatter.format(this)
-    fun String.decode() = dateFormatter.parse(this)
+    fun LocalDate.encode(): String = dateFormatter.format(this)
+    fun String.decode(): LocalDate = LocalDate.from(dateFormatter.parse(this))
 }

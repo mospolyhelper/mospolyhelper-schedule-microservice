@@ -5,11 +5,10 @@ import com.mospolytech.domain.peoples.model.Student
 import com.mospolytech.domain.peoples.model.Teacher
 
 interface PeoplesRepository {
-    fun getTeachers(name: String = "", page: Int = 1, pageSize: Int = 100): PagingDTO<Teacher>
-    fun getStudents(name: String = "", page: Int = 1, pageSize: Int = 100): PagingDTO<Student>
-    fun getClassmates(group: String): List<Student>
-    fun getTeachers(): List<Teacher>
-    fun getStudents(): List<Student>
-
-    fun updateData()
+    suspend fun getTeachers(name: String = "", page: Int = 1, pageSize: Int = 100): PagingDTO<Teacher>
+    suspend fun getStudents(name: String = "", page: Int = 1, pageSize: Int = 100): PagingDTO<Student>
+    suspend fun getClassmates(group: String): List<Student>
+    suspend fun getTeachers(): List<Teacher>
+    suspend fun getStudents(): List<Student>
+    suspend fun updateData()
 }
