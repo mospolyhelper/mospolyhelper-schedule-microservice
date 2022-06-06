@@ -10,8 +10,9 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 
 fun Application.configureSecurity() {
+    val secret = environment.config.propertyOrNull("ktor.jwt_secret")?.getString().orEmpty()
     install(Authentication) {
-        mpuAuth(AuthConfigs.Mpu) {
+        mpuAuth(AuthConfigs.Mpu, secret) {
             validate {
                 MpuPrincipal(it.payload.getClaim("mospolytechLkToken").asString())
             }

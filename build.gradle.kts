@@ -9,9 +9,6 @@ buildscript {
         google()
         mavenCentral()
     }
-    dependencies {
-        classpath("com.squareup.sqldelight:gradle-plugin:1.5.3")
-    }
 }
 
 val ktor_version: String by project
@@ -20,6 +17,7 @@ val logback_version: String by project
 val prometeus_version: String by project
 val koin_version: String by project
 val exposed_version: String by project
+val xmlutil_version: String by project
 
 allprojects {
     repositories {
@@ -38,7 +36,6 @@ allprojects {
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
-    apply(plugin = "com.squareup.sqldelight")
 
     dependencies {
         implementation("io.ktor:ktor-server-auth:$ktor_version")
@@ -74,11 +71,13 @@ subprojects {
         implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
         implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
 
-        implementation("io.github.pdvrieze.xmlutil:core:0.84.2")
-        implementation("io.github.pdvrieze.xmlutil:serialization:0.84.2")
+        implementation("io.github.pdvrieze.xmlutil:core:$xmlutil_version")
+        implementation("io.github.pdvrieze.xmlutil:serialization:$xmlutil_version")
 
+        implementation("org.postgresql:postgresql:42.2.2")
 
         testImplementation("io.ktor:ktor-server-tests:$ktor_version")
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     }
 }
+

@@ -10,7 +10,7 @@ data class Student(
     val id: String,
     val firstName: String,
     val secondName: String,
-    val surname: String,
+    val surname: String?,
     val sex: String,
     val avatar: String?,
     @Serializable(LocalDateConverter::class)
@@ -23,7 +23,7 @@ data class Student(
     val payment: Boolean,
     val course: Int?,
     val group: String?,
-    val years: String,
+    val years: String?,
     val dialogId: String?,
     val additionalInfo: String?
 ) {

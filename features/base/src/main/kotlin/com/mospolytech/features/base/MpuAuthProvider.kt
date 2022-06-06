@@ -32,7 +32,7 @@ class MpuPrincipal(val token: String) : Principal
 /**
  * JWT authentication provider that will be registered with the specified [name]
  */
-class MpuAuthenticationProvider(config: Configuration) : AuthenticationProvider(config) {
+class MpuAuthenticationProvider(private val secret: String, config: Configuration) : AuthenticationProvider(config) {
     internal val authHeader: (ApplicationCall) -> HttpAuthHeader? = config.authHeader
     internal val authenticationFunction = config.authenticationFunction
     internal val challengeFunction: MpuAuthChallengeFunction = config.challenge
@@ -40,7 +40,7 @@ class MpuAuthenticationProvider(config: Configuration) : AuthenticationProvider(
     /**
      * JWT auth provider configuration
      */
-    class Configuration(name: String?) : AuthenticationProvider.Config(name) {
+    class Configuration(private val secret: String, name: String?) : AuthenticationProvider.Config(name) {
         internal var authenticationFunction: AuthenticationFunction<MpuCredential> = {
             throw NotImplementedError(
                 "JWT auth validate function is not specified. Use jwt { validate { ... } } to fix."
@@ -65,7 +65,7 @@ class MpuAuthenticationProvider(config: Configuration) : AuthenticationProvider(
             authenticationFunction = validate
         }
 
-        internal fun build() = MpuAuthenticationProvider(this)
+        internal fun build() = MpuAuthenticationProvider(secret, this)
     }
 
     override suspend fun onAuthenticate(context: AuthenticationContext) {
@@ -78,8 +78,8 @@ class MpuAuthenticationProvider(config: Configuration) : AuthenticationProvider(
         }
 
         try {
-            val principal = verifyAndValidate(call, token) {
-                authenticationFunction(this, MpuCredential(token.getBlob()!!))
+            val principal = verifyAndValidate(secret, call, token) {
+                authenticationFunction(this, MpuCredential(token.getBlob(secret)!!))
             }
             if (principal != null) {
                 context.principal(principal)
@@ -99,10 +99,11 @@ class MpuAuthenticationProvider(config: Configuration) : AuthenticationProvider(
 }
 
 fun AuthenticationConfig.mpuAuth(
-    name: String? = null,
+    name: String?,
+    jwtSecret: String,
     configure: MpuAuthenticationProvider.Configuration.() -> Unit
 ) {
-    val provider = MpuAuthenticationProvider.Configuration(name).apply(configure).build()
+    val provider = MpuAuthenticationProvider.Configuration(jwtSecret, name).apply(configure).build()
     register(provider)
 }
 
@@ -129,14 +130,13 @@ private fun AuthenticationContext.bearerChallenge(
 }
 
 private suspend fun verifyAndValidate(
+    secret: String,
     call: ApplicationCall,
     token: HttpAuthHeader,
     validate: suspend ApplicationCall.(Payload) -> Principal?
 ): Principal? {
     val jwt = try {
-        // There is no check
-        //if (token.toString() == "qwerqw") token.getBlob() else null
-        token.getBlob()
+        token.getBlob(secret)
     } catch (ex: JWTVerificationException) {
         CustomLogger.trace("Token verification failed: {}", ex.message)
         null
@@ -144,15 +144,15 @@ private suspend fun verifyAndValidate(
     return validate(call, jwt)
 }
 
-private fun HttpAuthHeader.getBlob() = when {
+private fun HttpAuthHeader.getBlob(secret: String) = when {
     this is HttpAuthHeader.Single && authScheme == "Bearer" -> {
-        blob.decodeJwtToken().parse()
+        blob.decodeJwtToken(secret).parse()
     }
     else -> null
 }
 
-private fun String.decodeJwtToken() = JWT
-    .require(Algorithm.HMAC256("secret_key")) //todo move secret key
+private fun String.decodeJwtToken(secret: String) = JWT
+    .require(Algorithm.HMAC256(secret))
     .build()
     .verify(this)
 

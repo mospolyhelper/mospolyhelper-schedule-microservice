@@ -10,4 +10,6 @@ interface PeoplesRepository {
     fun getClassmates(group: String): List<Student>
     fun getTeachers(): List<Teacher>
     fun getStudents(): List<Student>
+
+    fun updateData()
 }

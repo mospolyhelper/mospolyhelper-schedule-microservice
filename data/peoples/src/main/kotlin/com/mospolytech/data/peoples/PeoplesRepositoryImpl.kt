@@ -4,23 +4,31 @@ import com.mospolytech.domain.base.model.PagingDTO
 import com.mospolytech.domain.peoples.model.Student
 import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.peoples.repository.PeoplesRepository
+import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class PeoplesRepositoryImpl(
     studentsService: StudentsService,
-    teachersService: TeachersService
+    teachersService: TeachersService,
+    private val peoplesDb: PeoplesDb
 ): PeoplesRepository {
 
-    private val teachersLocalCache = teachersService.getTeachers()
-        .asSequence()
-        .map { it.toModel() }
-        .distinctBy { it.id }
-        .toList()
+    private val teachersLocalCache by lazy {
+        teachersService.getTeachers()
+            .asSequence()
+            .map { it.toModel() }
+            .distinctBy { it.id }
+            .toList()
+    }
 
-    private val studentsLocalCache = studentsService.getStudents()
-        .asSequence()
-        .map { it.toModel() }
-        .distinctBy { it.id }
-        .toList()
+    private val studentsLocalCache by lazy {
+        studentsService.getStudents()
+            .asSequence()
+            .map { it.toModel() }
+            .distinctBy { it.id }
+            .toList()
+    }
 
     override fun getTeachers(name: String, page: Int, pageSize: Int): PagingDTO<Teacher> {
         val pages = teachersLocalCache
@@ -83,4 +91,11 @@ class PeoplesRepositoryImpl(
     override fun getClassmates(group: String): List<Student> {
         return studentsLocalCache.filter { it.group == group }
     }
+
+    override fun updateData() {
+        peoplesDb.clearData()
+        teachersLocalCache.forEach(peoplesDb::addTeacher)
+        studentsLocalCache.forEach(peoplesDb::addStudent)
+    }
+
 }

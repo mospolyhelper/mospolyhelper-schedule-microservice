@@ -1,5 +1,7 @@
 package com.mospolytech.features.auth
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import com.mospolytech.domain.auth.AuthRepository
 import com.mospolytech.domain.personal.repository.PersonalRepository
 import com.mospolytech.features.base.AuthConfigs
@@ -11,15 +13,18 @@ import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import io.ktor.util.*
 import kotlinx.serialization.Serializable
+import java.util.*
 
+private const val LK_TOKEN = "mospolytechLkToken"
 fun Application.authRoutesV1(
     repository: AuthRepository,
     personalRepository: PersonalRepository
 ) {
     routing {
+        val secret = environment?.config?.propertyOrNull("ktor.jwt_secret")?.getString().orEmpty()
         post("login") {
             val loginRequest = call.receive<LoginRequest>()
-            val token = repository.getToken(loginRequest.login, loginRequest.password)
+            val token = repository.getToken(loginRequest.login, loginRequest.password).mapCatching { it.createJwt(secret) }
             call.respondResult(token)
         }
 
@@ -34,6 +39,12 @@ fun Application.authRoutesV1(
         }
     }
 }
+
+private fun String.createJwt(secretKey: String) = JWT
+    .create()
+    .withClaim(LK_TOKEN, this)
+    .withExpiresAt(Date(Long.MAX_VALUE))
+    .sign(Algorithm.HMAC256(secretKey))
 
 enum class ValidationFields {
     UserType,

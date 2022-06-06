@@ -42,8 +42,14 @@ fun Application.peoplesRoutesV1(repository: PeoplesRepository) {
                 authenticate(AuthConfigs.Mpu, optional = true) {
                     get {
                         val token = call.getTokenOrRespondError() ?: return@get
-                        call.respond(repository.getClassmates(""))
+                        call.respond(repository.getClassmates(token))
                     }
+                }
+            }
+            route("/update") {
+                get {
+                    repository.updateData()
+                    call.respond("updated")
                 }
             }
         }

@@ -12,12 +12,14 @@ object LocalDateConverter: KSerializer<LocalDate> {
     private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 
     override fun serialize(encoder: Encoder, value: LocalDate) {
-        val string = dateFormatter.format(value)
-        encoder.encodeString(string)
+        encoder.encodeString(value.encode())
     }
 
     override fun deserialize(decoder: Decoder): LocalDate {
         val string = decoder.decodeString()
         return LocalDate.from(dateFormatter.parse(string))
     }
+
+    fun LocalDate.encode() = dateFormatter.format(this)
+    fun String.decode() = dateFormatter.parse(this)
 }
