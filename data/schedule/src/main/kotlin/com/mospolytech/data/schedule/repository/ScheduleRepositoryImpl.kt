@@ -1,5 +1,6 @@
 package com.mospolytech.data.schedule.repository
 
+import com.mospolytech.domain.peoples.model.description
 import com.mospolytech.domain.schedule.model.ScheduleComplexFilter
 import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
 import com.mospolytech.domain.schedule.model.pack.CompactSchedule
@@ -50,7 +51,7 @@ class ScheduleRepositoryImpl(
                     .flatMap { it.lesson.teachersId }
                     .mapNotNull { teachersRepository.get(it) }
                     .toSortedSet()
-                    .map { ScheduleSourceFull(sourceType, it.id, it.name, "", "") }
+                    .map { ScheduleSourceFull(sourceType, it.id, it.name, it.description, "") }
             }
             ScheduleSources.Student -> {
                 emptyList()

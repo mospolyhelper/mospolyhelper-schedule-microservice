@@ -1,15 +1,14 @@
-package com.mospolytech.data.peoples
+package com.mospolytech.data.peoples.service
 
-import com.mospolytech.domain.base.model.PagingDTO
+import com.mospolytech.data.peoples.model.EmployeeInfo
 import kotlinx.serialization.decodeFromString
 import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
-import nl.adaptivity.xmlutil.XmlDeclMode
 import nl.adaptivity.xmlutil.serialization.UnknownChildHandler
 import nl.adaptivity.xmlutil.serialization.XML
 
 class TeachersService {
     @OptIn(ExperimentalXmlUtilApi::class)
-    fun getTeachers(): List<EmployeeInfo> {
+    fun getTeachers(): Sequence<EmployeeInfo> {
         val xml = XML {
             unknownChildHandler = UnknownChildHandler { _, _, _, _, _ -> emptyList() }
         }
@@ -32,7 +31,7 @@ class TeachersService {
             .findAll(inputString)
             .map { xml.decodeFromString<EmployeeInfo>(it.value) }
             .filter { it.Состояние == "Работа" }
-            .toList()
+
         return teachers
     }
 }

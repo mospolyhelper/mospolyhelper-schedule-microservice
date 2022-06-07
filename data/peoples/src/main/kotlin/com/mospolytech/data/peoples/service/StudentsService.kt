@@ -1,12 +1,7 @@
-package com.mospolytech.data.peoples
+package com.mospolytech.data.peoples.service
 
-import com.mospolytech.domain.base.model.EducationType
-import com.mospolytech.domain.base.model.PagingDTO
-import com.mospolytech.domain.peoples.model.Student
-import com.mospolytech.domain.peoples.model.toForm
+import com.mospolytech.data.peoples.model.xml.StudentData
 import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
 import kotlinx.serialization.decodeFromString
 import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
 import nl.adaptivity.xmlutil.serialization.UnknownChildHandler
@@ -24,7 +19,7 @@ class StudentsService(
     }
 
     @OptIn(ExperimentalXmlUtilApi::class)
-    fun getStudents(): List<StudentData> {
+    fun getStudents(): Sequence<StudentData> {
         val xml = XML {
             unknownChildHandler = UnknownChildHandler { _, _, _, _, _ -> emptyList() }
         }
@@ -45,7 +40,7 @@ class StudentsService(
             .findAll(inputString)
             .map { xml.decodeFromString<StudentData>(it.value) }
             .filter { it.studentStatus.name == "Является студентом" }
-            .toList()
+
         return students
     }
 

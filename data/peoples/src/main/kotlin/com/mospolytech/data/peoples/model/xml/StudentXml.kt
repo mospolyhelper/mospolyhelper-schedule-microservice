@@ -1,4 +1,4 @@
-package com.mospolytech.data.peoples
+package com.mospolytech.data.peoples.model.xml
 
 import com.mospolytech.domain.base.model.EducationType
 import com.mospolytech.domain.peoples.model.EducationForm

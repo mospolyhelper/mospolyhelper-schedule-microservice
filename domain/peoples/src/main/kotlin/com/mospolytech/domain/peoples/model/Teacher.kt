@@ -1,9 +1,8 @@
 package com.mospolytech.domain.peoples.model
 
 import com.mospolytech.domain.base.model.Department
-import com.mospolytech.domain.base.utils.converters.LocalDateConverter
+import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
-import java.time.LocalDate
 
 @Serializable
 data class Teacher(
@@ -16,8 +15,23 @@ data class Teacher(
     val department: Department?,
     val email: String?,
     val sex: String?,
-    @Serializable(LocalDateConverter::class)
     val birthday: LocalDate?,
-    val dialogId: String?,
-    val additionalInfo: String? = null
-)
+    val dialogId: String?
+) : Comparable<Teacher> {
+    override fun compareTo(other: Teacher): Int {
+        return name.compareTo(other.name)
+    }
+}
+
+val Teacher.description: String
+    get() {
+        return buildString {
+            grade?.let { append(it) }
+            var prefix = ""
+            if (isNotEmpty()) {
+                prefix = ", "
+            }
+            department?.title?.let { append(prefix + it) }
+                ?: departmentParent?.title?.let { append(prefix + it) }
+        }
+    }

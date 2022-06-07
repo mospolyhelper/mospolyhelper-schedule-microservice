@@ -19,4 +19,6 @@ dependencies {
     implementation(project(Modules.Features.Applications))
     implementation(project(Modules.Features.Payments))
     implementation(project(Modules.Features.Personal))
+
+    implementation(projects.data.common)
 }

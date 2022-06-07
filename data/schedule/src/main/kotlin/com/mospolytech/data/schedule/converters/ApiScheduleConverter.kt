@@ -25,7 +25,7 @@ class ApiScheduleConverter(
         private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
     }
 
-    fun convertToLessons(scheduleResponse: ScheduleResponse): List<CompactLessonAndTimes> {
+    suspend fun convertToLessons(scheduleResponse: ScheduleResponse): List<CompactLessonAndTimes> {
         val lessons = scheduleResponse.contents.values.flatMap {
             convertLessons(
                 it.grid.toList(),
@@ -36,7 +36,7 @@ class ApiScheduleConverter(
         return lessons
     }
 
-    fun convertToLessons(scheduleResponse: ScheduleSessionResponse): List<CompactLessonAndTimes> {
+    suspend fun convertToLessons(scheduleResponse: ScheduleSessionResponse): List<CompactLessonAndTimes> {
         val lessons = scheduleResponse.contents.flatMap {
             convertLessons(
                 it.grid.toList(),
@@ -47,7 +47,7 @@ class ApiScheduleConverter(
         return lessons
     }
 
-    private fun convertLessons(
+    private suspend fun convertLessons(
         days: List<Pair<String, Map<String, List<ApiLesson>>>>,
         groups: List<ApiGroup>,
         isByDate: Boolean
@@ -111,7 +111,7 @@ class ApiScheduleConverter(
             day.plusDays(daysToAdd - 7L)
     }
 
-    private fun convertLessonDateTimes(
+    private suspend fun convertLessonDateTimes(
         apiLesson: ApiLesson,
         groups: List<ApiGroup>,
         dates: Pair<LocalDate, LocalDate?>,
@@ -143,17 +143,17 @@ class ApiScheduleConverter(
         )
     }
 
-    private fun convertLesson(apiLesson: ApiLesson, apiGroups: List<ApiGroup>): CompactLessonFeatures {
+    private suspend fun convertLesson(apiLesson: ApiLesson, apiGroups: List<ApiGroup>): CompactLessonFeatures {
         val subject = lessonSubjectsConverter.convertTitle(apiLesson.sbj)
         val type = lessonTypeConverter.convertType(apiLesson.type, apiLesson.sbj)
-        val teachers = teachersConverter.convertTeachers(apiLesson.teacher)
+        val teacherIds = teachersConverter.convertTeachers(apiLesson.teacher)
         val groups = groupsConverter.convertGroups(apiGroups)
         val places = placesConverter.convertPlaces(apiLesson.auditories)
 
         return CompactLessonFeatures(
             typeId = type.id,
             subjectId = subject.id,
-            teachersId = teachers.map { it.id },
+            teachersId = teacherIds,
             groupsId = groups.map { it.id },
             placesId = places.map { it.id },
         )

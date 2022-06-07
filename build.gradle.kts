@@ -18,6 +18,8 @@ val prometeus_version: String by project
 val koin_version: String by project
 val exposed_version: String by project
 val xmlutil_version: String by project
+val kotlinx_datetime: String by project
+val postgresql: String by project
 
 allprojects {
     repositories {
@@ -70,11 +72,14 @@ subprojects {
         implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
         implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
         implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
+        implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposed_version")
 
         implementation("io.github.pdvrieze.xmlutil:core:$xmlutil_version")
         implementation("io.github.pdvrieze.xmlutil:serialization:$xmlutil_version")
 
-        implementation("org.postgresql:postgresql:42.2.2")
+        implementation("org.postgresql:postgresql:$postgresql")
+
+        implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime")
 
         testImplementation("io.ktor:ktor-server-tests:$ktor_version")
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")

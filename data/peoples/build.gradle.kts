@@ -3,7 +3,9 @@ plugins {
 }
 
 dependencies {
-    api(project(Modules.Data.Base))
-    api(project(Modules.Data.Personal))
-    api(project(Modules.Domain.Peoples))
+    api(projects.data.base)
+    implementation(projects.data.common)
+    implementation(projects.data.personal)
+
+    implementation(projects.domain.peoples)
 }

@@ -4,7 +4,7 @@ import com.mospolytech.domain.schedule.model.group.GroupInfo
 import com.mospolytech.domain.schedule.model.lesson_subject.LessonSubjectInfo
 import com.mospolytech.domain.schedule.model.lesson_type.LessonTypeInfo
 import com.mospolytech.domain.schedule.model.place.PlaceInfo
-import com.mospolytech.domain.schedule.model.teacher.TeacherInfo
+import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.schedule.repository.*
 
 class ScheduleInfoRepositoryImpl(
@@ -14,7 +14,7 @@ class ScheduleInfoRepositoryImpl(
     private val lessonSubjectsRepository: LessonSubjectsRepository,
     private val lessonTypesRepository: LessonTypesRepository
 ) : ScheduleInfoRepository {
-    override suspend fun getTeacherInfo(id: String): Result<TeacherInfo?> {
+    override suspend fun getTeacher(id: String): Result<Teacher?> {
         return Result.success(teacherRepository.get(id))
     }
 

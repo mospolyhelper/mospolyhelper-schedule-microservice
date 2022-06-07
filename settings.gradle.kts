@@ -1,5 +1,5 @@
 rootProject.name = "mospolyhelper-web"
-
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -24,6 +24,7 @@ include(":workers:schedule")
 
 include(":data")
 include(":data:base")
+include(":data:common")
 include(":data:auth")
 include(":data:schedule")
 include(":data:performance")

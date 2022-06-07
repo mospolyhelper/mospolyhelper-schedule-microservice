@@ -12,9 +12,9 @@ data class Teacher(
     }
 
     companion object {
-        private val map = mutableMapOf<TeacherInfo, Teacher>()
+        private val map = mutableMapOf<Teacher, Teacher>()
 
-        fun from(info: TeacherInfo) =
+        fun from(info: Teacher) =
             map.getOrPut(info) {
                 Teacher(
                     id = info.id,

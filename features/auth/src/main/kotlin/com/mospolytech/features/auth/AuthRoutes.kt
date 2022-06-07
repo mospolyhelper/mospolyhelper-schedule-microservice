@@ -21,11 +21,11 @@ fun Application.authRoutesV1(
     personalRepository: PersonalRepository
 ) {
     routing {
-        val secret = environment?.config?.propertyOrNull("ktor.jwt_secret")?.getString().orEmpty()
+        val secret = environment?.config?.propertyOrNull("jwt.secret")?.getString().orEmpty()
         post("login") {
             val loginRequest = call.receive<LoginRequest>()
             val token = repository.getToken(loginRequest.login, loginRequest.password).mapCatching { it.createJwt(secret) }
-            call.respondResult(token)
+            call.respondResult(token.map { TokenResponse(it) })
         }
 
         authenticate(AuthConfigs.Mpu, optional = true) {

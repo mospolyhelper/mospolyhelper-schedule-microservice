@@ -1,8 +1,8 @@
 package com.mospolytech.domain.schedule.repository
 
-import com.mospolytech.domain.schedule.model.teacher.TeacherInfo
+import com.mospolytech.domain.peoples.model.Teacher
 
 interface TeachersRepository {
-    fun add(name: String, description: String): TeacherInfo
-    fun get(id: String): TeacherInfo?
+    suspend fun findAndGetId(name: String): String
+    fun get(id: String): Teacher?
 }

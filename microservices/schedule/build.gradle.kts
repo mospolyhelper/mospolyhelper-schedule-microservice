@@ -17,4 +17,6 @@ dependencies {
 
     implementation(project(Modules.Features.Auth))
     implementation(project(Modules.Features.Schedule))
+
+    implementation(projects.data.common)
 }

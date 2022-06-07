@@ -4,4 +4,5 @@ plugins {
 
 dependencies {
     api(project(Modules.Domain.Base))
+    implementation(project(Modules.Domain.Peoples))
 }

@@ -1,20 +1,20 @@
-package com.mospolytech.data.peoples
+package com.mospolytech.data.peoples.repository
 
-import com.mospolytech.domain.base.model.PagingDTO
+import com.mospolytech.data.peoples.model.xml.toModel
+import com.mospolytech.data.peoples.remote.StudentsRemoteDS
+import com.mospolytech.data.peoples.remote.TeachersRemoteDS
+import com.mospolytech.data.peoples.service.StudentsService
+import com.mospolytech.data.peoples.service.TeachersService
 import com.mospolytech.domain.peoples.model.Student
 import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.peoples.repository.PeoplesRepository
 import com.mospolytech.domain.personal.repository.PersonalRepository
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.transaction
 
 class PeoplesRepositoryImpl(
     studentsService: StudentsService,
     teachersService: TeachersService,
-    private val peoplesDb: PeoplesDb,
+    private val studentsDS: StudentsRemoteDS,
+    private val teachersDS: TeachersRemoteDS,
     private val personalRepository: PersonalRepository
 ): PeoplesRepository {
 
@@ -35,25 +35,30 @@ class PeoplesRepositoryImpl(
     }
 
     override suspend fun getTeachers(name: String, page: Int, pageSize: Int) =
-        peoplesDb.getTeachersPaging(name, pageSize, page)
+        teachersDS.getTeachersPaging(name, pageSize, page)
 
-    override suspend fun getTeachers() = peoplesDb.getTeachers()
+    override suspend fun getTeachers() = teachersDS.getTeachers()
+    override suspend fun getTeacher(name: String): Result<Teacher?> {
+        return kotlin.runCatching {
+            teachersDS.getTeacher(name)
+        }
+    }
 
     override suspend fun getStudents(name: String, page: Int, pageSize: Int) =
-        peoplesDb.getStudentsPaging(name, pageSize, page)
+        studentsDS.getStudentsPaging(name, pageSize, page)
 
-    override suspend fun getStudents() = peoplesDb.getStudents()
+    override suspend fun getStudents() = studentsDS.getStudents()
 
     override suspend fun getClassmates(token: String): Result<List<Student>> {
         return personalRepository.getPersonalInfo(token).mapCatching {
-            getStudents(it.group, 1, 10000).data
+            studentsDS.getStudents(it.group)
         }
     }
 
     override suspend fun updateData() {
-        peoplesDb.clearData()
-        teachersLocalCache.forEach(peoplesDb::addTeacher)
-        studentsLocalCache.forEach(peoplesDb::addStudent)
+        studentsDS.clearData()
+        teachersLocalCache.forEach(teachersDS::addTeacher)
+        studentsLocalCache.forEach(studentsDS::addStudent)
     }
 
 }

@@ -10,7 +10,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 
 fun Application.configureSecurity() {
-    val secret = environment.config.propertyOrNull("ktor.jwt_secret")?.getString().orEmpty()
+    val secret = environment.config.propertyOrNull("jwt.secret")?.getString().orEmpty()
     install(Authentication) {
         mpuAuth(AuthConfigs.Mpu, secret) {
             validate {

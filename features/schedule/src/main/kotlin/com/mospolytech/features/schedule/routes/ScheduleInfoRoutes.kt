@@ -16,7 +16,7 @@ fun Routing.scheduleInfoRoutesV1(
             get<ScheduleInfoRequest> {
                 when (it.type) {
                     ScheduleInfoObject.Group -> call.respondResult(repository.getGroupInfo(it.key))
-                    ScheduleInfoObject.Teacher -> call.respondResult(repository.getTeacherInfo(it.key))
+                    ScheduleInfoObject.Teacher -> call.respondResult(repository.getTeacher(it.key))
                     ScheduleInfoObject.Student -> call.respondResult(repository.getStudentInfo(it.key))
                     ScheduleInfoObject.Place -> call.respondResult(repository.getPlaceInfo(it.key))
                     ScheduleInfoObject.Subject -> call.respondResult(repository.getSubjectInfo(it.key))

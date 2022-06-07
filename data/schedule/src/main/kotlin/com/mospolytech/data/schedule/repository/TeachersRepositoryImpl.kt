@@ -1,42 +1,31 @@
 package com.mospolytech.data.schedule.repository
 
 import com.mospolytech.domain.peoples.repository.PeoplesRepository
-import com.mospolytech.domain.schedule.model.teacher.TeacherInfo
+import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.schedule.repository.TeachersRepository
 
 class TeachersRepositoryImpl(
     private val peoplesRepository: PeoplesRepository
 ) : TeachersRepository {
-    private val map = mutableMapOf<String, TeacherInfo>()
-    private val map2 = mutableMapOf<String, String>()
+    private val map = mutableMapOf<String, String>()
 
-    override fun add(name: String, description: String): TeacherInfo {
-        val rawId = name
-        val id = map2.get(rawId)
-        val teacher = id?.let { map.get(it) }
+    override suspend fun findAndGetId(name: String): String {
+        val id = map[name]
+        val teacher = id?.let { map[it] }
 
         if (teacher != null) return teacher
 
 
-        val teacher2 = peoplesRepository.getTeachers()
-            .firstOrNull { it.name == name }
+        val teacher2 = peoplesRepository.getTeacher(name).getOrNull()
 
-        val id2 = teacher2?.id ?: rawId
-
-        val description = teacher2
-            ?.let { it.department?.title ?: it.departmentParent?.title } ?: ""
-
+        val id2 = teacher2?.id ?: name
 
         return map.getOrPut(id2) {
-            TeacherInfo(
-                id = id2,
-                name = name,
-                description = description
-            )
+            id2
         }
     }
 
-    override fun get(id: String): TeacherInfo? {
-        return map[id]
+    override fun get(id: String): Teacher? {
+        return map[id] as? Teacher
     }
 }

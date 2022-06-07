@@ -1,14 +1,19 @@
 package com.mospolytech.data.peoples
 
+import com.mospolytech.data.peoples.remote.StudentsRemoteDS
+import com.mospolytech.data.peoples.remote.TeachersRemoteDS
+import com.mospolytech.data.peoples.repository.PeoplesRepositoryImpl
+import com.mospolytech.data.peoples.service.StudentsService
+import com.mospolytech.data.peoples.service.TeachersService
 import com.mospolytech.domain.peoples.repository.PeoplesRepository
 import org.koin.core.module.dsl.bind
-import org.koin.core.module.dsl.binds
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 val peoplesDataModule = module {
     singleOf(::TeachersService)
     singleOf(::StudentsService)
-    singleOf(::PeoplesDb)
+    singleOf(::StudentsRemoteDS)
+    singleOf(::TeachersRemoteDS)
     singleOf(::PeoplesRepositoryImpl) { bind<PeoplesRepository>() }
 }
