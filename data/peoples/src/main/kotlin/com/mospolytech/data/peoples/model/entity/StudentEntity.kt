@@ -36,7 +36,9 @@ class StudentEntity(id: EntityID<String>) : Entity<String>(id) {
     fun toModel(): Student {
         return Student(
             id = id.value,
-            name = lastName + " " + firstName + (middleName?.let { " $it" } ?: ""),
+            firstName = firstName,
+            lastName = lastName,
+            middleName = middleName,
             sex = sex,
             avatar = avatar,
             birthday = birthday,

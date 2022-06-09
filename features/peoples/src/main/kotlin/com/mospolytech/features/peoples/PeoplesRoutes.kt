@@ -1,6 +1,7 @@
 package com.mospolytech.features.peoples
 
 import com.mospolytech.domain.peoples.repository.StudentsRepository
+import com.mospolytech.domain.peoples.repository.TeachersRepository
 import com.mospolytech.features.base.AuthConfigs
 import com.mospolytech.features.base.utils.getTokenOrRespondError
 import com.mospolytech.features.base.utils.respondResult
@@ -10,59 +11,62 @@ import io.ktor.server.locations.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Application.peoplesRoutesV1(repository: StudentsRepository) {
+fun Application.peoplesRoutesV1(
+    studentsRepository: StudentsRepository,
+    teachersRepository: TeachersRepository
+) {
     routing {
         authenticate(AuthConfigs.Mpu, optional = true) {
             route("/peoples") {
                 route("/students") {
                     get<NameRequest> {
                         call.getTokenOrRespondError() ?: return@get
-                        call.respond(repository.getStudents(it.name, it.page, it.pageSize))
+                        call.respond(studentsRepository.getStudents(it.name, it.page, it.pageSize))
                     }
                     get<NoNameRequest> {
                         call.getTokenOrRespondError() ?: return@get
-                        call.respond(repository.getStudents(it.name, it.page, it.pageSize))
+                        call.respond(studentsRepository.getStudents(it.name, it.page, it.pageSize))
                     }
                     get<Empty> {
                         call.getTokenOrRespondError() ?: return@get
-                        call.respond(repository.getStudents())
+                        call.respond(studentsRepository.getStudents())
                     }
                     get {
                         call.getTokenOrRespondError() ?: return@get
-                        call.respond(repository.getStudents())
+                        call.respond(studentsRepository.getStudents())
                     }
                 }
                 route("/teachers") {
                     get<NameRequest> {
                         call.getTokenOrRespondError() ?: return@get
-                        call.respond(repository.getTeachers(it.name, it.page, it.pageSize))
+                        call.respond(teachersRepository.getTeachers(it.name, it.page, it.pageSize))
                     }
                     get<NoNameRequest> {
                         call.getTokenOrRespondError() ?: return@get
-                        call.respond(repository.getTeachers(it.name, it.page, it.pageSize))
+                        call.respond(teachersRepository.getTeachers(it.name, it.page, it.pageSize))
                     }
                     get<Empty> {
                         call.getTokenOrRespondError() ?: return@get
-                        call.respond(repository.getTeachers())
+                        call.respond(teachersRepository.getTeachers())
                     }
                     get {
                         call.getTokenOrRespondError() ?: return@get
-                        call.respond(repository.getTeachers())
+                        call.respond(teachersRepository.getTeachers())
                     }
                 }
                 route("/classmates") {
                     get {
                         val token = call.getTokenOrRespondError() ?: return@get
-                        call.respondResult(repository.getClassmates(token))
+                        call.respondResult(studentsRepository.getClassmates(token))
                     }
                     get<Empty> {
                         val token = call.getTokenOrRespondError() ?: return@get
-                        call.respondResult(repository.getClassmates(token))
+                        call.respondResult(studentsRepository.getClassmates(token))
                     }
                 }
                 route("/update") {
                     get {
-                        repository.updateData()
+                        studentsRepository.updateData()
                         call.respond("updated")
                     }
                 }

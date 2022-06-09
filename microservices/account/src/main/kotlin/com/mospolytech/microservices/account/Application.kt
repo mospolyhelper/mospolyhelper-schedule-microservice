@@ -36,7 +36,7 @@ fun Application.setRoutes() {
     paymentsRoutesV1(get())
     personalRoutesV1(get())
     performanceRoutesV1(get())
-    peoplesRoutesV1(get())
+    peoplesRoutesV1(get(), get())
 }
 
 fun Application.setDataConversions() {

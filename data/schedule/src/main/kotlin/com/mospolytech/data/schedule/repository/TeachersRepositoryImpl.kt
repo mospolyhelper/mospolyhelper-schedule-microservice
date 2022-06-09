@@ -1,11 +1,10 @@
 package com.mospolytech.data.schedule.repository
 
-import com.mospolytech.domain.peoples.repository.StudentsRepository
 import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.schedule.repository.TeachersRepository
 
 class TeachersRepositoryImpl(
-    private val studentsRepository: StudentsRepository
+    private val teachersRepository: com.mospolytech.domain.peoples.repository.TeachersRepository
 ) : TeachersRepository {
     private val map = mutableMapOf<String, String>()
 
@@ -16,7 +15,7 @@ class TeachersRepositoryImpl(
         if (teacher != null) return teacher
 
 
-        val teacher2 = studentsRepository.getTeacher(name).getOrNull()
+        val teacher2 = teachersRepository.getTeacher(name).getOrNull()
 
         val id2 = teacher2?.id ?: name
 

@@ -1,15 +1,14 @@
 package com.mospolytech.data.peoples.remote
 
 import com.mospolytech.data.common.db.MosPolyDb
+import com.mospolytech.data.peoples.model.db.GroupsDb
 import com.mospolytech.data.peoples.model.db.StudentsDb
+import com.mospolytech.data.peoples.model.entity.*
 import com.mospolytech.domain.base.model.EducationType
 import com.mospolytech.domain.base.model.PagingDTO
 import com.mospolytech.domain.base.utils.converters.LocalDateConverter.decode
-import com.mospolytech.domain.base.utils.converters.LocalDateConverter.encode
 import com.mospolytech.domain.peoples.model.EducationForm
 import com.mospolytech.domain.peoples.model.Student
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.*
 import kotlin.math.ceil
 
@@ -21,15 +20,18 @@ class StudentsRemoteDS {
         }
     }
 
-    suspend fun getStudents() = withContext(Dispatchers.IO) {
-        MosPolyDb.transaction {
-            StudentsDb.selectAll().map { it.toStudent() }
-        }
+    suspend fun getStudents() = MosPolyDb.transaction {
+        StudentEntity.all().map { it.toModel() }
     }
 
-    suspend fun getStudentsPaging(query: String, pageSize: Int, page: Int) = withContext(Dispatchers.IO) {
+    suspend fun getStudentsPaging(query: String, pageSize: Int, page: Int) =
         MosPolyDb.transaction {
-            val count = StudentsDb.select { (StudentsDb.group like query) or (StudentsDb.lastName.lowerCase() like "%${query.lowercase()}%") }.count().toInt()
+            StudentEntity.all()
+                .count { it.group != null && it.group!!.title.contains(query, ignoreCase = true) }
+            val count = StudentEntity.find {
+                (GroupsDb.title like query) or
+                        (StudentsDb.lastName.lowerCase() like "%${query.lowercase()}%")
+            }.count().toInt()
             val lastPageSize = if (count % pageSize != 0) count % pageSize else page
             val pagesCount = count / pageSize + ceil(count.toDouble() / pageSize).toInt()
             val offset = when {
@@ -48,11 +50,14 @@ class StudentsRemoteDS {
                 page <= 1 -> 2
                 else -> page + 1
             }
-            val list = StudentsDb.select { (StudentsDb.group like query) or (StudentsDb.lastName.lowerCase() like "%${query.lowercase()}%") }
-                .orderBy(StudentsDb.lastName, SortOrder.ASC)
+            val list = StudentEntity.find {
+                (GroupsDb.title like query) or
+                        (StudentsDb.lastName.lowerCase() like "%${query.lowercase()}%")
+            }
+                .orderBy(StudentsDb.lastName to SortOrder.ASC)
                 .limit(pageSize, offset)
-                .map { it.toStudent() }
-                .sortedBy { it.secondName }
+                .mapLazy { it.toModel() }
+                .sortedBy { it.firstName }
             PagingDTO(
                 count = list.size,
                 previousPage = previousPage,
@@ -60,17 +65,15 @@ class StudentsRemoteDS {
                 data = list
             )
         }
-    }
 
 
-    suspend fun getStudents(group: String) = withContext(Dispatchers.IO) {
+    suspend fun getStudents(group: String) =
         MosPolyDb.transaction {
-            StudentsDb.select { (StudentsDb.group eq group) }
-                .orderBy(StudentsDb.lastName, SortOrder.ASC)
-                .map { it.toStudent() }
-                .sortedBy { it.secondName }
+            StudentEntity.find { (GroupsDb.title eq group) }
+                .orderBy(StudentsDb.lastName to SortOrder.ASC)
+                .mapLazy { it.toModel() }
+                .sortedBy { it.firstName }
         }
-    }
 
     suspend fun clearData() {
         MosPolyDb.transaction {
@@ -80,50 +83,53 @@ class StudentsRemoteDS {
 
     suspend fun addStudent(student: Student) {
         MosPolyDb.transaction {
-            StudentsDb.insert {
-                it[guid] = student.id
-                it[firstName] = student.firstName
-                it[lastName] = student.secondName
-                it[middleName] = student.surname
-                it[sex] = student.sex
-                it[avatar] = student.avatar
-                it[birthday] = student.birthday?.encode()
-                it[faculty] = student.faculty
-                it[direction] = student.direction
-                it[specialization] = student.specialization
-                it[educationType] = student.educationType?.name
-                it[educationForm] = student.educationForm?.name
-                it[payment] = student.payment
-                it[course] = student.course
-                it[group] = student.group
-                it[years] = student.years
-                it[dialogId] = student.dialogId
-                it[additionalInfo] = student.additionalInfo
+            val facultyEntity = student.faculty.let { faculty ->
+                StudentFacultyEntity.new(faculty.id) {
+                    title = faculty.title
+                    titleShort = faculty.titleShort
+                }
+            }
+
+            val directionEntity = student.direction.let { direction ->
+                StudentDirectionEntity.new(direction.id) {
+                    title = direction.title
+                    code = direction.code
+                }
+            }
+
+            val specializationEntity = student.specialization?.let { specialization ->
+                StudentSpecializationEntity.new(specialization.id) {
+                    title = specialization.title
+                }
+            }
+
+            val groupEntity = student.group?.let { group ->
+                GroupEntity.new(group.id) {
+                    title = group.title
+                    course = group.course
+                    faculty = facultyEntity
+                    direction = directionEntity
+                }
+            }
+
+            StudentEntity.new(student.id) {
+                firstName = student.firstName
+                lastName = student.lastName
+                middleName = student.middleName
+                sex = student.sex
+                avatar = student.avatar
+                birthday = student.birthday
+                faculty = facultyEntity
+                direction = directionEntity
+                specialization = specializationEntity
+                educationType = student.educationType
+                educationForm = student.educationForm
+                payment = student.payment
+                course = student.course
+                group = groupEntity
+                years = student.years
             }
         }
-    }
-
-    private fun ResultRow.toStudent(): Student {
-        return Student(
-            id = this[StudentsDb.guid],
-            firstName = this[StudentsDb.firstName],
-            secondName = this[StudentsDb.lastName],
-            surname = this[StudentsDb.middleName],
-            sex = this[StudentsDb.sex],
-            avatar = this[StudentsDb.avatar],
-            birthday = this[StudentsDb.birthday]?.decode(),
-            faculty = this[StudentsDb.faculty],
-            direction = this[StudentsDb.direction],
-            specialization = this[StudentsDb.specialization],
-            educationForm = this[StudentsDb.educationForm]?.let(EducationForm::valueOf),
-            educationType = this[StudentsDb.educationType]?.let(EducationType::valueOf),
-            payment = this[StudentsDb.payment],
-            course = this[StudentsDb.course],
-            group = this[StudentsDb.group],
-            years = this[StudentsDb.years],
-            dialogId =  this[StudentsDb.dialogId],
-            additionalInfo =  this[StudentsDb.additionalInfo],
-        )
     }
 }
 

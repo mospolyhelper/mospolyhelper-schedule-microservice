@@ -1,6 +1,6 @@
 package com.mospolytech.data.peoples.service
 
-import com.mospolytech.data.peoples.model.xml.StudentData
+import com.mospolytech.data.peoples.model.xml.StudentXml
 import io.ktor.client.*
 import kotlinx.serialization.decodeFromString
 import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
@@ -19,7 +19,7 @@ class StudentsService(
     }
 
     @OptIn(ExperimentalXmlUtilApi::class)
-    fun getStudents(): Sequence<StudentData> {
+    fun getStudents(): Sequence<StudentXml> {
         val xml = XML {
             unknownChildHandler = UnknownChildHandler { _, _, _, _, _ -> emptyList() }
         }
@@ -38,7 +38,7 @@ class StudentsService(
             .replace("m:", "")
         val students = "<Состав>[^*]*?</Состав>".toRegex()
             .findAll(inputString)
-            .map { xml.decodeFromString<StudentData>(it.value) }
+            .map { xml.decodeFromString<StudentXml>(it.value) }
             .filter { it.studentStatus.title == "Является студентом" }
 
         return students

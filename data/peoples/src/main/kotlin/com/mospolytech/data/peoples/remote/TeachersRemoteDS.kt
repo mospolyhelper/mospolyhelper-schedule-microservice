@@ -41,7 +41,7 @@ class TeachersRemoteDS {
         }
     }
 
-    suspend fun getTeachersPaging(query: String, pageSize: Int, page: Int) = withContext(Dispatchers.IO) {
+    suspend fun getTeachersPaging(query: String, pageSize: Int, page: Int) =
         MosPolyDb.transaction {
             val count = TeacherEntity.find { TeachersDb.name.lowerCase() like "%${query.lowercase()}%" }.count().toInt()
             val lastPageSize = if (count % pageSize != 0) count % pageSize else page
@@ -74,7 +74,6 @@ class TeachersRemoteDS {
                 data = list
             )
         }
-    }
 
     suspend fun addTeacher(teacher: Teacher) {
         MosPolyDb.transaction {

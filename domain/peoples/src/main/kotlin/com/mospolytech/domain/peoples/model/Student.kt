@@ -8,7 +8,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Student(
     val id: String,
-    val name: String,
+    val firstName: String,
+    val lastName: String,
+    val middleName: String?,
     val sex: String,
     val avatar: String?,
     val birthday: LocalDate?,
