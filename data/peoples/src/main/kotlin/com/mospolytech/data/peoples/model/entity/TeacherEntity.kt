@@ -18,7 +18,6 @@ class TeacherEntity(id: EntityID<String>) : Entity<String>(id) {
     var email by TeachersDb.email
     var sex by TeachersDb.sex
     var birthday by TeachersDb.birthday
-    var dialogId by TeachersDb.dialogId
 
     fun toModel(): Teacher {
         return Teacher(
@@ -31,8 +30,7 @@ class TeacherEntity(id: EntityID<String>) : Entity<String>(id) {
             department = department?.toModel(),
             email = email,
             sex = sex,
-            birthday = birthday,
-            dialogId = dialogId
+            birthday = birthday
         )
     }
 }

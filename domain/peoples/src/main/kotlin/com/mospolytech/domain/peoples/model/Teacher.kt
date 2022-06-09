@@ -15,8 +15,7 @@ data class Teacher(
     val department: Department?,
     val email: String?,
     val sex: String?,
-    val birthday: LocalDate?,
-    val dialogId: String?
+    val birthday: LocalDate?
 ) : Comparable<Teacher> {
     override fun compareTo(other: Teacher): Int {
         return name.compareTo(other.name)

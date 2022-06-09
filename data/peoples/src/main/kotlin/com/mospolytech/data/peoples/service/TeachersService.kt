@@ -1,6 +1,6 @@
 package com.mospolytech.data.peoples.service
 
-import com.mospolytech.data.peoples.model.EmployeeInfo
+import com.mospolytech.data.peoples.model.xml.EmployeeInfo
 import kotlinx.serialization.decodeFromString
 import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
 import nl.adaptivity.xmlutil.serialization.UnknownChildHandler

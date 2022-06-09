@@ -2,6 +2,7 @@ package com.mospolytech.data.peoples.model.xml
 
 import com.mospolytech.domain.base.model.Department
 import com.mospolytech.domain.peoples.model.Teacher
+import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.serialization.SerialName
 import nl.adaptivity.xmlutil.serialization.XmlElement
 import java.time.LocalDate
@@ -79,10 +80,9 @@ fun EmployeeInfo.toModel(): Teacher {
         id = guid,
         name = name,
         avatar = "https://e.mospolytech.ru/old/img/no_avatar.jpg",
-        dialogId = null,
         stuffType = stuffType,
         birthday = try {
-            LocalDate.parse(birthDate, dateFormatter)
+            LocalDate.parse(birthDate, dateFormatter).toKotlinLocalDate()
         } catch (e: Throwable) {
             null
         },
@@ -96,8 +96,7 @@ fun EmployeeInfo.toModel(): Teacher {
             title = department
         ) else null,
         sex = Sex,
-        email = email,
-        additionalInfo = null
+        email = email
     )
 }
 

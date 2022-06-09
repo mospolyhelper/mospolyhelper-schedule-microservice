@@ -1,6 +1,6 @@
 package com.mospolytech.features.peoples
 
-import com.mospolytech.domain.peoples.repository.PeoplesRepository
+import com.mospolytech.domain.peoples.repository.StudentsRepository
 import com.mospolytech.features.base.AuthConfigs
 import com.mospolytech.features.base.utils.getTokenOrRespondError
 import com.mospolytech.features.base.utils.respondResult
@@ -10,7 +10,7 @@ import io.ktor.server.locations.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Application.peoplesRoutesV1(repository: PeoplesRepository) {
+fun Application.peoplesRoutesV1(repository: StudentsRepository) {
     routing {
         authenticate(AuthConfigs.Mpu, optional = true) {
             route("/peoples") {

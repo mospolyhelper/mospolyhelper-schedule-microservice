@@ -16,5 +16,4 @@ object TeachersDb : IdTable<String>() {
     val email = text("email").nullable()
     val sex = text("sex").nullable()
     val birthday = date("birthday").nullable()
-    val dialogId = text("dialog_id").nullable()
 }

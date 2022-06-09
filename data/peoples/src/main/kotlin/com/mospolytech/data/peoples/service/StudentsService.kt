@@ -39,7 +39,7 @@ class StudentsService(
         val students = "<Состав>[^*]*?</Состав>".toRegex()
             .findAll(inputString)
             .map { xml.decodeFromString<StudentData>(it.value) }
-            .filter { it.studentStatus.name == "Является студентом" }
+            .filter { it.studentStatus.title == "Является студентом" }
 
         return students
     }

@@ -12,10 +12,3 @@ enum class EducationForm(val type: String) {
     @SerialName("correspondence")
     Correspondence("Заочная")
 }
-
-fun String.toForm(): EducationForm? {
-    EducationForm.values().forEach {
-        if (it.type == this) return it
-    }
-    return null
-}
