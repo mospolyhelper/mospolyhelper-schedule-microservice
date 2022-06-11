@@ -35,8 +35,14 @@ class TeachersRepositoryImpl(
     }
 
 
-    override suspend fun updateData() {
-        teachersDS.clearData()
+    override suspend fun updateData(recreateDb: Boolean) {
+        if (recreateDb) {
+            teachersDS.deleteTables()
+            teachersDS.createTables()
+        } else {
+            teachersDS.clearData()
+        }
+
         teachersLocalCache.forEach {
             teachersDS.addTeacher(it)
         }

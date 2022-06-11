@@ -19,8 +19,8 @@ class StudentEntity(id: EntityID<String>) : Entity<String>(id) {
     var birthday by StudentsDb.birthday
     var avatar by StudentsDb.avatar
     var group by GroupEntity optionalReferencedOn StudentsDb.group
-    var faculty by StudentFacultyEntity referencedOn StudentsDb.faculty
-    var direction by StudentDirectionEntity referencedOn StudentsDb.direction
+//    var faculty by StudentFacultyEntity referencedOn StudentsDb.faculty
+//    var direction by StudentDirectionEntity referencedOn StudentsDb.direction
     var specialization by StudentSpecializationEntity optionalReferencedOn StudentsDb.specialization
     var educationType by StudentsDb.educationType
     var educationForm by StudentsDb.educationForm
@@ -42,8 +42,8 @@ class StudentEntity(id: EntityID<String>) : Entity<String>(id) {
             sex = sex,
             avatar = avatar,
             birthday = birthday,
-            faculty = faculty.toModel(),
-            direction = direction.toModel(),
+//            faculty = faculty.toModel(),
+//            direction = direction.toModel(),
             specialization = specialization?.toModel(),
             educationType = educationType,
             educationForm = educationForm,

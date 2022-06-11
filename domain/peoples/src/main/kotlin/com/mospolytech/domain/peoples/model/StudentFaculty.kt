@@ -4,5 +4,5 @@ package com.mospolytech.domain.peoples.model
 data class StudentFaculty(
     val id: String,
     val title: String,
-    val titleShort: String
+    val titleShort: String?
 )

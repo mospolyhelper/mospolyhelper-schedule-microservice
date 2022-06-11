@@ -34,11 +34,17 @@ class StudentsRepositoryImpl(
         }
     }
 
-    override suspend fun updateData() {
-        studentsDS.clearData()
-        studentsLocalCache.forEach {
-            studentsDS.addStudent(it)
+    override suspend fun updateData(recreateDb: Boolean) {
+        if (recreateDb) {
+            studentsDS.deleteTables()
+            studentsDS.createTables()
+        } else {
+            studentsDS.clearData()
         }
+        studentsDS.addStudents(studentsLocalCache)
+//        studentsLocalCache.forEach {
+//            studentsDS.addStudent(it)
+//        }
     }
 
 }

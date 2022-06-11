@@ -4,7 +4,7 @@ package com.mospolytech.domain.peoples.model
 data class Group(
     val id: String,
     val title: String,
-    val course: String,
+    val course: Int?,
     val faculty: StudentFaculty,
     val direction: StudentDirection,
 )

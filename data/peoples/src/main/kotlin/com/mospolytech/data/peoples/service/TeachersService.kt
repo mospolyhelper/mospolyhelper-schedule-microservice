@@ -30,7 +30,7 @@ class TeachersService {
         val teachers = "<ДанныеОРаботнике>[^*]*?</ДанныеОРаботнике>".toRegex()
             .findAll(inputString)
             .map { xml.decodeFromString<EmployeeInfo>(it.value) }
-            .filter { it.Состояние == "Работа" }
+            .filter { it.status == "Работа" }
 
         return teachers
     }

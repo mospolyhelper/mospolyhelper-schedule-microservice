@@ -207,21 +207,21 @@ data class StudentBranchXml(
 private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
 fun StudentXml.toModel(): Student {
-    val educationType = when (studentEducationForm.title) {
-        "Бакалавриат" -> EducationType.Bachelor
-        "Специалитет" -> EducationType.Specialist
-        "Аспирантура" -> EducationType.Aspirant
-        "Магистратура" -> EducationType.Magistrate
-        "СПО" -> EducationType.College
-        else -> null
-    }
-    val educationForm = when (studentForm.title) {
-        "Заочная" -> EducationForm.Correspondence
-        "Очно-заочная" -> EducationForm.Evening
-        "Очная" -> EducationForm.FullTime
-        else -> null
-    }
-    val payment = studentPayment.title
+//    val educationType = when (studentEducationForm.title) {
+//        "Бакалавриат" -> EducationType.Bachelor
+//        "Специалитет" -> EducationType.Specialist
+//        "Аспирантура" -> EducationType.Aspirant
+//        "Магистратура" -> EducationType.Magistrate
+//        "СПО" -> EducationType.College
+//        else -> null
+//    }
+//    val educationForm = when (studentForm.title) {
+//        "Заочная" -> EducationForm.Correspondence
+//        "Очно-заочная" -> EducationForm.Evening
+//        "Очная" -> EducationForm.FullTime
+//        else -> null
+//    }
+    //val payment = studentPayment.title
 //    val payment = when (studentPayment.title) {
 //        "Бюджетная основа" -> EducationForm.Correspondence
 //        "Полное возмещение затрат" -> EducationForm.Evening
@@ -233,60 +233,82 @@ fun StudentXml.toModel(): Student {
     } catch (e: Throwable) {
         null
     }
-    val faculty = StudentFaculty(
-        id = studentFaculty.guid,
-        title = studentFaculty.title,
-        titleShort = studentFaculty.titleShort,
-    )
-    val direction = StudentDirection(
-        id = studentDir.guid,
-        title = studentDir.title,
-        code = studentDir.code
-    )
-    val specialization = studentSpec.let {
-        StudentSpecialization(
-            id = studentSpec.guid,
-            title = studentSpec.title,
-        )
-    }
-
-    val group = studentEducationGroup.let {
-        Group(
-            id = studentEducationGroup.guid,
-            title = studentEducationGroup.title,
-            course = studentEducationCourse.title,
-            faculty = faculty,
-            direction = direction
-        )
-    }
-
-    val branch = StudentBranch(
-        id = studentBranch.guid,
-        title = studentBranch.title
-    )
+    val faculty = studentFaculty.toModel()
+    val direction = studentDir.toModel()
+    val specialization = studentSpec.toModel()
+    val group = studentEducationGroup.toModel(studentEducationCourse.title.toIntOrNull(), faculty, direction)
+    val branch = studentBranch.toModel()
 
     return Student(
         id = studentInfo.id,
         firstName = studentInfo.firstName,
         lastName = studentInfo.lastName,
         middleName = studentInfo.middleName,
-        sex = studentInfo.sex,
+        sex = studentInfo.sex.ifEmpty { null },
         avatar = "https://e.mospolytech.ru/old/img/no_avatar.jpg",
         birthday = date,
-        faculty = faculty,
-        direction = direction,
+//        faculty = faculty,
+//        direction = direction,
         specialization = specialization,
-        educationForm = studentForm.title,
         educationType = studentEducationForm.title,
-        payment = payment,
+        educationForm = studentForm.title,
+        payment = studentPayment.title,
         course = studentEducationCourse.title.toIntOrNull(),
         group = group,
         years = studentEducationYear.title,
-        branch = branch,
         code = studentCode.title,
-        dormitory = dormitory.title,
-        dormitoryRoom = dormitoryRoom.title
+        branch = branch,
+        dormitory = dormitory.title.ifEmpty { null },
+        dormitoryRoom = dormitoryRoom.title.ifEmpty { null }
     )
+}
+
+fun StudentFacultyXml.toModel(): StudentFaculty {
+    return StudentFaculty(
+        id = guid,
+        title = title,
+        titleShort = titleShort.ifEmpty { null },
+    )
+}
+
+fun StudentDirectionXml.toModel(): StudentDirection {
+    return StudentDirection(
+        id = guid,
+        title = title,
+        code = code
+    )
+}
+
+fun StudentBranchXml.toModel(): StudentBranch {
+    return StudentBranch(
+        id = guid,
+        title = title
+    )
+}
+
+fun StudentSpecializationXml.toModel(): StudentSpecialization? {
+    return if (title.isEmpty()) {
+        null
+    } else {
+        StudentSpecialization(
+            id = guid,
+            title = title,
+        )
+    }
+}
+
+fun StudentEducationGroupXml.toModel(course: Int?, faculty: StudentFaculty, direction: StudentDirection): Group? {
+    return if (title.isEmpty()) {
+        null
+    } else {
+        Group(
+            id = guid,
+            title = title,
+            course = course,
+            faculty = faculty,
+            direction = direction
+        )
+    }
 }
 
 

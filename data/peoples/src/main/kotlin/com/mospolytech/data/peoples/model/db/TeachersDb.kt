@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.kotlin.datetime.date
 
 object TeachersDb : IdTable<String>() {
-    override val id: Column<EntityID<String>> = text("guid").entityId()
+    override val id: Column<EntityID<String>> = text("id").entityId()
     val name = text("name")
     val avatar = text("avatar").nullable()
     val stuffType = text("stuff_type").nullable()
@@ -16,4 +16,6 @@ object TeachersDb : IdTable<String>() {
     val email = text("email").nullable()
     val sex = text("sex").nullable()
     val birthday = date("birthday").nullable()
+
+    override val primaryKey = PrimaryKey(id)
 }

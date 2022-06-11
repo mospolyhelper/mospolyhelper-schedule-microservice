@@ -28,19 +28,10 @@ data class EmployeeInfo(
     val stuffType: String,
     @XmlElement(true)
     @SerialName("Состояние")
-    val Состояние: String,
-    @XmlElement(true)
-    @SerialName("СтраховойНомерПФР")
-    val СтраховойНомерПФР: String,
+    val status: String,
     @XmlElement(true)
     @SerialName("Должность")
     val post: String,
-    @XmlElement(true)
-    @SerialName("ВидЗанятости")
-    val ВидЗанятости: String,
-    @XmlElement(true)
-    @SerialName("Ставка")
-    val Ставка: String,
     @SerialName("Пол")
     @XmlElement(true)
     val Sex: String,

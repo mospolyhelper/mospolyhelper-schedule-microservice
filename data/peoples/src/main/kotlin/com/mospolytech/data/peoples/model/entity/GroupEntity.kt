@@ -11,8 +11,8 @@ class GroupEntity(id: EntityID<String>) : Entity<String>(id) {
 
     var title by GroupsDb.title
     var course by GroupsDb.course
-    var faculty by StudentFacultyEntity referencedOn  GroupsDb.faculty
-    var direction by StudentDirectionEntity referencedOn  GroupsDb.direction
+    var faculty by StudentFacultyEntity referencedOn GroupsDb.faculty
+    var direction by StudentDirectionEntity referencedOn GroupsDb.direction
 
 
     fun toModel(): Group {
