@@ -1,4 +1,4 @@
-package com.mospolytech.data.schedule.model
+package com.mospolytech.data.schedule.model.response
 
 import com.mospolytech.domain.base.utils.converters.LocalDateConverter
 import com.mospolytech.domain.base.utils.converters.LocalTimeConverter

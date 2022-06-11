@@ -1,9 +1,9 @@
 package com.mospolytech.data.schedule.converters
 
-import com.mospolytech.data.schedule.model.ApiGroup
-import com.mospolytech.data.schedule.model.ApiLesson
-import com.mospolytech.data.schedule.model.ScheduleResponse
-import com.mospolytech.data.schedule.model.ScheduleSessionResponse
+import com.mospolytech.data.schedule.model.response.ApiGroup
+import com.mospolytech.data.schedule.model.response.ApiLesson
+import com.mospolytech.data.schedule.model.response.ScheduleResponse
+import com.mospolytech.data.schedule.model.response.ScheduleSessionResponse
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
 import com.mospolytech.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes

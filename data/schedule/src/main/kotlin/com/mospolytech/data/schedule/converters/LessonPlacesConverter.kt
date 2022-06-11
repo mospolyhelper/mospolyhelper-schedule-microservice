@@ -1,6 +1,6 @@
 package com.mospolytech.data.schedule.converters
 
-import com.mospolytech.data.schedule.model.ApiLesson
+import com.mospolytech.data.schedule.model.response.ApiLesson
 import com.mospolytech.domain.base.model.Location
 import com.mospolytech.domain.base.utils.capitalized
 import com.mospolytech.domain.schedule.model.place.PlaceInfo

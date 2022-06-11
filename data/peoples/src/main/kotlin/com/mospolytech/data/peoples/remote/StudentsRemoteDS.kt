@@ -52,7 +52,18 @@ class StudentsRemoteDS {
 
     suspend fun getStudents(group: String) =
         MosPolyDb.transaction {
-            StudentEntity.find { (GroupsDb.title eq group) }
+            val query = StudentsDb.leftJoin(
+                GroupsDb.leftJoin(StudentFacultiesDb)
+                    .leftJoin(StudentDirectionsDb)
+            )
+                .leftJoin(StudentSpecializationsDb)
+                .leftJoin(StudentBranchesDb)
+                .slice(StudentsDb.columns)
+                .select {
+                    (GroupsDb.title eq group)
+                }
+
+            StudentEntity.wrapRows(query)
                 .orderBy(StudentsDb.lastName to SortOrder.ASC)
                 .mapLazy { it.toModel() }
                 .sortedBy { it.firstName }

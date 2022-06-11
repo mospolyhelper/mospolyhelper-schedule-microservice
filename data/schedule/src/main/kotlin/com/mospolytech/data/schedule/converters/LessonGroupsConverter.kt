@@ -1,6 +1,6 @@
 package com.mospolytech.data.schedule.converters
 
-import com.mospolytech.data.schedule.model.ApiGroup
+import com.mospolytech.data.schedule.model.response.ApiGroup
 import com.mospolytech.domain.schedule.model.group.GroupInfo
 import com.mospolytech.domain.schedule.repository.GroupsRepository
 

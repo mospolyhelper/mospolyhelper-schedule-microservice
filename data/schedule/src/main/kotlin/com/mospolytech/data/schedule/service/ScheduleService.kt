@@ -1,7 +1,7 @@
 package com.mospolytech.data.schedule.service
 
-import com.mospolytech.data.schedule.model.ScheduleResponse
-import com.mospolytech.data.schedule.model.ScheduleSessionResponse
+import com.mospolytech.data.schedule.model.response.ScheduleResponse
+import com.mospolytech.data.schedule.model.response.ScheduleSessionResponse
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
