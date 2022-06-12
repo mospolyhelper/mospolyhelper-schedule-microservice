@@ -15,7 +15,7 @@ class PlacesRepositoryImpl : PlacesRepository {
         floor: String?,
         auditorium: String?,
         location: Location?,
-        description: Map<String, String>?
+        description: String?
     ): PlaceInfo {
         return PlaceInfo.Building(
             id = (PlaceInfo.Building::class.simpleName + title),
@@ -35,7 +35,7 @@ class PlacesRepositoryImpl : PlacesRepository {
     override fun addOnline(
         title: String, 
         url: String?, 
-        description: Map<String, String>?
+        description: String?
     ): PlaceInfo {
         return PlaceInfo.Online(
             id = (PlaceInfo.Online::class.simpleName + title + url),
@@ -49,7 +49,7 @@ class PlacesRepositoryImpl : PlacesRepository {
 
     override fun addOther(
         title: String, 
-        description: Map<String, String>?
+        description: String?
     ): PlaceInfo {
         return PlaceInfo.Other(
             id = (PlaceInfo.Other::class.simpleName + title),
@@ -62,7 +62,7 @@ class PlacesRepositoryImpl : PlacesRepository {
 
     override fun addUnclassified(
         title: String, 
-        description: Map<String, String>?
+        description: String?
     ): PlaceInfo {
         return PlaceInfo.Unclassified(
             id = (PlaceInfo.Unclassified::class.simpleName + title),

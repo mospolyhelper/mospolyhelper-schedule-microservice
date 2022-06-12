@@ -12,23 +12,23 @@ interface PlacesRepository {
         floor: String? = null,
         auditorium: String? = null,
         location: Location? = null,
-        description: Map<String, String>? = null
+        description: String? = null
     ): PlaceInfo
 
     fun addOnline(
         title: String,
         url: String? = null,
-        description: Map<String, String>? = null
+        description: String? = null
     ): PlaceInfo
 
     fun addOther(
         title: String,
-        description: Map<String, String>? = null
+        description: String? = null
     ): PlaceInfo
 
     fun addUnclassified(
         title: String,
-        description: Map<String, String>? = null
+        description: String? = null
     ): PlaceInfo
 
 

@@ -1,9 +1,11 @@
 package com.mospolytech.domain.schedule.model.lesson
 
+import com.mospolytech.domain.base.utils.atTime
 import com.mospolytech.domain.base.utils.converters.LocalDateConverter
+import kotlinx.datetime.*
 import kotlinx.serialization.Serializable
-import java.time.LocalDate
-import java.time.LocalDateTime
+import kotlin.time.Duration.Companion.days
+import kotlin.time.ExperimentalTime
 
 @Serializable
 data class LessonDateTimes(
@@ -17,19 +19,18 @@ data class LessonDateTimes(
 
 @Serializable
 data class LessonDateTime(
-    @Serializable(with = LocalDateConverter::class)
     val startDate: LocalDate,
-    @Serializable(with = LocalDateConverter::class)
     val endDate: LocalDate?,
     val time: LessonTime
 )
 
 fun LessonDateTime.toDateTimeRanges(): List<ClosedRange<LocalDateTime>> {
     return if (endDate == null) {
-        listOf(LocalDateTime.of(startDate, time.start)..LocalDateTime.of(startDate, time.end))
+
+        listOf(startDate.atTime(time.start)..startDate.atTime(time.end))
     } else {
         generateDatesFromRange(startDate, endDate).map {
-            LocalDateTime.of(it, time.start)..LocalDateTime.of(it, time.end)
+            it.atTime(time.start)..it.atTime(time.end)
         }
     }
 }
@@ -39,7 +40,7 @@ private fun generateDatesFromRange(startDate: LocalDate, endDate: LocalDate): Li
     var currentDay = startDate
     do {
         dates += currentDay
-        currentDay = currentDay.plusDays(7)
+        currentDay = currentDay.plus(DatePeriod(days = 7))
     } while (currentDay <= endDate)
     return dates
 }

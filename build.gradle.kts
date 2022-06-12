@@ -73,6 +73,7 @@ subprojects {
         implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
         implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
         implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposed_version")
+        implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
 
         implementation("io.github.pdvrieze.xmlutil:core:$xmlutil_version")
         implementation("io.github.pdvrieze.xmlutil:serialization:$xmlutil_version")
@@ -80,6 +81,7 @@ subprojects {
         implementation("org.postgresql:postgresql:$postgresql")
 
         implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime")
+
 
         testImplementation("io.ktor:ktor-server-tests:$ktor_version")
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")

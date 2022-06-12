@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CompactLessonFeatures(
+    val id: String,
     val typeId: String,
     val subjectId: String,
     val teachersId: List<String>,
