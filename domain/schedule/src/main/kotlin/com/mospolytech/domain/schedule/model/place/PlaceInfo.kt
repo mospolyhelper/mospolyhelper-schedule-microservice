@@ -66,3 +66,41 @@ sealed class PlaceInfo : Comparable<PlaceInfo> {
         val description: String? = null
     ) : PlaceInfo()
 }
+
+val PlaceInfo.description: String
+    get() {
+        return buildString {
+            when (this@description) {
+                is PlaceInfo.Building -> buildString {
+                    street?.let {
+                        append(street)
+                    }
+
+                    building?.let {
+                        ifEmpty { append(", ") }
+                        append("$building-й корус")
+                    }
+
+                    floor?.let {
+                        ifEmpty { append(", ") }
+                        append("$floor-й этаж")
+                    }
+                }
+                is PlaceInfo.Online -> buildString {
+                    url?.let {
+                        append(url)
+                    }
+                }
+                is PlaceInfo.Other -> buildString {
+                    description?.let {
+                        append(description)
+                    }
+                }
+                is PlaceInfo.Unclassified -> buildString {
+                    description?.let {
+                        append(description)
+                    }
+                }
+            }
+        }
+    }

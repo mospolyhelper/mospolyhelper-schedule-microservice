@@ -1,21 +1,14 @@
 package com.mospolytech.data.schedule.model.entity
 
-import com.mospolytech.data.peoples.model.db.*
 import com.mospolytech.data.peoples.model.entity.GroupEntity
 import com.mospolytech.data.peoples.model.entity.TeacherEntity
-import com.mospolytech.data.peoples.model.entity.TeacherEntity.Companion.referrersOn
 import com.mospolytech.data.schedule.model.db.*
-import com.mospolytech.data.schedule.model.db.LessonTypesDb.uniqueIndex
-import com.mospolytech.domain.peoples.model.Group
-import com.mospolytech.domain.schedule.model.lesson_type.LessonType
-import com.mospolytech.domain.schedule.model.lesson_type.LessonTypeInfo
+import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
+import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
 import com.mospolytech.domain.schedule.model.pack.CompactLessonFeatures
-import org.jetbrains.exposed.dao.Entity
-import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
-import org.jetbrains.exposed.dao.id.UUIDTable
 import java.util.*
 
 class LessonEntity(id: EntityID<UUID>) : UUIDEntity(id) {
@@ -29,7 +22,7 @@ class LessonEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var dateTimes by LessonDateTimeEntity via LessonToLessonDateTimesDb
 
 
-    fun toModel(): CompactLessonFeatures {
+    fun toLessonModel(): CompactLessonFeatures {
         return CompactLessonFeatures(
             id = id.value.toString(),
             typeId = type.id.toString(),
@@ -37,6 +30,19 @@ class LessonEntity(id: EntityID<UUID>) : UUIDEntity(id) {
             teachersId = teachers.map { it.id.toString() },
             groupsId = groups.map { it.id.toString() },
             placesId = places.map { it.id.toString() },
+        )
+    }
+
+    fun toLessonTimeModel(): List<LessonDateTime> {
+        return dateTimes.map {
+            it.toModel()
+        }
+    }
+
+    fun toFullModel(): CompactLessonAndTimes {
+        return CompactLessonAndTimes(
+            lesson = toLessonModel(),
+            times = toLessonTimeModel()
         )
     }
 }

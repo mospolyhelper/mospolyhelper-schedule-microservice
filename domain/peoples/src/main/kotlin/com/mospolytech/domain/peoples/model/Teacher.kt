@@ -26,11 +26,15 @@ val Teacher.description: String
     get() {
         return buildString {
             grade?.let { append(it) }
-            var prefix = ""
-            if (isNotEmpty()) {
-                prefix = ", "
+
+            department?.let {
+                ifEmpty { append(", ") }
+                append(department.title)
             }
-            department?.title?.let { append(prefix + it) }
-                ?: departmentParent?.title?.let { append(prefix + it) }
+
+            departmentParent?.let {
+                ifEmpty { append(", ") }
+                append(departmentParent.title)
+            }
         }
     }

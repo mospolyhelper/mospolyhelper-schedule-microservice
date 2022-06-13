@@ -12,4 +12,5 @@ interface ScheduleRepository {
     suspend fun getCompactSchedule(source: ScheduleSource): CompactSchedule
 
     suspend fun getSourceList(sourceType: ScheduleSources): List<ScheduleSourceFull>
+    suspend fun updateData(recreateDb: Boolean)
 }

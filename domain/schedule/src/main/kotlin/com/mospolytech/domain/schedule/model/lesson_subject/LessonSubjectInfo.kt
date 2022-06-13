@@ -12,3 +12,10 @@ data class LessonSubjectInfo(
         return title.compareTo(other.title)
     }
 }
+
+val LessonSubjectInfo.description
+    get() = buildString {
+        type?.let {
+            append(type)
+        }
+    }

@@ -4,5 +4,6 @@ import com.mospolytech.domain.peoples.model.Teacher
 
 interface TeachersRepository {
     suspend fun findAndGetId(name: String): String
-    fun get(id: String): Teacher?
+    suspend fun get(id: String): Teacher?
+    suspend fun getAll(): List<Teacher>
 }

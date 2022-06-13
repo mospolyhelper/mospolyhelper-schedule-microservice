@@ -44,5 +44,12 @@ fun Routing.scheduleRoutesV1(
                 )
             }
         }
+        route("/update-schedules") {
+            get {
+                val recreateDb = call.request.queryParameters["recreate"] == "1"
+                repository.updateData(recreateDb)
+                call.respond("updated")
+            }
+        }
     }
 }

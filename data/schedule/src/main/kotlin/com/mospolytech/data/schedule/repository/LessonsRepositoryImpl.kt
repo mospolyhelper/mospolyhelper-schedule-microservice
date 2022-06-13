@@ -6,6 +6,7 @@ import com.mospolytech.data.schedule.local.ScheduleCacheDS
 import com.mospolytech.data.schedule.service.ScheduleService
 import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
 import com.mospolytech.domain.schedule.repository.LessonsRepository
+import com.mospolytech.domain.schedule.utils.filterByPlaces
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
@@ -38,5 +39,10 @@ class LessonsRepositoryImpl(
         } else {
             cacheDS.scheduleCache
         }
+    }
+
+    override suspend fun getLessonsByPlaces(placeIds: List<String>): List<CompactLessonAndTimes> {
+        return getLessons()
+            .let { if (placeIds.isNotEmpty()) it.filterByPlaces(placeIds) else it }
     }
 }

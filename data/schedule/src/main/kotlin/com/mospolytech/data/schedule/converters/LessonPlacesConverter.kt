@@ -9,14 +9,14 @@ import com.mospolytech.domain.schedule.repository.PlacesRepository
 class LessonPlacesConverter(
     private val placesRepository: PlacesRepository
 ) {
-    fun convertPlaces(auditoriums: List<ApiLesson.Auditory>, url: String = ""): List<PlaceInfo> {
+    suspend fun convertPlaces(auditoriums: List<ApiLesson.Auditory>, url: String = ""): List<String> {
         return auditoriums.map { processAuditorium(it.title, url) }
     }
 
     private val regex = Regex("""href="(.*?)".*?>(.*?)<""")
 
 
-    private fun processAuditorium(auditorium: String, url: String): PlaceInfo {
+    private suspend fun processAuditorium(auditorium: String, url: String): String {
         val regGroups = regex.find(auditorium)?.groupValues
         val (url2, rawTitle0) = if (regGroups != null)
             regGroups.getOrNull(1) to regGroups.getOrNull(2)
@@ -61,7 +61,7 @@ class LessonPlacesConverter(
             raw.replace(emoji.first, "").trim() to emoji.second
     }
 
-    private fun parsePlace(place: String, url: String = ""): PlaceInfo {
+    private suspend fun parsePlace(place: String, url: String = ""): String {
         return parserChain.firstNotNullOfOrNull {
             val matchResult = place.parseBy(patterns = it.patterns.toTypedArray())
             if (matchResult == null)
@@ -74,9 +74,9 @@ class LessonPlacesConverter(
 
     data class PlaceParserPack(
         val patterns: List<String>,
-        val placeFactory: MatchResult.(List<String>) -> PlaceInfo
+        val placeFactory: suspend MatchResult.(List<String>) -> String
     ) {
-        constructor(vararg patterns: String, placeFactory: MatchResult.(List<String>) -> PlaceInfo) :
+        constructor(vararg patterns: String, placeFactory: suspend MatchResult.(List<String>) -> String) :
                 this(patterns.toList(), placeFactory)
     }
 

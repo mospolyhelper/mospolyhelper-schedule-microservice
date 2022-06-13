@@ -6,7 +6,7 @@ import com.mospolytech.domain.schedule.repository.LessonSubjectsRepository
 class LessonSubjectConverter(
     private val lessonSubjectsRepository: LessonSubjectsRepository
 ) {
-    fun convertTitle(title: String): LessonSubjectInfo {
+    suspend fun convertTitle(title: String): String {
         return lessonSubjectsRepository.add(title)
     }
 }

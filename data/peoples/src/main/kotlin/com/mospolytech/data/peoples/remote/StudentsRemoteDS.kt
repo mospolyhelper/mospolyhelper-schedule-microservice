@@ -69,18 +69,37 @@ class StudentsRemoteDS {
                 .sortedBy { it.firstName }
         }
 
+    suspend fun getShortStudents() =
+        MosPolyDb.transaction {
+            val query = StudentsDb.leftJoin(
+                GroupsDb.leftJoin(StudentFacultiesDb)
+                    .leftJoin(StudentDirectionsDb)
+            )
+                .leftJoin(StudentSpecializationsDb)
+                .leftJoin(StudentBranchesDb)
+                .slice(StudentsDb.columns)
+                .selectAll()
+
+            StudentEntity.wrapRows(query)
+                .orderBy(
+                    StudentsDb.lastName to SortOrder.ASC,
+                    StudentsDb.firstName to SortOrder.ASC,
+                    StudentsDb.middleName to SortOrder.ASC
+                )
+                .map { it.toModelShort() }
+        }
+
     suspend fun addStudent(student: Student) {
         MosPolyDb.transaction {
-
             val groupEntity = student.group?.let { group ->
-                val facultyEntity = group.faculty.let { faculty ->
+                val facultyEntity = group.faculty?.let { faculty ->
                     StudentFacultyEntity.upsert(faculty.id) {
                         title = faculty.title
                         titleShort = faculty.titleShort
                     }
                 }
 
-                val directionEntity = group.direction.let { direction ->
+                val directionEntity = group.direction?.let { direction ->
                     StudentDirectionEntity.upsert(direction.id) {
                         title = direction.title
                         code = direction.code
@@ -135,14 +154,14 @@ class StudentsRemoteDS {
         MosPolyDb.transaction {
             students.forEach { student ->
                 val groupEntity = student.group?.let { group ->
-                    val facultyEntity = group.faculty.let { faculty ->
+                    val facultyEntity = group.faculty?.let { faculty ->
                         StudentFacultyEntity.upsert(faculty.id) {
                             title = faculty.title
                             titleShort = faculty.titleShort
                         }
                     }
 
-                    val directionEntity = group.direction.let { direction ->
+                    val directionEntity = group.direction?.let { direction ->
                         StudentDirectionEntity.upsert(direction.id) {
                             title = direction.title
                             code = direction.code

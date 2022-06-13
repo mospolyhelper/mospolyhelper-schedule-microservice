@@ -4,5 +4,5 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import java.time.LocalTime
 
-public fun LocalDate.atTime(time: LocalTime): LocalDateTime =
+fun LocalDate.atTime(time: LocalTime): LocalDateTime =
     LocalDateTime(year, monthNumber, dayOfMonth, time.hour, time.minute, time.second, time.nano)

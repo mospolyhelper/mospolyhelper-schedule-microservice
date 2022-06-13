@@ -1,13 +1,14 @@
 package com.mospolytech.domain.schedule.repository
 
-import com.mospolytech.domain.schedule.model.group.GroupInfo
+import com.mospolytech.domain.peoples.model.Group
 
 interface GroupsRepository {
-    fun add(
+    suspend fun getOrPut(
         title: String,
-        description: String,
         course: String,
         isEvening: Boolean
-    ): GroupInfo
-    fun get(id: String): GroupInfo?
+    ): String
+    suspend fun get(id: String): Group?
+
+    suspend fun getAll(): List<Group>
 }

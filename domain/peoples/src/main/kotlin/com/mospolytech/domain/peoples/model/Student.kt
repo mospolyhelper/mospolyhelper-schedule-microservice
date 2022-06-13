@@ -28,3 +28,22 @@ data class Student(
     var dormitoryRoom: String?,
     var branch: StudentBranch,
 )
+
+val Student.description
+    get() = buildString {
+        group?.let {
+            append(it.title)
+        }
+
+        course?.let {
+            ifEmpty { append(", ") }
+            append("$course-й курс")
+        }
+
+        group?.let {
+            group.direction?.let {
+                ifEmpty { append(", ") }
+                append(group.direction)
+            }
+        }
+    }

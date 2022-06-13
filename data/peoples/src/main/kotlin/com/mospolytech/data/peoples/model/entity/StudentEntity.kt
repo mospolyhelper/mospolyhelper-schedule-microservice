@@ -4,6 +4,7 @@ import com.mospolytech.data.peoples.model.db.*
 import com.mospolytech.data.peoples.model.db.StudentsDb.nullable
 import com.mospolytech.data.peoples.model.entity.StudentEntity.Companion.referrersOn
 import com.mospolytech.domain.peoples.model.Student
+import com.mospolytech.domain.peoples.model.StudentShort
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -55,6 +56,28 @@ class StudentEntity(id: EntityID<String>) : Entity<String>(id) {
             dormitory = dormitory,
             dormitoryRoom = dormitoryRoom,
             branch = branch.toModel()
+        )
+    }
+
+    private fun fullName(): String {
+        return buildString {
+            append(lastName)
+            append(" ")
+            append(firstName)
+            middleName?.let {
+                append(" ")
+                append(middleName)
+            }
+        }
+    }
+
+    fun toModelShort(): StudentShort {
+        return StudentShort(
+            id = id.value,
+            name = fullName(),
+            avatar = avatar,
+            course = course,
+            group = group?.toModel()
         )
     }
 }

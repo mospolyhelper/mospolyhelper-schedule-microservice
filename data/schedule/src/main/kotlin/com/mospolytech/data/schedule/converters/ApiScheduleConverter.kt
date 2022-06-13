@@ -8,6 +8,7 @@ import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
 import com.mospolytech.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
 import com.mospolytech.domain.schedule.model.pack.CompactLessonFeatures
+import kotlinx.datetime.toKotlinLocalDate
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
@@ -19,7 +20,8 @@ class ApiScheduleConverter(
     private val lessonTypeConverter: LessonTypeConverter,
     private val teachersConverter: LessonTeachersConverter,
     private val groupsConverter: LessonGroupsConverter,
-    private val placesConverter: LessonPlacesConverter
+    private val placesConverter: LessonPlacesConverter,
+
 ) {
     companion object {
         private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
@@ -134,8 +136,8 @@ class ApiScheduleConverter(
     ): LessonDateTime {
 
         return LessonDateTime(
-            startDate = dates.first,
-            endDate = dates.second,
+            startDate = dates.first.toKotlinLocalDate(),
+            endDate = dates.second?.toKotlinLocalDate(),
             time = LessonTime(
                 start = timeStart,
                 end = timeEnd
@@ -151,11 +153,12 @@ class ApiScheduleConverter(
         val places = placesConverter.convertPlaces(apiLesson.auditories)
 
         return CompactLessonFeatures(
-            typeId = type.id,
-            subjectId = subject.id,
+            id = "",
+            typeId = type,
+            subjectId = subject,
             teachersId = teacherIds,
-            groupsId = groups.map { it.id },
-            placesId = places.map { it.id },
+            groupsId = groups,
+            placesId = places,
         )
     }
 

@@ -1,5 +1,6 @@
 package com.mospolytech.data.schedule.repository
 
+import com.mospolytech.domain.base.utils.time
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
 import com.mospolytech.domain.schedule.model.lesson.toDateTimeRanges
 import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
@@ -11,8 +12,8 @@ import com.mospolytech.domain.schedule.repository.FreePlacesRepository
 import com.mospolytech.domain.schedule.repository.LessonsRepository
 import com.mospolytech.domain.schedule.repository.PlacesRepository
 import com.mospolytech.domain.schedule.utils.filterByPlaces
-import java.time.LocalDate
-import java.time.LocalDateTime
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import java.time.LocalTime
 
 class FreePlacesRepositoryImpl(
@@ -21,7 +22,7 @@ class FreePlacesRepositoryImpl(
 ) : FreePlacesRepository {
 
     override suspend fun getPlaces(filters: PlaceFilters): Map<PlaceInfo, Int> {
-        val lessons = lessonsRepository.getLessons().let { if (filters.ids.isNotEmpty()) it.filterByPlaces(filters.ids) else it }
+        val lessons = lessonsRepository.getLessonsByPlaces(filters.ids)
 
         return arrangePlacesByLessons(lessons, filters.dateTimeFrom, filters.dateTimeTo)
             .mapKeys { placesRepository.get(it.key) }
@@ -38,10 +39,10 @@ class FreePlacesRepositoryImpl(
         lessons.forEach { lessonAndTimes ->
             lessonAndTimes.times.forEach { lessonDateTime ->
                 lessonDateTime.toDateTimeRanges().forEach last@ { dateTimeRange ->
-                    val dailyOccupancy = resMap.getOrPut(dateTimeRange.start.toLocalDate()) { mutableListOf() }
+                    val dailyOccupancy = resMap.getOrPut(dateTimeRange.start.date) { mutableListOf() }
                     val newTimeRange = TempPlaceOccupancyTimeRange(
-                        timeFrom = dateTimeRange.start.toLocalTime(),
-                        timeTo = dateTimeRange.endInclusive.toLocalTime(),
+                        timeFrom = dateTimeRange.start.time,
+                        timeTo = dateTimeRange.endInclusive.time,
                         value = 1.0
                     )
 

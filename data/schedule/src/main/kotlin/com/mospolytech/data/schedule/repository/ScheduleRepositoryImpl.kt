@@ -1,15 +1,23 @@
 package com.mospolytech.data.schedule.repository
 
+import com.mospolytech.data.common.db.MosPolyDb
+import com.mospolytech.data.peoples.model.db.*
+import com.mospolytech.data.schedule.model.db.*
 import com.mospolytech.domain.peoples.model.description
+import com.mospolytech.domain.peoples.repository.StudentsRepository
 import com.mospolytech.domain.schedule.model.ScheduleComplexFilter
+import com.mospolytech.domain.schedule.model.lesson_subject.description
 import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
 import com.mospolytech.domain.schedule.model.pack.CompactSchedule
 import com.mospolytech.domain.schedule.model.pack.ScheduleInfo
+import com.mospolytech.domain.schedule.model.place.description
 import com.mospolytech.domain.schedule.model.source.ScheduleSource
 import com.mospolytech.domain.schedule.model.source.ScheduleSourceFull
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import com.mospolytech.domain.schedule.repository.*
 import com.mospolytech.domain.schedule.utils.*
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.deleteAll
 
 class ScheduleRepositoryImpl(
     private val lessonsRepository: LessonsRepository,
@@ -17,14 +25,15 @@ class ScheduleRepositoryImpl(
     private val lessonTypesRepository: LessonTypesRepository,
     private val teachersRepository: TeachersRepository,
     private val groupsRepository: GroupsRepository,
-    private val placesRepository: PlacesRepository
+    private val placesRepository: PlacesRepository,
+    private val studentsRepository: StudentsRepository
 ) : ScheduleRepository {
     private suspend fun getLessons(source: ScheduleSource): List<CompactLessonAndTimes> {
         val lessons = lessonsRepository.getLessons()
         return when (source.type) {
             ScheduleSources.Group -> lessons.filterByGroup(source.key)
             ScheduleSources.Teacher -> lessons.filterByTeacher(source.key)
-            ScheduleSources.Student -> lessons
+            ScheduleSources.Student -> lessons.filterByGroup(source.key)
             ScheduleSources.Place -> lessons.filterByPlace(source.key)
             ScheduleSources.Subject -> lessons.filterBySubject(source.key)
             ScheduleSources.Complex -> lessons
@@ -40,37 +49,26 @@ class ScheduleRepositoryImpl(
     override suspend fun getSourceList(sourceType: ScheduleSources): List<ScheduleSourceFull> {
         return when (sourceType) {
             ScheduleSources.Group -> {
-                lessonsRepository.getLessons()
-                    .flatMap { it.lesson.groupsId }
-                    .mapNotNull { groupsRepository.get(it) }
-                    .toSortedSet()
-                    .map { ScheduleSourceFull(sourceType, it.id, it.title, it.description, "") }
+                groupsRepository.getAll()
+                    .map { ScheduleSourceFull(sourceType, it.id, it.title, it.description, null) }
             }
             ScheduleSources.Teacher -> {
-                lessonsRepository.getLessons()
-                    .flatMap { it.lesson.teachersId }
-                    .mapNotNull { teachersRepository.get(it) }
-                    .toSortedSet()
-                    .map { ScheduleSourceFull(sourceType, it.id, it.name, it.description, "") }
+                teachersRepository.getAll()
+                    .map { ScheduleSourceFull(sourceType, it.id, it.name, it.description, it.avatar) }
             }
             ScheduleSources.Student -> {
-                emptyList()
+                studentsRepository.getShortStudents()
+                    .map { ScheduleSourceFull(sourceType, it.id, it.name, it.description, it.avatar) }
             }
             ScheduleSources.Place -> {
-                lessonsRepository.getLessons()
-                    .flatMap { it.lesson.placesId }
-                    .mapNotNull { placesRepository.get(it) }
-                    .toSortedSet()
-                    .map { ScheduleSourceFull(sourceType, it.id, it.title, "", "") }
+                placesRepository.getAll()
+                    .map { ScheduleSourceFull(sourceType, it.id, it.title, it.description, null) }
             }
             ScheduleSources.Subject -> {
-                lessonsRepository.getLessons()
-                    .map { it.lesson.subjectId }
-                    .mapNotNull { lessonSubjectsRepository.get(it) }
-                    .toSortedSet()
-                    .map { ScheduleSourceFull(sourceType, it.id, it.title, "", "") }
+                lessonSubjectsRepository.getAll()
+                    .map { ScheduleSourceFull(sourceType, it.id, it.title, it.description, null) }
             }
-            ScheduleSources.Complex -> emptyList()
+            ScheduleSources.Complex -> error("Can't process ScheduleSources.Complex")
         }
     }
 
@@ -84,6 +82,54 @@ class ScheduleRepositoryImpl(
 
     override suspend fun getCompactSchedule(filter: ScheduleComplexFilter): CompactSchedule {
         return getSchedulePackFromLessons(getLessons(filter))
+    }
+
+    override suspend fun updateData(recreateDb: Boolean) {
+        if (recreateDb) {
+            MosPolyDb.transaction {
+                SchemaUtils.drop(
+                    LessonDateTimesDb,
+                    LessonsDb,
+                    LessonToGroupsDb,
+                    LessonToLessonDateTimesDb,
+                    LessonToPlacesDb,
+                    LessonToTeachersDb,
+                    LessonTypesDb,
+                    PlacesDb,
+                    StudentsDb
+                )
+            }
+            MosPolyDb.transaction {
+                SchemaUtils.create(
+                    LessonDateTimesDb,
+                    LessonsDb,
+                    LessonToGroupsDb,
+                    LessonToLessonDateTimesDb,
+                    LessonToPlacesDb,
+                    LessonToTeachersDb,
+                    LessonTypesDb,
+                    PlacesDb,
+                    StudentsDb
+                )
+            }
+        } else {
+            MosPolyDb.transaction {
+                    LessonDateTimesDb.deleteAll()
+                    LessonsDb.deleteAll()
+                    LessonToGroupsDb.deleteAll()
+                    LessonToLessonDateTimesDb.deleteAll()
+                    LessonToPlacesDb.deleteAll()
+                    LessonToTeachersDb.deleteAll()
+                    LessonTypesDb.deleteAll()
+                    PlacesDb.deleteAll()
+                    StudentsDb.deleteAll()
+            }
+        }
+        addSchedule()
+    }
+
+    private fun addSchedule() {
+
     }
 
     private fun getSchedulePackFromLessons(lessons: List<CompactLessonAndTimes>): CompactSchedule {

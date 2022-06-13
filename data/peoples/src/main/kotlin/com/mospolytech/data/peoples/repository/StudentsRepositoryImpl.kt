@@ -2,11 +2,8 @@ package com.mospolytech.data.peoples.repository
 
 import com.mospolytech.data.peoples.model.xml.toModel
 import com.mospolytech.data.peoples.remote.StudentsRemoteDS
-import com.mospolytech.data.peoples.remote.TeachersRemoteDS
 import com.mospolytech.data.peoples.service.StudentsService
-import com.mospolytech.data.peoples.service.TeachersService
 import com.mospolytech.domain.peoples.model.Student
-import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.peoples.repository.StudentsRepository
 import com.mospolytech.domain.personal.repository.PersonalRepository
 
@@ -28,6 +25,8 @@ class StudentsRepositoryImpl(
 
     override suspend fun getStudents() = studentsDS.getStudents()
 
+    override suspend fun getShortStudents() = studentsDS.getShortStudents()
+
     override suspend fun getClassmates(token: String): Result<List<Student>> {
         return personalRepository.getPersonalInfo(token).mapCatching {
             studentsDS.getStudents(it.group)
@@ -42,9 +41,6 @@ class StudentsRepositoryImpl(
             studentsDS.clearData()
         }
         studentsDS.addStudents(studentsLocalCache)
-//        studentsLocalCache.forEach {
-//            studentsDS.addStudent(it)
-//        }
     }
 
 }

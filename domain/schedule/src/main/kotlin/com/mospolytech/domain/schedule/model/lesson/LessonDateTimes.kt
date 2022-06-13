@@ -8,16 +8,6 @@ import kotlin.time.Duration.Companion.days
 import kotlin.time.ExperimentalTime
 
 @Serializable
-data class LessonDateTimes(
-    val lesson: Lesson,
-    val time: List<LessonDateTime>
-): Comparable<LessonDateTimes> {
-    override fun compareTo(other: LessonDateTimes): Int {
-        return lesson.compareTo(other.lesson)
-    }
-}
-
-@Serializable
 data class LessonDateTime(
     val startDate: LocalDate,
     val endDate: LocalDate?,

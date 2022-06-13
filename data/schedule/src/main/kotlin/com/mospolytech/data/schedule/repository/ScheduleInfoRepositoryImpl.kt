@@ -1,40 +1,75 @@
 package com.mospolytech.data.schedule.repository
 
-import com.mospolytech.domain.schedule.model.group.GroupInfo
+import com.mospolytech.data.peoples.model.db.GroupsDb
+import com.mospolytech.data.peoples.model.db.StudentsDb
+import com.mospolytech.data.peoples.model.db.TeachersDb
+import com.mospolytech.data.peoples.model.entity.GroupEntity
+import com.mospolytech.data.peoples.model.entity.StudentEntity
+import com.mospolytech.data.peoples.model.entity.TeacherEntity
+import com.mospolytech.data.schedule.model.db.LessonTypesDb
+import com.mospolytech.data.schedule.model.db.PlacesDb
+import com.mospolytech.data.schedule.model.db.SubjectsDb
+import com.mospolytech.data.schedule.model.entity.LessonTypeEntity
+import com.mospolytech.data.schedule.model.entity.PlaceEntity
+import com.mospolytech.data.schedule.model.entity.SubjectEntity
+import com.mospolytech.domain.peoples.model.Group
+import com.mospolytech.domain.peoples.model.Student
 import com.mospolytech.domain.schedule.model.lesson_subject.LessonSubjectInfo
 import com.mospolytech.domain.schedule.model.lesson_type.LessonTypeInfo
 import com.mospolytech.domain.schedule.model.place.PlaceInfo
 import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.schedule.repository.*
+import java.util.*
 
-class ScheduleInfoRepositoryImpl(
-    private val teacherRepository: TeachersRepository,
-    private val groupsRepository: GroupsRepository,
-    private val placesRepository: PlacesRepository,
-    private val lessonSubjectsRepository: LessonSubjectsRepository,
-    private val lessonTypesRepository: LessonTypesRepository
-) : ScheduleInfoRepository {
+class ScheduleInfoRepositoryImpl : ScheduleInfoRepository {
     override suspend fun getTeacher(id: String): Result<Teacher?> {
-        return Result.success(teacherRepository.get(id))
+        return kotlin.runCatching {
+            TeacherEntity.find { TeachersDb.id eq id }
+                .map { it.toModel() }
+                .firstOrNull()
+        }
     }
 
-    override suspend fun getGroupInfo(id: String): Result<GroupInfo?> {
-        return Result.success(groupsRepository.get(id))
+    override suspend fun getGroupInfo(id: String): Result<Group?> {
+        return kotlin.runCatching {
+            GroupEntity.find { GroupsDb.id eq id }
+                .map { it.toModel() }
+                .firstOrNull()
+        }
     }
 
     override suspend fun getPlaceInfo(id: String): Result<PlaceInfo?> {
-        return Result.success(placesRepository.get(id))
+        val uuid = UUID.fromString(id)
+        return kotlin.runCatching {
+            PlaceEntity.find { PlacesDb.id eq uuid }
+                .map { it.toModel() }
+                .firstOrNull()
+        }
     }
 
     override suspend fun getSubjectInfo(id: String): Result<LessonSubjectInfo?> {
-        return Result.success(lessonSubjectsRepository.get(id))
+        val uuid = UUID.fromString(id)
+        return kotlin.runCatching {
+            SubjectEntity.find { SubjectsDb.id eq uuid }
+                .map { it.toModel() }
+                .firstOrNull()
+        }
     }
 
     override suspend fun getLessonTypeInfo(id: String): Result<LessonTypeInfo?> {
-        return Result.success(lessonTypesRepository.get(id))
+        val uuid = UUID.fromString(id)
+        return kotlin.runCatching {
+            LessonTypeEntity.find { LessonTypesDb.id eq uuid }
+                .map { it.toModel() }
+                .firstOrNull()
+        }
     }
 
-    override suspend fun getStudentInfo(id: String): Result<String?> {
-        return Result.success("")
+    override suspend fun getStudentInfo(id: String): Result<Student?> {
+        return kotlin.runCatching {
+            StudentEntity.find { StudentsDb.id eq id }
+                .map { it.toModel() }
+                .firstOrNull()
+        }
     }
 }
