@@ -5,7 +5,7 @@ import org.jetbrains.exposed.sql.Table
 
 object LessonToGroupsDb : Table() {
     val lesson = reference("lesson", LessonsDb)
-    val groups = reference("group", GroupsDb)
+    val group = reference("group", GroupsDb)
 
-    override val primaryKey = PrimaryKey(lesson, groups)
+    override val primaryKey = PrimaryKey(lesson, group)
 }

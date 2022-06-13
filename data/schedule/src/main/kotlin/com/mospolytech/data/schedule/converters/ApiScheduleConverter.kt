@@ -4,6 +4,8 @@ import com.mospolytech.data.schedule.model.response.ApiGroup
 import com.mospolytech.data.schedule.model.response.ApiLesson
 import com.mospolytech.data.schedule.model.response.ScheduleResponse
 import com.mospolytech.data.schedule.model.response.ScheduleSessionResponse
+import com.mospolytech.data.schedule.remote.LessonDateTimesRemoteDS
+import com.mospolytech.data.schedule.remote.LessonsRemoteDS
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
 import com.mospolytech.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
@@ -21,14 +23,15 @@ class ApiScheduleConverter(
     private val teachersConverter: LessonTeachersConverter,
     private val groupsConverter: LessonGroupsConverter,
     private val placesConverter: LessonPlacesConverter,
-
+    private val lessonsRemoteDS: LessonsRemoteDS,
+    private val lessonDateTimesRemoteDS: LessonDateTimesRemoteDS
 ) {
     companion object {
         private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
     }
 
-    suspend fun convertToLessons(scheduleResponse: ScheduleResponse): List<CompactLessonAndTimes> {
-        val lessons = scheduleResponse.contents.values.flatMap {
+    suspend fun convertToLessons(scheduleResponse: ScheduleResponse) {
+        val lessons = scheduleResponse.contents.values.forEach {
             convertLessons(
                 it.grid.toList(),
                 listOf(it.group),
@@ -38,8 +41,8 @@ class ApiScheduleConverter(
         return lessons
     }
 
-    suspend fun convertToLessons(scheduleResponse: ScheduleSessionResponse): List<CompactLessonAndTimes> {
-        val lessons = scheduleResponse.contents.flatMap {
+    suspend fun convertToLessons(scheduleResponse: ScheduleSessionResponse) {
+        val lessons = scheduleResponse.contents.forEach {
             convertLessons(
                 it.grid.toList(),
                 listOf(it.group),
@@ -53,14 +56,13 @@ class ApiScheduleConverter(
         days: List<Pair<String, Map<String, List<ApiLesson>>>>,
         groups: List<ApiGroup>,
         isByDate: Boolean
-    ): List<CompactLessonAndTimes> {
+    ) {
         val groupIsEvening = (groups.firstOrNull()?.evening ?: 0) != 0
 
-        val convertedDays = days.flatMap { (day, dailyLessons) ->
-            dailyLessons.toList().flatMap {
+        days.forEach { (day, dailyLessons) ->
+            dailyLessons.forEach {
                 val (order, lessons) = it
-
-                lessons.map { apiLesson ->
+                lessons.forEach { apiLesson ->
                     val orderInt = order.toIntOrNull() ?: 0
                     val (timeStart, timeEnd) = LessonTimeConverter.getLocalTime(orderInt - 1, groupIsEvening)
 
@@ -68,19 +70,27 @@ class ApiScheduleConverter(
                     val dateTo = parseDate(apiLesson.dt, LocalDate.MAX)
                     val dates = getDates(day, isByDate, dateFrom, dateTo)
 
-
-                    convertLessonDateTimes(
+                    val lessonPack = convertLessonDateTimes(
                         apiLesson,
                         groups,
                         dates,
                         timeStart,
                         timeEnd
                     )
+
+                    val timesId = lessonDateTimesRemoteDS.add(lessonPack.times)
+
+                    lessonsRemoteDS.add(
+                        typeId = lessonPack.lesson.typeId,
+                        subjectId = lessonPack.lesson.subjectId,
+                        teachersId = lessonPack.lesson.teachersId,
+                        groupsId = lessonPack.lesson.groupsId,
+                        placesId = lessonPack.lesson.placesId,
+                        lessonDateTimesId = timesId
+                    )
                 }
             }
-
         }
-        return convertedDays
     }
 
     private fun getDates(day: String, isByDate: Boolean, dateFrom: LocalDate, dateTo: LocalDate): Pair<LocalDate, LocalDate?> {
@@ -193,7 +203,11 @@ fun mergeLessons(vararg lessonsList: List<CompactLessonAndTimes>): List<CompactL
 }
 
 fun CompactLessonAndTimes.mergeByGroup(other: CompactLessonAndTimes): CompactLessonAndTimes {
-    return this.copy(lesson = lesson.copy(groupsId = (lesson.groupsId + other.lesson.groupsId).sorted()))
+    return this.copy(
+        lesson = lesson.copy(
+            groupsId = (lesson.groupsId + other.lesson.groupsId).sorted()
+        )
+    )
 }
 
 fun CompactLessonAndTimes.canMergeByGroup(other: CompactLessonAndTimes): Boolean {

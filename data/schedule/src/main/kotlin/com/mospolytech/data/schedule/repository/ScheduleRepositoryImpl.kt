@@ -73,7 +73,7 @@ class ScheduleRepositoryImpl(
     }
 
     override suspend fun getCompactSchedule(): CompactSchedule {
-        return getSchedulePackFromLessons(lessonsRepository.getLessons())
+        return lessonsRepository.getAllLessons()
     }
 
     override suspend fun getCompactSchedule(source: ScheduleSource): CompactSchedule {
