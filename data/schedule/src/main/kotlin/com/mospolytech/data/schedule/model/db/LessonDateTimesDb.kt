@@ -9,4 +9,8 @@ object LessonDateTimesDb : UUIDTable() {
     val endDate = date("end_date").nullable()
     val startTime = time("start_time")
     val endTime = time("end_time")
+
+    init {
+        uniqueIndex(startDate, endDate, startTime, endTime)
+    }
 }

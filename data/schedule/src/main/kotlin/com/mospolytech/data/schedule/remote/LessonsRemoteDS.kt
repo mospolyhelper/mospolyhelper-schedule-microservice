@@ -2,8 +2,6 @@ package com.mospolytech.data.schedule.remote
 
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.schedule.model.db.*
-import com.mospolytech.data.schedule.model.entity.*
-import com.mospolytech.domain.schedule.model.lesson_subject.LessonSubjectInfo
 import org.jetbrains.exposed.sql.*
 import java.util.*
 
@@ -35,21 +33,17 @@ class LessonsRemoteDS {
             var id = map[cacheKey]
 
             if (id == null) {
-                id = LessonEntity.all()
-                    .filter {
-                        it.type.id.value.toString() == typeId &&
-                                it.subject.id.value.toString() == subjectId &&
-                                listContentEquals(it.teachers.map { it.id.value.toString() }, teachersId) &&
-                                listContentEquals(it.groups.map { it.id.value.toString() }, groupsId) &&
-                                listContentEquals(it.places.map { it.id.value.toString() }, placesId) &&
-                                listContentEquals(it.dateTimes.map { it.id.value.toString() }, lessonDateTimesId)
-                    }
-                    .firstOrNull()
-                    ?.toLessonModel()
-                    ?.id
+                id = firstOrNullId(
+                    typeId,
+                    subjectId,
+                    teachersId,
+                    groupsId,
+                    placesId,
+                    lessonDateTimesId
+                )
             }
 
-            id?.let {
+            if (id != null) {
                 groupsId.forEach { groupId ->
                     val group = LessonToGroupsDb.select {
                         LessonToGroupsDb.lesson eq UUID.fromString(id) and
@@ -64,6 +58,7 @@ class LessonsRemoteDS {
                     }
                 }
             }
+
 
             if (id == null) {
                 id = LessonsDb.insertAndGetId {
@@ -95,19 +90,82 @@ class LessonsRemoteDS {
         }
     }
 
-//    suspend fun get(id: String): LessonSubjectInfo? {
-//        return MosPolyDb.transaction {
-//            SubjectEntity.findById(UUID.fromString(id))?.toModel()
-//        }
-//    }
-//
-//    suspend fun getAll(): List<LessonSubjectInfo> {
-//        return MosPolyDb.transaction {
-//            SubjectEntity.all()
-//                .orderBy(SubjectsDb.title to SortOrder.ASC)
-//                .map { it.toModel() }
-//        }
-//    }
+    private suspend fun firstOrNullId(
+        typeId: String,
+        subjectId: String,
+        teachersId: List<String>,
+        groupsId: List<String>,
+        placesId: List<String>,
+        lessonDateTimesId: List<String>
+    ): String? {
+        return MosPolyDb.transaction {
+            var isInitialized = false
+            var resLessons = setOf<UUID>()
+
+            fun updateResList(lessons: Set<UUID>) {
+                resLessons = if (isInitialized) {
+                    resLessons intersect lessons
+                } else {
+                    lessons
+                }
+                isInitialized = true
+            }
+
+            if (groupsId.isNotEmpty()) {
+                val lessonsToIntersect = LessonToGroupsDb.select {
+                    LessonToGroupsDb.group inList groupsId
+                }.map { it[LessonToGroupsDb.lesson].value }.toSet()
+
+                updateResList(lessonsToIntersect)
+                if (isInitialized && resLessons.isEmpty()) return@transaction null
+            }
+
+            if (teachersId.isNotEmpty()) {
+                val lessonsToIntersect = LessonToTeachersDb.select {
+                    LessonToTeachersDb.teacher inList teachersId
+                }.map { it[LessonToTeachersDb.lesson].value }.toSet()
+
+                updateResList(lessonsToIntersect)
+                if (isInitialized && resLessons.isEmpty()) return@transaction null
+            }
+
+            if (placesId.isNotEmpty()) {
+                val placesId = placesId.map { UUID.fromString(it) }
+                val lessonsToIntersect = LessonToPlacesDb.select {
+                    LessonToPlacesDb.place inList placesId
+                }.map { it[LessonToPlacesDb.lesson].value }.toSet()
+
+                updateResList(lessonsToIntersect)
+                if (isInitialized && resLessons.isEmpty()) return@transaction null
+            }
+
+            if (placesId.isNotEmpty()) {
+                val lessonDateTimesId = lessonDateTimesId.map { UUID.fromString(it) }
+                val lessonsToIntersect = LessonToLessonDateTimesDb.select {
+                    LessonToLessonDateTimesDb.time inList lessonDateTimesId
+                }.map { it[LessonToLessonDateTimesDb.lesson].value }.toSet()
+
+                updateResList(lessonsToIntersect)
+                if (isInitialized && resLessons.isEmpty()) return@transaction null
+            }
+
+            val query = LessonsDb.selectAll()
+
+            if (resLessons.isNotEmpty()) {
+                query.andWhere { LessonsDb.id inList resLessons }
+            }
+
+            query.andWhere {
+                LessonsDb.subject eq  UUID.fromString(subjectId)
+            }
+
+            query.andWhere {
+                LessonsDb.type eq UUID.fromString(typeId)
+            }
+
+            query.mapLazy { it[LessonsDb.id].value.toString() }.firstOrNull()
+        }
+    }
 
     private data class LessonCacheKey(
         val typeId: String,

@@ -6,4 +6,19 @@ import kotlinx.serialization.Serializable
 data class CompactSchedule(
     val lessons: List<CompactLessonAndTimes>,
     val info: ScheduleInfo
-)
+) {
+    companion object {
+        val empty by lazy {
+            CompactSchedule(
+                emptyList(),
+                ScheduleInfo(
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    emptyList()
+                )
+            )
+        }
+    }
+}

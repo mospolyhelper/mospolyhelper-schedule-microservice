@@ -156,6 +156,7 @@ class LessonsRepositoryImpl(
                 }.map { it[LessonToGroupsDb.lesson].value }.toSet()
 
                 updateResList(lessonsToIntersect)
+                if (isInitialized && resLessons.isEmpty()) return@transaction CompactSchedule.empty
             }
 
             if (filter.teachersId.isNotEmpty()) {
@@ -164,6 +165,7 @@ class LessonsRepositoryImpl(
                 }.map { it[LessonToTeachersDb.lesson].value }.toSet()
 
                 updateResList(lessonsToIntersect)
+                if (isInitialized && resLessons.isEmpty()) return@transaction CompactSchedule.empty
             }
 
             if (filter.placesId.isNotEmpty()) {
@@ -173,6 +175,7 @@ class LessonsRepositoryImpl(
                 }.map { it[LessonToPlacesDb.lesson].value }.toSet()
 
                 updateResList(lessonsToIntersect)
+                if (isInitialized && resLessons.isEmpty()) return@transaction CompactSchedule.empty
             }
 
             val query = fullQuery().selectAll()

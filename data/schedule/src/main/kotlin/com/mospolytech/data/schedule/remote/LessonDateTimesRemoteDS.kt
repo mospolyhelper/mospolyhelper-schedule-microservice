@@ -29,4 +29,22 @@ class LessonDateTimesRemoteDS {
             }
         }
     }
+
+    suspend fun add(lessonDateTime: LessonDateTime): String {
+        return MosPolyDb.transaction {
+            LessonDateTimeEntity.insertIfNotExist(
+                op = {
+                    LessonDateTimesDb.startDate eq lessonDateTime.startDate and
+                            (LessonDateTimesDb.endDate eq lessonDateTime.endDate) and
+                            (LessonDateTimesDb.startTime eq lessonDateTime.time.start) and
+                            (LessonDateTimesDb.endTime eq lessonDateTime.time.end)
+                }
+            ) {
+                startDate = lessonDateTime.startDate
+                endDate = lessonDateTime.endDate
+                startTime = lessonDateTime.time.start
+                endTime = lessonDateTime.time.end
+            }.id.value.toString()
+        }
+    }
 }

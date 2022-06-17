@@ -23,6 +23,8 @@ val scheduleDataModule = module {
     singleOf(::LessonTeachersConverter)
     singleOf(::LessonGroupsConverter)
     singleOf(::LessonPlacesConverter)
+    singleOf(::LessonDateTimeConverter)
+    singleOf(::LessonConverter)
 
     singleOf(::LessonsRepositoryImpl) { bind<LessonsRepository>() }
     singleOf(::ScheduleRepositoryImpl) { bind<ScheduleRepository>() }
