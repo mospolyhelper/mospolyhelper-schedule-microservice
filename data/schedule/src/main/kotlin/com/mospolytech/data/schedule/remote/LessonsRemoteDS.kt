@@ -10,6 +10,11 @@ import java.util.*
 class LessonsRemoteDS {
     private val map = mutableMapOf<LessonCacheKey, String>()
 
+    private fun <T> listContentEquals(l1: List<T>, l2: List<T>): Boolean {
+        if (l1.size != l2.size) return false
+        return l1.all { it in l2 }
+    }
+
     suspend fun add(
         typeId: String,
         subjectId: String,
@@ -30,15 +35,18 @@ class LessonsRemoteDS {
             var id = map[cacheKey]
 
             if (id == null) {
-                id = SubjectEntity.find { SubjectsDb.title eq "" }
-                    .mapLazy { it.toModel() }
+                id = LessonEntity.all()
+                    .filter {
+                        it.type.id.value.toString() == typeId &&
+                                it.subject.id.value.toString() == subjectId &&
+                                listContentEquals(it.teachers.map { it.id.value.toString() }, teachersId) &&
+                                listContentEquals(it.groups.map { it.id.value.toString() }, groupsId) &&
+                                listContentEquals(it.places.map { it.id.value.toString() }, placesId) &&
+                                listContentEquals(it.dateTimes.map { it.id.value.toString() }, lessonDateTimesId)
+                    }
                     .firstOrNull()
+                    ?.toLessonModel()
                     ?.id
-
-                LessonToGroupsDb.batchInsert(groupsId) {
-                    this[LessonToGroupsDb.lesson] = UUID.fromString(id)
-                    this[LessonToGroupsDb.group] = it
-                }
             }
 
             id?.let {
@@ -58,10 +66,10 @@ class LessonsRemoteDS {
             }
 
             if (id == null) {
-                id = LessonEntity.new {
-                    this.type = type
-                    this.subject = subject
-                }.toLessonModel().id
+                id = LessonsDb.insertAndGetId {
+                    it[type] = UUID.fromString(typeId)
+                    it[subject] = UUID.fromString(subjectId)
+                }.value.toString()
 
                 LessonToTeachersDb.batchInsert(teachersId) {
                     this[LessonToTeachersDb.lesson] = UUID.fromString(id)
@@ -73,7 +81,7 @@ class LessonsRemoteDS {
                 }
                 LessonToPlacesDb.batchInsert(placesId) {
                     this[LessonToPlacesDb.lesson] = UUID.fromString(id)
-                    this[LessonToPlacesDb.place] = it
+                    this[LessonToPlacesDb.place] = UUID.fromString(it)
                 }
                 LessonToLessonDateTimesDb.batchInsert(lessonDateTimesId) {
                     this[LessonToLessonDateTimesDb.lesson] = UUID.fromString(id)

@@ -4,151 +4,253 @@ import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.peoples.model.db.*
 import com.mospolytech.data.peoples.model.entity.StudentEntity
 import com.mospolytech.data.schedule.converters.ApiScheduleConverter
-import com.mospolytech.data.schedule.converters.mergeLessons
 import com.mospolytech.data.schedule.local.ScheduleCacheDS
 import com.mospolytech.data.schedule.model.db.*
 import com.mospolytech.data.schedule.model.entity.LessonEntity
 import com.mospolytech.data.schedule.service.ScheduleService
+import com.mospolytech.domain.peoples.model.Group
+import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.schedule.model.ScheduleComplexFilter
+import com.mospolytech.domain.schedule.model.lesson_subject.LessonSubjectInfo
+import com.mospolytech.domain.schedule.model.lesson_type.LessonTypeInfo
 import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
 import com.mospolytech.domain.schedule.model.pack.CompactSchedule
+import com.mospolytech.domain.schedule.model.pack.ScheduleInfo
+import com.mospolytech.domain.schedule.model.place.PlaceInfo
 import com.mospolytech.domain.schedule.repository.LessonsRepository
 import com.mospolytech.domain.schedule.utils.filterByPlaces
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
+import java.util.UUID
 
 class LessonsRepositoryImpl(
     private val service: ScheduleService,
-    private val converter: ApiScheduleConverter,
-    private val cacheDS: ScheduleCacheDS
+    private val converter: ApiScheduleConverter
 ) : LessonsRepository {
-    private val updateScheduleLock = Any()
-
-    private suspend fun updateSchedule(): List<CompactLessonAndTimes> {
+    override suspend fun updateSchedule() {
         val semester = service.getSchedules()
-        val lessonsSemester = converter.convertToLessons(semester)
+        converter.convertToLessons(semester)
 
         val session = service.getSchedulesSession()
-        val lessonsSession = converter.convertToLessons(session)
-
-        val mergedLessons = mergeLessons(lessonsSemester, lessonsSession)
-
-        synchronized(updateScheduleLock) {
-            cacheDS.scheduleCache = mergedLessons
-            cacheDS.scheduleCacheUpdateDateTime = LocalDateTime.now()
-        }
-        return mergedLessons
-    }
-
-    override suspend fun getLessons(): List<CompactLessonAndTimes> {
-        return if (cacheDS.scheduleCacheUpdateDateTime.until(LocalDateTime.now(), ChronoUnit.HOURS) > 24) {
-            updateSchedule()
-        } else {
-            cacheDS.scheduleCache
-        }
+        converter.convertToLessons(session)
     }
 
     override suspend fun getLessonsByPlaces(placeIds: List<String>): List<CompactLessonAndTimes> {
-        return getLessons()
-            .let { if (placeIds.isNotEmpty()) it.filterByPlaces(placeIds) else it }
-    }
-
-    suspend fun getLessons(filter: ScheduleComplexFilter): List<CompactLessonAndTimes> {
         return MosPolyDb.transaction {
-            val notNeedFilterBySubject = filter.subjectsId.isEmpty()
-            val notNeedFilterByType = filter.typesId.isEmpty()
-            val notNeedFilterByTeachers = filter.teachersId.isEmpty()
-            val notNeedFilterByGroups = filter.groupsId.isEmpty()
-            val notNeedFilterByPlaces = filter.placesId.isEmpty()
+            val resLessons = if (placeIds.isNotEmpty()) {
+                val placesId = placeIds.map { UUID.fromString(it) }
 
+                LessonToPlacesDb.select {
+                    LessonToPlacesDb.place inList placesId
+                }.map { it[LessonToPlacesDb.lesson].value }.toSet()
+            } else {
+                setOf<UUID>()
+            }
 
-            val query = LessonsDb
-                .innerJoin(LessonTypesDb)
-                .innerJoin(SubjectsDb)
-                .innerJoin(LessonToTeachersDb)
-                .innerJoin(
-                    TeachersDb.leftJoin(DepartmentsDb)
-                )
-                .innerJoin(LessonToGroupsDb)
-                .innerJoin(
-                    GroupsDb.leftJoin(StudentFacultiesDb)
-                        .leftJoin(StudentDirectionsDb)
-                )
-                .innerJoin(LessonToPlacesDb)
-                .innerJoin(
-                    PlacesDb
-                )
-                .innerJoin(LessonToPlacesDb)
-                .innerJoin(
-                    PlacesDb
-                )
-                .selectAll()
+            val query = fullQuery().selectAll()
+            if (resLessons.isNotEmpty()) {
+                query.andWhere { LessonsDb.id inList resLessons }
+            }
 
-//            if (!notNeedFilterByGroups) {
-//                query = query.andWhere {
-//
-//                }
-//            }
-//
-//            LessonEntity.find {
-//                (notNeedFilterBySubject || it.lesson.subjectId in filter.subjectsId) and
-//                        (notNeedFilterByType || it.lesson.typeId in filter.typesId) and
-//                        (notNeedFilterByTeachers || it.lesson.teachersId.any { it in filter.teachersId }) and
-//                        (notNeedFilterByGroups || it.lesson.groupsId.any { it in filter.groupsId }) and
-//                        (notNeedFilterByPlaces || it.lesson.placesId.any { it in filter.placesId })
-//            }
-
-            LessonEntity.wrapRows(query)
-                .map { it.toFullModel() }
+            buildSchedule(query).lessons
         }
     }
 
     override suspend fun getAllLessons(): CompactSchedule {
         return MosPolyDb.transaction {
-            val query = LessonsDb
-                .innerJoin(LessonTypesDb)
-                .innerJoin(SubjectsDb)
-                .innerJoin(LessonToTeachersDb)
-                .innerJoin(
-                    TeachersDb.leftJoin(DepartmentsDb)
-                )
-                .innerJoin(LessonToGroupsDb)
-                .innerJoin(
-                    GroupsDb.leftJoin(StudentFacultiesDb)
-                        .leftJoin(StudentDirectionsDb)
-                )
-                .innerJoin(LessonToPlacesDb)
-                .innerJoin(
-                    PlacesDb
-                )
-                .innerJoin(LessonToPlacesDb)
-                .innerJoin(
-                    PlacesDb
-                )
+            val query = fullQuery()
                 .selectAll()
 
-            val lessons = LessonEntity.wrapRows(query)
-                .map { it.toFullModel() }
-
-            error("")
+            buildSchedule(query)
         }
     }
 
-    fun List<CompactLessonAndTimes>.filter(filter: ScheduleComplexFilter): List<CompactLessonAndTimes> {
-        val notNeedFilterBySubject = filter.subjectsId.isEmpty()
-        val notNeedFilterByType = filter.typesId.isEmpty()
-        val notNeedFilterByTeachers = filter.teachersId.isEmpty()
-        val notNeedFilterByGroups = filter.groupsId.isEmpty()
-        val notNeedFilterByPlaces = filter.placesId.isEmpty()
+    override suspend fun getLessonsByGroup(groupId: String): CompactSchedule {
+        return MosPolyDb.transaction {
+            val lessonsId = LessonToGroupsDb.select {
+                LessonToGroupsDb.group eq groupId
+            }.mapLazy { it[LessonToGroupsDb.lesson].value }
+                .toList()
 
-        return this.filter {
-            (notNeedFilterBySubject || it.lesson.subjectId in filter.subjectsId) &&
-                    (notNeedFilterByType || it.lesson.typeId in filter.typesId) &&
-                    (notNeedFilterByTeachers || it.lesson.teachersId.any { it in filter.teachersId }) &&
-                    (notNeedFilterByGroups || it.lesson.groupsId.any { it in filter.groupsId }) &&
-                    (notNeedFilterByPlaces || it.lesson.placesId.any { it in filter.placesId })
+            val query = fullQuery().select {
+                LessonsDb.id inList lessonsId
+            }
+
+            buildSchedule(query)
         }
+    }
+
+    override suspend fun getLessonsByStudent(studentId: String): CompactSchedule {
+        return MosPolyDb.transaction {
+            val groupId = StudentEntity.findById(studentId)?.group?.id?.value.orEmpty()
+
+            val lessonsId = LessonToGroupsDb.select {
+                LessonToGroupsDb.group eq groupId
+            }.mapLazy { it[LessonToGroupsDb.lesson].value }
+                .toList()
+
+            val query = fullQuery().select {
+                LessonsDb.id inList lessonsId
+            }
+
+            buildSchedule(query)
+        }
+    }
+
+    override suspend fun getLessonsByTeacher(teacherId: String): CompactSchedule {
+        return MosPolyDb.transaction {
+            val lessonsId = LessonToTeachersDb.select {
+                LessonToTeachersDb.teacher eq teacherId
+            }.mapLazy { it[LessonToGroupsDb.lesson].value }
+                .toList()
+
+            val query = fullQuery().select {
+                LessonsDb.id inList lessonsId
+            }
+
+            buildSchedule(query)
+        }
+    }
+
+    override suspend fun getLessonsByPlace(placeId: String): CompactSchedule {
+        return MosPolyDb.transaction {
+            val lessonsId = LessonToPlacesDb.select {
+                LessonToPlacesDb.place eq UUID.fromString(placeId)
+            }.mapLazy { it[LessonToGroupsDb.lesson].value }
+                .toList()
+
+            val query = fullQuery().select {
+                LessonsDb.id inList lessonsId
+            }
+
+            buildSchedule(query)
+        }
+    }
+
+    override suspend fun getLessonsBySubject(subjectId: String): CompactSchedule {
+        return MosPolyDb.transaction {
+            val query = fullQuery().select {
+                LessonsDb.subject eq UUID.fromString(subjectId)
+            }
+
+            buildSchedule(query)
+        }
+    }
+
+    override suspend fun getLessonsByFilter(filter: ScheduleComplexFilter): CompactSchedule {
+        return MosPolyDb.transaction {
+            var isInitialized = false
+            var resLessons = setOf<UUID>()
+
+            fun updateResList(lessons: Set<UUID>) {
+                resLessons = if (isInitialized) {
+                    resLessons intersect lessons
+                } else {
+                    lessons
+                }
+                isInitialized = true
+            }
+
+            if (filter.groupsId.isNotEmpty()) {
+                val lessonsToIntersect = LessonToGroupsDb.select {
+                    LessonToGroupsDb.group inList filter.groupsId
+                }.map { it[LessonToGroupsDb.lesson].value }.toSet()
+
+                updateResList(lessonsToIntersect)
+            }
+
+            if (filter.teachersId.isNotEmpty()) {
+                val lessonsToIntersect = LessonToTeachersDb.select {
+                    LessonToTeachersDb.teacher inList filter.teachersId
+                }.map { it[LessonToTeachersDb.lesson].value }.toSet()
+
+                updateResList(lessonsToIntersect)
+            }
+
+            if (filter.placesId.isNotEmpty()) {
+                val placesId = filter.placesId.map { UUID.fromString(it) }
+                val lessonsToIntersect = LessonToPlacesDb.select {
+                    LessonToPlacesDb.place inList placesId
+                }.map { it[LessonToPlacesDb.lesson].value }.toSet()
+
+                updateResList(lessonsToIntersect)
+            }
+
+            val query = fullQuery().selectAll()
+
+            if (resLessons.isNotEmpty()) {
+                query.andWhere { LessonsDb.id inList resLessons }
+            }
+
+            if (filter.subjectsId.isNotEmpty()) {
+                val subjectsId = filter.subjectsId.map { UUID.fromString(it) }
+                query.andWhere {
+                    LessonsDb.subject inList subjectsId
+                }
+            }
+
+            if (filter.typesId.isNotEmpty()) {
+                val typesId = filter.typesId.map { UUID.fromString(it) }
+                query.andWhere {
+                    LessonsDb.type inList typesId
+                }
+            }
+
+            buildSchedule(query)
+        }
+    }
+
+    private fun fullQuery(): ColumnSet {
+        val query = LessonsDb
+            .innerJoin(LessonTypesDb)
+            .innerJoin(SubjectsDb)
+            .innerJoin(LessonToTeachersDb)
+            .innerJoin(
+                TeachersDb.leftJoin(DepartmentsDb)
+            )
+            .innerJoin(LessonToGroupsDb)
+            .innerJoin(
+                GroupsDb.leftJoin(StudentFacultiesDb)
+                    .leftJoin(StudentDirectionsDb)
+            )
+            .innerJoin(LessonToPlacesDb)
+            .innerJoin(
+                PlacesDb
+            )
+            .innerJoin(LessonToPlacesDb)
+            .innerJoin(
+                PlacesDb
+            )
+
+        return query
+    }
+
+    private fun buildSchedule(query: Query): CompactSchedule {
+        val types = mutableListOf<LessonTypeInfo>()
+        val subjects = mutableListOf<LessonSubjectInfo>()
+        val teachers = mutableListOf<Teacher>()
+        val groups = mutableListOf<Group>()
+        val places = mutableListOf<PlaceInfo>()
+        val lessonsList = mutableListOf<CompactLessonAndTimes>()
+
+
+        LessonEntity.wrapRows(query).forEach {
+            types.add(it.type.toModel())
+            subjects.add(it.subject.toModel())
+            teachers.addAll(it.teachers.map { it.toModel() })
+            groups.addAll(it.groups.map { it.toModel() })
+            places.addAll(it.places.map { it.toModel() })
+            lessonsList.add(it.toFullModel())
+        }
+
+        return CompactSchedule(
+            lessons = lessonsList,
+            info = ScheduleInfo(
+                typesInfo = types,
+                subjectsInfo = subjects,
+                teachersInfo = teachers,
+                groupsInfo = groups,
+                placesInfo = places
+            )
+        )
     }
 }

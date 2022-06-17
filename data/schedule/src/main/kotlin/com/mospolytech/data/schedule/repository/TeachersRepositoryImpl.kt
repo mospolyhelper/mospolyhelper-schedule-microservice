@@ -7,6 +7,7 @@ import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.schedule.repository.TeachersRepository
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.mapLazy
+import java.util.UUID
 
 class TeachersRepositoryImpl : TeachersRepository {
     private val map = mutableMapOf<String, String>()
@@ -24,7 +25,7 @@ class TeachersRepositoryImpl : TeachersRepository {
             }
 
             if (id == null) {
-                id = TeacherEntity.new {
+                id = TeacherEntity.new(UUID.randomUUID().toString()) {
                     this.name = name
                 }.toModel().id
             }

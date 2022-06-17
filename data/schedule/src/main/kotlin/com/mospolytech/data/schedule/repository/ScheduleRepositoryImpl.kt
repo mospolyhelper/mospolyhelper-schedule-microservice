@@ -28,23 +28,23 @@ class ScheduleRepositoryImpl(
     private val placesRepository: PlacesRepository,
     private val studentsRepository: StudentsRepository
 ) : ScheduleRepository {
-    private suspend fun getLessons(source: ScheduleSource): List<CompactLessonAndTimes> {
-        val lessons = lessonsRepository.getLessons()
-        return when (source.type) {
-            ScheduleSources.Group -> lessons.filterByGroup(source.key)
-            ScheduleSources.Teacher -> lessons.filterByTeacher(source.key)
-            ScheduleSources.Student -> lessons.filterByGroup(source.key)
-            ScheduleSources.Place -> lessons.filterByPlace(source.key)
-            ScheduleSources.Subject -> lessons.filterBySubject(source.key)
-            ScheduleSources.Complex -> lessons
-        }
-    }
-
-    private suspend fun getLessons(filter: ScheduleComplexFilter): List<CompactLessonAndTimes> {
-        val lessons = lessonsRepository.getLessons()
-
-        return lessons.filter(filter)
-    }
+//    private suspend fun getLessons(source: ScheduleSource): List<CompactLessonAndTimes> {
+//        val lessons = lessonsRepository.getLessons()
+//        return when (source.type) {
+//            ScheduleSources.Group -> lessons.filterByGroup(source.key)
+//            ScheduleSources.Teacher -> lessons.filterByTeacher(source.key)
+//            ScheduleSources.Student -> lessons.filterByGroup(source.key)
+//            ScheduleSources.Place -> lessons.filterByPlace(source.key)
+//            ScheduleSources.Subject -> lessons.filterBySubject(source.key)
+//            ScheduleSources.Complex -> lessons
+//        }
+//    }
+//
+//    private suspend fun getLessons(filter: ScheduleComplexFilter): List<CompactLessonAndTimes> {
+//        val lessons = lessonsRepository.getLessons()
+//
+//        return lessons.filter(filter)
+//    }
 
     override suspend fun getSourceList(sourceType: ScheduleSources): List<ScheduleSourceFull> {
         return when (sourceType) {
@@ -77,11 +77,18 @@ class ScheduleRepositoryImpl(
     }
 
     override suspend fun getCompactSchedule(source: ScheduleSource): CompactSchedule {
-        return getSchedulePackFromLessons(getLessons(source))
+        return when (source.type) {
+            ScheduleSources.Group -> lessonsRepository.getLessonsByGroup(source.key)
+            ScheduleSources.Teacher -> lessonsRepository.getLessonsByTeacher(source.key)
+            ScheduleSources.Student -> lessonsRepository.getLessonsByStudent(source.key)
+            ScheduleSources.Place -> lessonsRepository.getLessonsByPlace(source.key)
+            ScheduleSources.Subject -> lessonsRepository.getLessonsBySubject(source.key)
+            ScheduleSources.Complex -> error("Can't process ScheduleSources.Complex")
+        }
     }
 
     override suspend fun getCompactSchedule(filter: ScheduleComplexFilter): CompactSchedule {
-        return getSchedulePackFromLessons(getLessons(filter))
+        return lessonsRepository.getLessonsByFilter(filter)
     }
 
     override suspend fun updateData(recreateDb: Boolean) {
@@ -128,26 +135,26 @@ class ScheduleRepositoryImpl(
         addSchedule()
     }
 
-    private fun addSchedule() {
-
+    private suspend fun addSchedule() {
+        lessonsRepository.updateSchedule()
     }
 
-    private fun getSchedulePackFromLessons(lessons: List<CompactLessonAndTimes>): CompactSchedule {
-        val typesId = lessons.asSequence().map { it.lesson.typeId }.distinct()
-        val subjectsId = lessons.asSequence().map { it.lesson.subjectId }.distinct()
-        val teachersId = lessons.asSequence().flatMap { it.lesson.teachersId }.distinct()
-        val groupsId = lessons.asSequence().flatMap { it.lesson.groupsId }.distinct()
-        val placesId = lessons.asSequence().flatMap { it.lesson.placesId }.distinct()
-
-        return CompactSchedule(
-            lessons = lessons,
-            info = ScheduleInfo(
-                typesInfo = typesId.mapNotNull { lessonTypesRepository.get(it) }.toList(),
-                subjectsInfo = subjectsId.mapNotNull { lessonSubjectsRepository.get(it) }.toList(),
-                teachersInfo = teachersId.mapNotNull { teachersRepository.get(it) }.toList(),
-                groupsInfo = groupsId.mapNotNull { groupsRepository.get(it) }.toList(),
-                placesInfo = placesId.mapNotNull { placesRepository.get(it) }.toList()
-            )
-        )
-    }
+//    private fun getSchedulePackFromLessons(lessons: List<CompactLessonAndTimes>): CompactSchedule {
+//        val typesId = lessons.asSequence().map { it.lesson.typeId }.distinct()
+//        val subjectsId = lessons.asSequence().map { it.lesson.subjectId }.distinct()
+//        val teachersId = lessons.asSequence().flatMap { it.lesson.teachersId }.distinct()
+//        val groupsId = lessons.asSequence().flatMap { it.lesson.groupsId }.distinct()
+//        val placesId = lessons.asSequence().flatMap { it.lesson.placesId }.distinct()
+//
+//        return CompactSchedule(
+//            lessons = lessons,
+//            info = ScheduleInfo(
+//                typesInfo = typesId.mapNotNull { lessonTypesRepository.get(it) }.toList(),
+//                subjectsInfo = subjectsId.mapNotNull { lessonSubjectsRepository.get(it) }.toList(),
+//                teachersInfo = teachersId.mapNotNull { teachersRepository.get(it) }.toList(),
+//                groupsInfo = groupsId.mapNotNull { groupsRepository.get(it) }.toList(),
+//                placesInfo = placesId.mapNotNull { placesRepository.get(it) }.toList()
+//            )
+//        )
+//    }
 }

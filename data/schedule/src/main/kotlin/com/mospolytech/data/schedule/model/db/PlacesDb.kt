@@ -15,7 +15,7 @@ object PlacesDb : UUIDTable() {
     val auditorium = text("auditorium").nullable()
     val lat = double("lat").nullable()
     val lng = double("lng").nullable()
-    val url = text("auditorium").nullable()
+    val url = text("url").nullable()
     val description = text("description").nullable()
 
     init {

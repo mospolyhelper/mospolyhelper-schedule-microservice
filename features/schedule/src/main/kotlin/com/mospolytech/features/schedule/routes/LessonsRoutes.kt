@@ -12,7 +12,7 @@ fun Routing.lessonsRoutesV1(
 ) {
     route("/lessons") {
         get {
-            call.respond(repository.getLessons())
+            call.respond(repository.getAllLessons())
         }
     }
 }

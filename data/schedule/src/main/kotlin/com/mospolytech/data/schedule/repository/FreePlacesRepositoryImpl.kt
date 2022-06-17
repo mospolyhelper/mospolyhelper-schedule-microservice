@@ -32,7 +32,7 @@ class FreePlacesRepositoryImpl(
     }
 
     override suspend fun getPlaceOccupancy(placeId: String): List<PlaceDailyOccupancy> {
-        val lessons = lessonsRepository.getLessons().filterByPlaces(listOf(placeId))
+        val lessons = lessonsRepository.getLessonsByPlace(placeId).lessons
 
         val resMap = mutableMapOf<LocalDate, MutableList<TempPlaceOccupancyTimeRange>>()
 

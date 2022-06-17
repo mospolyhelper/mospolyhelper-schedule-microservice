@@ -8,6 +8,7 @@ import com.mospolytech.domain.peoples.model.Group
 import com.mospolytech.domain.schedule.repository.GroupsRepository
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.mapLazy
+import java.util.UUID
 
 class GroupsRepositoryImpl : GroupsRepository {
     private val map = mutableMapOf<String, String>()
@@ -28,7 +29,7 @@ class GroupsRepositoryImpl : GroupsRepository {
             }
 
             if (id == null) {
-                id = GroupEntity.new {
+                id = GroupEntity.new(UUID.randomUUID().toString()) {
                     this.title = title
                     this.course = course.toIntOrNull()
                 }.toModel().id

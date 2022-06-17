@@ -6,7 +6,7 @@ import com.mospolytech.domain.schedule.repository.GroupsRepository
 class LessonGroupsConverter(
     private val groupsRepository: GroupsRepository
 ) {
-    fun convertGroups(groups: List<ApiGroup>): List<String> {
+    suspend fun convertGroups(groups: List<ApiGroup>): List<String> {
         return groups.map {
             groupsRepository.getOrPut(
                 title = it.title,
