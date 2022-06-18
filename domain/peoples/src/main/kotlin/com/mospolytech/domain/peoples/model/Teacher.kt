@@ -1,6 +1,7 @@
 package com.mospolytech.domain.peoples.model
 
 import com.mospolytech.domain.base.model.Department
+import com.mospolytech.domain.base.utils.ifNotEmpty
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
@@ -28,12 +29,12 @@ val Teacher.description: String
             grade?.let { append(it) }
 
             department?.let {
-                ifEmpty { append(", ") }
+                ifNotEmpty { append(", ") }
                 append(department.title)
             }
 
             departmentParent?.let {
-                ifEmpty { append(", ") }
+                ifNotEmpty { append(", ") }
                 append(departmentParent.title)
             }
         }

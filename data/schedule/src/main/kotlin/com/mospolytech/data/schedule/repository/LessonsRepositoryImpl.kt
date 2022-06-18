@@ -19,6 +19,10 @@ import com.mospolytech.domain.schedule.model.pack.ScheduleInfo
 import com.mospolytech.domain.schedule.model.place.PlaceInfo
 import com.mospolytech.domain.schedule.repository.LessonsRepository
 import com.mospolytech.domain.schedule.utils.filterByPlaces
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import org.jetbrains.exposed.sql.*
 import java.util.UUID
 
@@ -204,35 +208,35 @@ class LessonsRepositoryImpl(
 
     private fun fullQuery(): ColumnSet {
         val query = LessonsDb
-            .innerJoin(LessonTypesDb)
-            .innerJoin(SubjectsDb)
-            .innerJoin(LessonToTeachersDb)
-            .innerJoin(
-                TeachersDb.leftJoin(DepartmentsDb)
+            .leftJoin(LessonTypesDb)
+            .leftJoin(SubjectsDb)
+            .leftJoin(LessonToTeachersDb)
+            .leftJoin(
+                TeachersDb.leftJoin(DepartmentsDb, { department }, { id })
             )
-            .innerJoin(LessonToGroupsDb)
-            .innerJoin(
+            .leftJoin(LessonToGroupsDb)
+            .leftJoin(
                 GroupsDb.leftJoin(StudentFacultiesDb)
                     .leftJoin(StudentDirectionsDb)
             )
-            .innerJoin(LessonToPlacesDb)
-            .innerJoin(
+            .leftJoin(LessonToPlacesDb)
+            .leftJoin(
                 PlacesDb
             )
-            .innerJoin(LessonToPlacesDb)
-            .innerJoin(
-                PlacesDb
+            .leftJoin(LessonToLessonDateTimesDb)
+            .leftJoin(
+                LessonDateTimesDb
             )
 
         return query
     }
 
     private fun buildSchedule(query: Query): CompactSchedule {
-        val types = mutableListOf<LessonTypeInfo>()
-        val subjects = mutableListOf<LessonSubjectInfo>()
-        val teachers = mutableListOf<Teacher>()
-        val groups = mutableListOf<Group>()
-        val places = mutableListOf<PlaceInfo>()
+        val types: MutableCollection<LessonTypeInfo> = LinkedHashSet()
+        val subjects: MutableCollection<LessonSubjectInfo> = LinkedHashSet()
+        val teachers: MutableCollection<Teacher> = LinkedHashSet()
+        val groups: MutableCollection<Group> = LinkedHashSet()
+        val places: MutableCollection<PlaceInfo> = LinkedHashSet()
         val lessonsList = mutableListOf<CompactLessonAndTimes>()
 
 
@@ -248,11 +252,11 @@ class LessonsRepositoryImpl(
         return CompactSchedule(
             lessons = lessonsList,
             info = ScheduleInfo(
-                typesInfo = types,
-                subjectsInfo = subjects,
-                teachersInfo = teachers,
-                groupsInfo = groups,
-                placesInfo = places
+                typesInfo = types.toList(),
+                subjectsInfo = subjects.toList(),
+                teachersInfo = teachers.toList(),
+                groupsInfo = groups.toList(),
+                placesInfo = places.toList()
             )
         )
     }

@@ -14,9 +14,10 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.mapLazy
 import java.util.*
+import javax.management.monitor.StringMonitor
 
 class PlacesRepositoryImpl : PlacesRepository {
-    private val map = mutableMapOf<String, String>()
+    private val map = mutableMapOf<PlaceCacheKey, String>()
     
     override suspend fun addBuilding(
         title: String,
@@ -29,7 +30,13 @@ class PlacesRepositoryImpl : PlacesRepository {
         description: String?
     ): String {
         return MosPolyDb.transaction {
-            var id = map[title]
+            val key = PlaceCacheKey(
+                title = title,
+                url = null,
+                type = PlaceTypes.Building
+            )
+
+            var id = map[key]
 
             if (id == null) {
                 id = PlaceEntity.find {
@@ -55,7 +62,7 @@ class PlacesRepositoryImpl : PlacesRepository {
                 }.toModel().id
             }
 
-            map[title] = id
+            map[key] = id
 
             id
         }
@@ -67,7 +74,13 @@ class PlacesRepositoryImpl : PlacesRepository {
         description: String?
     ): String {
         return MosPolyDb.transaction {
-            var id = map[title]
+            val key = PlaceCacheKey(
+                title = title,
+                url = url,
+                type = PlaceTypes.Online
+            )
+
+            var id = map[key]
 
             if (id == null) {
                 id = PlaceEntity.find {
@@ -89,7 +102,7 @@ class PlacesRepositoryImpl : PlacesRepository {
                 }.toModel().id
             }
 
-            map[title] = id
+            map[key] = id
 
             id
         }
@@ -100,7 +113,13 @@ class PlacesRepositoryImpl : PlacesRepository {
         description: String?
     ): String {
         return MosPolyDb.transaction {
-            var id = map[title]
+            val key = PlaceCacheKey(
+                title = title,
+                url = null,
+                type = PlaceTypes.Other
+            )
+
+            var id = map[key]
 
             if (id == null) {
                 id = PlaceEntity.find {
@@ -120,7 +139,7 @@ class PlacesRepositoryImpl : PlacesRepository {
                 }.toModel().id
             }
 
-            map[title] = id
+            map[key] = id
 
             id
         }
@@ -131,7 +150,13 @@ class PlacesRepositoryImpl : PlacesRepository {
         description: String?
     ): String {
         return MosPolyDb.transaction {
-            var id = map[title]
+            val key = PlaceCacheKey(
+                title = title,
+                url = null,
+                type = PlaceTypes.Unclassified
+            )
+
+            var id = map[key]
 
             if (id == null) {
                 id = PlaceEntity.find {
@@ -151,7 +176,7 @@ class PlacesRepositoryImpl : PlacesRepository {
                 }.toModel().id
             }
 
-            map[title] = id
+            map[key] = id
 
             id
         }
@@ -170,4 +195,10 @@ class PlacesRepositoryImpl : PlacesRepository {
                 .map { it.toModel() }
         }
     }
+
+    private data class PlaceCacheKey(
+        val title: String,
+        val url: String?,
+        val type: PlaceTypes
+    )
 }

@@ -37,7 +37,6 @@ class LessonsRemoteDS {
                     typeId,
                     subjectId,
                     teachersId,
-                    groupsId,
                     placesId,
                     lessonDateTimesId
                 )
@@ -94,7 +93,6 @@ class LessonsRemoteDS {
         typeId: String,
         subjectId: String,
         teachersId: List<String>,
-        groupsId: List<String>,
         placesId: List<String>,
         lessonDateTimesId: List<String>
     ): String? {
@@ -109,15 +107,6 @@ class LessonsRemoteDS {
                     lessons
                 }
                 isInitialized = true
-            }
-
-            if (groupsId.isNotEmpty()) {
-                val lessonsToIntersect = LessonToGroupsDb.select {
-                    LessonToGroupsDb.group inList groupsId
-                }.map { it[LessonToGroupsDb.lesson].value }.toSet()
-
-                updateResList(lessonsToIntersect)
-                if (isInitialized && resLessons.isEmpty()) return@transaction null
             }
 
             if (teachersId.isNotEmpty()) {
@@ -139,7 +128,7 @@ class LessonsRemoteDS {
                 if (isInitialized && resLessons.isEmpty()) return@transaction null
             }
 
-            if (placesId.isNotEmpty()) {
+            if (lessonDateTimesId.isNotEmpty()) {
                 val lessonDateTimesId = lessonDateTimesId.map { UUID.fromString(it) }
                 val lessonsToIntersect = LessonToLessonDateTimesDb.select {
                     LessonToLessonDateTimesDb.time inList lessonDateTimesId

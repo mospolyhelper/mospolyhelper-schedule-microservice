@@ -1,5 +1,6 @@
 package com.mospolytech.domain.peoples.model
 
+import com.mospolytech.domain.base.utils.ifNotEmpty
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -18,14 +19,14 @@ val StudentShort.description
         }
 
         course?.let {
-            ifEmpty { append(", ") }
+            ifNotEmpty { append(", ") }
             append("$course-й курс")
         }
 
         group?.let {
             group.direction?.let {
-                ifEmpty { append(", ") }
-                append(group.direction)
+                ifNotEmpty { append(", ") }
+                append(group.direction.title)
             }
         }
     }

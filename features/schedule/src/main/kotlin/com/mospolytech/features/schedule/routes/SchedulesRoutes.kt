@@ -39,17 +39,20 @@ fun Routing.scheduleRoutesV1(
 
                 call.respondResult(
                     userRepository.getPersonalInfo(token).map {
-                        repository.getCompactSchedule(ScheduleSource(ScheduleSources.Group, it.group))
+                        val id = repository.findGroupByTitle(it.group)
+                        id?.let {
+                            repository.getCompactSchedule(ScheduleSource(ScheduleSources.Group, id))
+                        }
                     }
                 )
             }
         }
-        route("/update-schedules") {
-            get {
-                val recreateDb = call.request.queryParameters["recreate"] == "1"
-                repository.updateData(recreateDb)
-                call.respond("updated")
-            }
-        }
+//        route("/update-schedules") {
+//            get {
+//                val recreateDb = call.request.queryParameters["recreate"] == "1"
+//                repository.updateData(recreateDb)
+//                call.respond("updated")
+//            }
+//        }
     }
 }

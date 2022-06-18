@@ -1,7 +1,5 @@
 package com.mospolytech.domain.peoples.model
 
-import com.mospolytech.domain.base.model.EducationType
-import com.mospolytech.domain.base.utils.converters.LocalDateConverter
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
@@ -15,8 +13,6 @@ data class Student(
     val avatar: String?,
     val birthday: LocalDate?,
     val group: Group?,
-//    val faculty: StudentFaculty,
-//    val direction: StudentDirection,
     val specialization: StudentSpecialization?,
     val educationType: String,
     val educationForm: String,
@@ -32,18 +28,6 @@ data class Student(
 val Student.description
     get() = buildString {
         group?.let {
-            append(it.title)
-        }
-
-        course?.let {
-            ifEmpty { append(", ") }
-            append("$course-й курс")
-        }
-
-        group?.let {
-            group.direction?.let {
-                ifEmpty { append(", ") }
-                append(group.direction)
-            }
+            append(it.description)
         }
     }

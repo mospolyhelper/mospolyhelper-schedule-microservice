@@ -11,6 +11,7 @@ import com.mospolytech.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
 import com.mospolytech.domain.schedule.model.pack.CompactLessonFeatures
 import kotlinx.datetime.toKotlinLocalDate
+import org.slf4j.LoggerFactory
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
@@ -21,24 +22,30 @@ class ApiScheduleConverter(
     private val lessonDateTimeConverter: LessonDateTimeConverter,
     private val lessonConverter: LessonConverter
 ) {
-    suspend fun convertToLessons(scheduleResponse: ScheduleResponse) {
+    private val logger = LoggerFactory.getLogger("com.mospolytech.data.schedule.converters")
 
-        // TODO PROGRESS
-        scheduleResponse.contents.values.forEach {
+    suspend fun convertToLessons(scheduleResponse: ScheduleResponse) {
+        val lessons = scheduleResponse.contents.values
+
+        lessons.forEachIndexed { index, apiSchedule ->
+            logger.debug("Schedule: $index / ${lessons.size}")
             convertLessons(
-                it.grid.toList(),
-                listOf(it.group),
-                it.isSession
+                apiSchedule.grid.toList(),
+                listOf(apiSchedule.group),
+                apiSchedule.isSession
             )
         }
     }
 
     suspend fun convertToLessons(scheduleResponse: ScheduleSessionResponse) {
-        scheduleResponse.contents.forEach {
+        val lessons = scheduleResponse.contents
+
+        lessons.forEachIndexed { index, apiSchedule ->
+            logger.debug("Schedule Session: $index / ${lessons.size}")
             convertLessons(
-                it.grid.toList(),
-                listOf(it.group),
-                it.isSession
+                apiSchedule.grid.toList(),
+                listOf(apiSchedule.group),
+                apiSchedule.isSession
             )
         }
     }

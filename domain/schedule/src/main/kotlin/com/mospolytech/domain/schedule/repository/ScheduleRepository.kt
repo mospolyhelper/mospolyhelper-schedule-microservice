@@ -10,6 +10,7 @@ interface ScheduleRepository {
     suspend fun getCompactSchedule(): CompactSchedule
     suspend fun getCompactSchedule(filter: ScheduleComplexFilter): CompactSchedule
     suspend fun getCompactSchedule(source: ScheduleSource): CompactSchedule
+    suspend fun findGroupByTitle(title: String): String?
 
     suspend fun getSourceList(sourceType: ScheduleSources): List<ScheduleSourceFull>
     suspend fun updateData(recreateDb: Boolean)

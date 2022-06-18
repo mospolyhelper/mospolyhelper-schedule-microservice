@@ -18,6 +18,7 @@ import com.mospolytech.domain.schedule.repository.*
 import com.mospolytech.domain.schedule.utils.*
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.deleteAll
+import org.jetbrains.exposed.sql.select
 
 class ScheduleRepositoryImpl(
     private val lessonsRepository: LessonsRepository,
@@ -87,6 +88,16 @@ class ScheduleRepositoryImpl(
         }
     }
 
+    override suspend fun findGroupByTitle(title: String): String? {
+        return MosPolyDb.transaction {
+            GroupsDb.select {
+                GroupsDb.title eq title
+            }.firstOrNull()?.let {
+                it[GroupsDb.id].value
+            }
+        }
+    }
+
     override suspend fun getCompactSchedule(filter: ScheduleComplexFilter): CompactSchedule {
         return lessonsRepository.getLessonsByFilter(filter)
     }
@@ -95,42 +106,46 @@ class ScheduleRepositoryImpl(
         if (recreateDb) {
             MosPolyDb.transaction {
                 SchemaUtils.drop(
-                    LessonDateTimesDb,
                     LessonsDb,
-                    LessonToGroupsDb,
+
                     LessonToLessonDateTimesDb,
-                    LessonToPlacesDb,
                     LessonToTeachersDb,
+                    LessonToGroupsDb,
+                    LessonToPlacesDb,
+
                     LessonTypesDb,
+                    SubjectsDb,
+                    LessonDateTimesDb,
                     PlacesDb,
-                    StudentsDb
                 )
             }
             MosPolyDb.transaction {
                 SchemaUtils.create(
-                    LessonDateTimesDb,
                     LessonsDb,
-                    LessonToGroupsDb,
+
                     LessonToLessonDateTimesDb,
-                    LessonToPlacesDb,
                     LessonToTeachersDb,
+                    LessonToGroupsDb,
+                    LessonToPlacesDb,
+
                     LessonTypesDb,
+                    SubjectsDb,
+                    LessonDateTimesDb,
                     PlacesDb,
-                    StudentsDb
                 )
             }
         } else {
-            MosPolyDb.transaction {
-                    LessonDateTimesDb.deleteAll()
-                    LessonsDb.deleteAll()
-                    LessonToGroupsDb.deleteAll()
-                    LessonToLessonDateTimesDb.deleteAll()
-                    LessonToPlacesDb.deleteAll()
-                    LessonToTeachersDb.deleteAll()
-                    LessonTypesDb.deleteAll()
-                    PlacesDb.deleteAll()
-                    StudentsDb.deleteAll()
-            }
+//            MosPolyDb.transaction {
+//                    LessonDateTimesDb.deleteAll()
+//                    LessonsDb.deleteAll()
+//                    LessonToGroupsDb.deleteAll()
+//                    LessonToLessonDateTimesDb.deleteAll()
+//                    LessonToPlacesDb.deleteAll()
+//                    LessonToTeachersDb.deleteAll()
+//                    LessonTypesDb.deleteAll()
+//                    PlacesDb.deleteAll()
+//                    StudentsDb.deleteAll()
+//            }
         }
         addSchedule()
     }

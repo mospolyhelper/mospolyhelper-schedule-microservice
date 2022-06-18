@@ -1,5 +1,7 @@
 package com.mospolytech.domain.peoples.model
 
+import com.mospolytech.domain.base.utils.ifNotEmpty
+
 @kotlinx.serialization.Serializable
 data class Group(
     val id: String,
@@ -18,12 +20,12 @@ val Group.description
         course?.let { append("$course-й курс") }
 
         direction?.let {
-            ifEmpty { append(", ") }
+            ifNotEmpty { append(", ") }
             append(direction.title)
         }
 
         faculty?.let {
-            ifEmpty { append(", ") }
+            ifNotEmpty { append(", ") }
             if (faculty.titleShort != null) {
                 append(faculty.titleShort)
             } else {

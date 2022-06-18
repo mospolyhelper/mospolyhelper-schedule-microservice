@@ -38,7 +38,7 @@ class StudentsRepositoryImpl(
             studentsDS.deleteTables()
             studentsDS.createTables()
         } else {
-            studentsDS.clearData()
+            //studentsDS.clearData()
         }
         studentsDS.addStudents(studentsLocalCache)
     }
