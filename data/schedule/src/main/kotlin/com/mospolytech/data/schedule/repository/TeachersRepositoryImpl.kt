@@ -3,6 +3,7 @@ package com.mospolytech.data.schedule.repository
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.peoples.model.db.TeachersDb
 import com.mospolytech.data.peoples.model.entity.TeacherEntity
+import com.mospolytech.data.peoples.model.entity.TeacherSafeEntity
 import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.schedule.repository.TeachersRepository
 import org.jetbrains.exposed.sql.SortOrder
@@ -19,11 +20,11 @@ class TeachersRepositoryImpl : TeachersRepository {
             if (id == null) {
                 val fixedName = name.replace('ё', 'e')
 
-                id = TeacherEntity.find { TeachersDb.name eq name }
+                id = TeacherSafeEntity.find { TeachersDb.name eq name }
                     .mapLazy { it.toModel() }
                     .sortedBy { stuffTypeOrder[it.stuffType] }
                     .firstOrNull()
-                    ?.id ?: TeacherEntity.find { TeachersDb.name eq fixedName }
+                    ?.id ?: TeacherSafeEntity.find { TeachersDb.name eq fixedName }
                     .mapLazy { it.toModel() }
                     .sortedBy { stuffTypeOrder[it.stuffType] }
                     .firstOrNull()
@@ -31,7 +32,7 @@ class TeachersRepositoryImpl : TeachersRepository {
             }
 
             if (id == null) {
-                id = TeacherEntity.new(UUID.randomUUID().toString()) {
+                id = TeacherSafeEntity.new(UUID.randomUUID().toString()) {
                     this.name = name
                 }.toModel().id
             }
@@ -55,13 +56,13 @@ class TeachersRepositoryImpl : TeachersRepository {
 
     override suspend fun get(id: String): Teacher? {
         return MosPolyDb.transaction {
-            TeacherEntity.findById(id)?.toModel()
+            TeacherSafeEntity.findById(id)?.toModel()
         }
     }
 
     override suspend fun getAll(): List<Teacher> {
         return MosPolyDb.transaction {
-            TeacherEntity.all()
+            TeacherSafeEntity.all()
                 .orderBy(TeachersDb.name to SortOrder.ASC)
                 .map { it.toModel() }
         }

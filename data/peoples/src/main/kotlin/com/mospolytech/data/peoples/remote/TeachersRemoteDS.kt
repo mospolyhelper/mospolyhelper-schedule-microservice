@@ -6,6 +6,7 @@ import com.mospolytech.data.peoples.model.db.DepartmentsDb
 import com.mospolytech.data.peoples.model.db.TeachersDb
 import com.mospolytech.data.peoples.model.entity.DepartmentEntity
 import com.mospolytech.data.peoples.model.entity.TeacherEntity
+import com.mospolytech.data.peoples.model.entity.TeacherSafeEntity
 import com.mospolytech.domain.base.model.PagingDTO
 import com.mospolytech.domain.peoples.model.Teacher
 import kotlinx.coroutines.Dispatchers
@@ -14,19 +15,17 @@ import org.jetbrains.exposed.sql.*
 import kotlin.math.ceil
 
 class TeachersRemoteDS {
-    suspend fun getTeacher(name: String) = withContext(Dispatchers.IO) {
-        MosPolyDb.transaction {
-            TeacherEntity.find { TeachersDb.name eq name }
-                .firstOrNull()
-                ?.toModel()
+    suspend fun getTeacher(name: String) = MosPolyDb.transaction {
+        TeacherSafeEntity.find { TeachersDb.name eq name }
+            .firstOrNull()
+            ?.toModel()
 
-        }
     }
 
-    suspend fun getTeachers() = withContext(Dispatchers.IO) {
-        MosPolyDb.transaction {
-            TeacherEntity.all().map { it.toModel() }
-        }
+    suspend fun getTeachers() = MosPolyDb.transaction {
+        TeacherSafeEntity.all()
+            .orderBy(TeachersDb.name to SortOrder.ASC)
+            .map { it.toModel() }
     }
 
     suspend fun getTeachersPaging(query: String, pageSize: Int, page: Int) =
@@ -35,10 +34,10 @@ class TeachersRemoteDS {
             val previousPage = if (page <= 1) null else page - 1
             val nextPage = if (page <= 1) 2 else page + 1
 
-            val list = TeacherEntity.find { TeachersDb.name.lowerCase() like "%${query.lowercase()}%" }
+            val list = TeacherSafeEntity.find { TeachersDb.name.lowerCase() like "%${query.lowercase()}%" }
+                .orderBy(TeachersDb.name to SortOrder.ASC)
                 .limit(pageSize, offset.toLong())
-                .mapLazy { it.toModel() }
-                .sortedByDescending { it.name }
+                .map{ it.toModel() }
 
             PagingDTO(
                 count = list.size,

@@ -3,9 +3,7 @@ package com.mospolytech.data.schedule.repository
 import com.mospolytech.data.peoples.model.db.GroupsDb
 import com.mospolytech.data.peoples.model.db.StudentsDb
 import com.mospolytech.data.peoples.model.db.TeachersDb
-import com.mospolytech.data.peoples.model.entity.GroupEntity
-import com.mospolytech.data.peoples.model.entity.StudentEntity
-import com.mospolytech.data.peoples.model.entity.TeacherEntity
+import com.mospolytech.data.peoples.model.entity.*
 import com.mospolytech.data.schedule.model.db.LessonTypesDb
 import com.mospolytech.data.schedule.model.db.PlacesDb
 import com.mospolytech.data.schedule.model.db.SubjectsDb
@@ -24,7 +22,7 @@ import java.util.*
 class ScheduleInfoRepositoryImpl : ScheduleInfoRepository {
     override suspend fun getTeacher(id: String): Result<Teacher?> {
         return kotlin.runCatching {
-            TeacherEntity.find { TeachersDb.id eq id }
+            TeacherSafeEntity.find { TeachersDb.id eq id }
                 .map { it.toModel() }
                 .firstOrNull()
         }
@@ -67,7 +65,7 @@ class ScheduleInfoRepositoryImpl : ScheduleInfoRepository {
 
     override suspend fun getStudentInfo(id: String): Result<Student?> {
         return kotlin.runCatching {
-            StudentEntity.find { StudentsDb.id eq id }
+            StudentSafeEntity.find { StudentsDb.id eq id }
                 .map { it.toModel() }
                 .firstOrNull()
         }

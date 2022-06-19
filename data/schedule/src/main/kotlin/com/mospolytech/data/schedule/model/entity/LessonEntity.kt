@@ -2,6 +2,7 @@ package com.mospolytech.data.schedule.model.entity
 
 import com.mospolytech.data.peoples.model.entity.GroupEntity
 import com.mospolytech.data.peoples.model.entity.TeacherEntity
+import com.mospolytech.data.peoples.model.entity.TeacherSafeEntity
 import com.mospolytech.data.schedule.model.db.*
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
 import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
@@ -16,7 +17,7 @@ class LessonEntity(id: EntityID<UUID>) : UUIDEntity(id) {
 
     var type by LessonTypeEntity referencedOn LessonsDb.type
     var subject by SubjectEntity referencedOn LessonsDb.subject
-    var teachers by TeacherEntity via LessonToTeachersDb
+    var teachers by TeacherSafeEntity via LessonToTeachersDb
     var groups by GroupEntity via LessonToGroupsDb
     var places by PlaceEntity via LessonToPlacesDb
     var dateTimes by LessonDateTimeEntity via LessonToLessonDateTimesDb

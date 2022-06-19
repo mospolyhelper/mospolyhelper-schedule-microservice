@@ -14,7 +14,13 @@ import kotlin.math.ceil
 
 class StudentsRemoteDS {
     suspend fun getStudents() = MosPolyDb.transaction {
-        StudentEntity.all().map { it.toModel() }
+        StudentSafeEntity.all()
+            .orderBy(
+                StudentsDb.lastName to SortOrder.ASC,
+                StudentsDb.firstName to SortOrder.ASC,
+                StudentsDb.middleName to SortOrder.ASC
+            )
+            .map { it.toModel() }
     }
 
     suspend fun getStudentsPaging(query: String, pageSize: Int, page: Int) =
@@ -23,24 +29,22 @@ class StudentsRemoteDS {
             val previousPage = if (page <= 1) null else page - 1
             val nextPage = if (page <= 1) 2 else page + 1
 
-            val query = StudentsDb.leftJoin(
-                GroupsDb.leftJoin(StudentFacultiesDb)
-                    .leftJoin(StudentDirectionsDb)
-            )
-                .leftJoin(StudentSpecializationsDb)
-                .leftJoin(StudentBranchesDb)
+            val query = StudentsDb.leftJoin(GroupsDb)
                 .slice(StudentsDb.columns)
                 .select {
                     (GroupsDb.title like query) or
                             (StudentsDb.lastName.lowerCase() like "%${query.lowercase()}%")
-                }
+                }.orderBy(
+                    StudentsDb.lastName to SortOrder.ASC,
+                    StudentsDb.firstName to SortOrder.ASC,
+                    StudentsDb.middleName to SortOrder.ASC
+                )
 
 
-            val list = StudentEntity.wrapRows(query)
-                .orderBy(StudentsDb.lastName to SortOrder.ASC)
+            val list = StudentSafeEntity.wrapRows(query)
                 .limit(pageSize, offset.toLong())
                 .mapLazy { it.toModel() }
-                .sortedBy { it.firstName }
+                .toList()
             PagingDTO(
                 count = list.size,
                 previousPage = previousPage,
@@ -52,41 +56,29 @@ class StudentsRemoteDS {
 
     suspend fun getStudents(group: String) =
         MosPolyDb.transaction {
-            val query = StudentsDb.leftJoin(
-                GroupsDb.leftJoin(StudentFacultiesDb)
-                    .leftJoin(StudentDirectionsDb)
-            )
-                .leftJoin(StudentSpecializationsDb)
-                .leftJoin(StudentBranchesDb)
-                .slice(StudentsDb.columns)
+            val query = StudentsDb.leftJoin(GroupsDb)
                 .select {
                     (GroupsDb.title eq group)
-                }
+                }.orderBy(
+                    StudentsDb.lastName to SortOrder.ASC,
+                    StudentsDb.firstName to SortOrder.ASC,
+                    StudentsDb.middleName to SortOrder.ASC
+                )
 
-            StudentEntity.wrapRows(query)
-                .orderBy(StudentsDb.lastName to SortOrder.ASC)
+            StudentSafeEntity.wrapRows(query)
                 .mapLazy { it.toModel() }
                 .sortedBy { it.firstName }
         }
 
     suspend fun getShortStudents() =
         MosPolyDb.transaction {
-            val query = StudentsDb.leftJoin(
-                GroupsDb.leftJoin(StudentFacultiesDb)
-                    .leftJoin(StudentDirectionsDb)
-            )
-                .leftJoin(StudentSpecializationsDb)
-                .leftJoin(StudentBranchesDb)
-                .slice(StudentsDb.columns)
-                .selectAll()
-
-            StudentEntity.wrapRows(query)
+            StudentShortEntity.find { StudentsDb.group neq null }
                 .orderBy(
                     StudentsDb.lastName to SortOrder.ASC,
                     StudentsDb.firstName to SortOrder.ASC,
                     StudentsDb.middleName to SortOrder.ASC
                 )
-                .map { it.toModelShort() }
+                .map { it.toModel() }
         }
 
     suspend fun addStudent(student: Student) {

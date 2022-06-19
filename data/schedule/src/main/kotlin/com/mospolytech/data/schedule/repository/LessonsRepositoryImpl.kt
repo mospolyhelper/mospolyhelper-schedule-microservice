@@ -104,7 +104,7 @@ class LessonsRepositoryImpl(
         return MosPolyDb.transaction {
             val lessonsId = LessonToTeachersDb.select {
                 LessonToTeachersDb.teacher eq teacherId
-            }.mapLazy { it[LessonToGroupsDb.lesson].value }
+            }.mapLazy { it[LessonToTeachersDb.lesson].value }
                 .toList()
 
             val query = fullQuery().select {
@@ -119,7 +119,7 @@ class LessonsRepositoryImpl(
         return MosPolyDb.transaction {
             val lessonsId = LessonToPlacesDb.select {
                 LessonToPlacesDb.place eq UUID.fromString(placeId)
-            }.mapLazy { it[LessonToGroupsDb.lesson].value }
+            }.mapLazy { it[LessonToPlacesDb.lesson].value }
                 .toList()
 
             val query = fullQuery().select {
@@ -208,25 +208,25 @@ class LessonsRepositoryImpl(
 
     private fun fullQuery(): ColumnSet {
         val query = LessonsDb
-            .leftJoin(LessonTypesDb)
-            .leftJoin(SubjectsDb)
-            .leftJoin(LessonToTeachersDb)
-            .leftJoin(
-                TeachersDb.leftJoin(DepartmentsDb, { department }, { id })
-            )
-            .leftJoin(LessonToGroupsDb)
-            .leftJoin(
-                GroupsDb.leftJoin(StudentFacultiesDb)
-                    .leftJoin(StudentDirectionsDb)
-            )
-            .leftJoin(LessonToPlacesDb)
-            .leftJoin(
-                PlacesDb
-            )
-            .leftJoin(LessonToLessonDateTimesDb)
-            .leftJoin(
-                LessonDateTimesDb
-            )
+//            .leftJoin(LessonTypesDb)
+//            .leftJoin(SubjectsDb)
+//            .leftJoin(LessonToTeachersDb)
+//            .leftJoin(
+//                TeachersDb.leftJoin(DepartmentsDb, { department }, { id })
+//            )
+//            .leftJoin(LessonToGroupsDb)
+//            .leftJoin(
+//                GroupsDb.leftJoin(StudentFacultiesDb)
+//                    .leftJoin(StudentDirectionsDb)
+//            )
+//            .leftJoin(LessonToPlacesDb)
+//            .leftJoin(
+//                PlacesDb
+//            )
+//            .leftJoin(LessonToLessonDateTimesDb)
+//            .leftJoin(
+//                LessonDateTimesDb
+//            )
 
         return query
     }

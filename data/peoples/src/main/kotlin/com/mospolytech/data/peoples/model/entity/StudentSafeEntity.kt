@@ -9,15 +9,14 @@ import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
-class StudentEntity(id: EntityID<String>) : Entity<String>(id) {
-    companion object : EntityClass<String, StudentEntity>(StudentsDb)
+class StudentSafeEntity(id: EntityID<String>) : Entity<String>(id) {
+    companion object : EntityClass<String, StudentSafeEntity>(StudentsDb)
 
     var firstName by StudentsDb.firstName
     var lastName by StudentsDb.lastName
     var middleName by StudentsDb.middleName
 
     var sex by StudentsDb.sex
-    var birthday by StudentsDb.birthday
     var avatar by StudentsDb.avatar
     var group by GroupEntity optionalReferencedOn StudentsDb.group
     var specialization by StudentSpecializationEntity optionalReferencedOn StudentsDb.specialization
@@ -27,8 +26,6 @@ class StudentEntity(id: EntityID<String>) : Entity<String>(id) {
     var course by StudentsDb.course
     var years by StudentsDb.years
     var code by StudentsDb.code
-    var dormitory by StudentsDb.dormitory
-    var dormitoryRoom by StudentsDb.dormitoryRoom
     var branch by StudentBranchEntity referencedOn StudentsDb.branch
 
 
@@ -40,7 +37,7 @@ class StudentEntity(id: EntityID<String>) : Entity<String>(id) {
             middleName = middleName,
             sex = sex,
             avatar = avatar,
-            birthday = birthday,
+            birthday = null,
             specialization = specialization?.toModel(),
             educationType = educationType,
             educationForm = educationForm,
@@ -49,8 +46,8 @@ class StudentEntity(id: EntityID<String>) : Entity<String>(id) {
             group = group?.toModel(),
             years = years,
             code = code,
-            dormitory = dormitory,
-            dormitoryRoom = dormitoryRoom,
+            dormitory = null,
+            dormitoryRoom = null,
             branch = branch.toModel()
         )
     }
@@ -65,5 +62,15 @@ class StudentEntity(id: EntityID<String>) : Entity<String>(id) {
                 append(middleName)
             }
         }
+    }
+
+    fun toModelShort(): StudentShort {
+        return StudentShort(
+            id = id.value,
+            name = fullName(),
+            avatar = avatar,
+            course = course,
+            group = group?.toModel()
+        )
     }
 }
