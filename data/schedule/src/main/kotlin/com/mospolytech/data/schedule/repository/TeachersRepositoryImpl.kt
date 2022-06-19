@@ -17,7 +17,13 @@ class TeachersRepositoryImpl : TeachersRepository {
             var id = map[name]
 
             if (id == null) {
+                val fixedName = name.replace('ё', 'e')
+
                 id = TeacherEntity.find { TeachersDb.name eq name }
+                    .mapLazy { it.toModel() }
+                    .sortedBy { stuffTypeOrder[it.stuffType] }
+                    .firstOrNull()
+                    ?.id ?: TeacherEntity.find { TeachersDb.name eq fixedName }
                     .mapLazy { it.toModel() }
                     .sortedBy { stuffTypeOrder[it.stuffType] }
                     .firstOrNull()
