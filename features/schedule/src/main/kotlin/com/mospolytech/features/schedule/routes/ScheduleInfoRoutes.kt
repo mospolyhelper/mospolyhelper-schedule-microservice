@@ -24,6 +24,23 @@ fun Routing.scheduleInfoRoutesV1(
                 }
             }
         }
-
+        get("/subjects") {
+            call.respondResult(repository.getAllSubjects())
+        }
+        get("/types") {
+            call.respondResult(repository.getAllLessonTypes())
+        }
+        get("/teachers") {
+            call.respondResult(repository.getAllTeachers())
+        }
+        get("/groups") {
+            call.respondResult(repository.getAllGroups())
+        }
+        get("/places") {
+            call.respondResult(repository.getAllPlaces())
+        }
+        get("/students") {
+            call.respondResult(repository.getAllStudents())
+        }
     }
 }

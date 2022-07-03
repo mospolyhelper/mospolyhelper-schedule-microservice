@@ -6,6 +6,7 @@ import com.mospolytech.domain.schedule.model.lesson_subject.LessonSubjectInfo
 import com.mospolytech.domain.schedule.model.lesson_type.LessonTypeInfo
 import com.mospolytech.domain.schedule.model.place.PlaceInfo
 import com.mospolytech.domain.peoples.model.Teacher
+import com.mospolytech.domain.schedule.model.schedule_info.ScheduleObject
 
 interface ScheduleInfoRepository {
     suspend fun getTeacher(id: String): Result<Teacher?>
@@ -14,4 +15,12 @@ interface ScheduleInfoRepository {
     suspend fun getSubjectInfo(id: String): Result<LessonSubjectInfo?>
     suspend fun getLessonTypeInfo(id: String): Result<LessonTypeInfo?>
     suspend fun getStudentInfo(id: String): Result<Student?>
+
+
+    suspend fun getAllSubjects(): Result<List<ScheduleObject>>
+    suspend fun getAllLessonTypes(): Result<List<ScheduleObject>>
+    suspend fun getAllTeachers(): Result<List<ScheduleObject>>
+    suspend fun getAllGroups(): Result<List<ScheduleObject>>
+    suspend fun getAllPlaces(): Result<List<ScheduleObject>>
+    suspend fun getAllStudents(): Result<List<ScheduleObject>>
 }

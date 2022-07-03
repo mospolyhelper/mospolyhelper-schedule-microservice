@@ -1,6 +1,7 @@
 package com.mospolytech.data.peoples.model.entity
 
 import com.mospolytech.data.peoples.model.db.TeachersDb
+import com.mospolytech.domain.base.utils.ifNotEmpty
 import com.mospolytech.domain.peoples.model.Teacher
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
@@ -33,3 +34,19 @@ class TeacherSafeEntity(id: EntityID<String>) : Entity<String>(id) {
         )
     }
 }
+val TeacherSafeEntity.description: String
+    get() {
+        return buildString {
+            grade?.let { append(it) }
+
+            department?.let {
+                ifNotEmpty { append(", ") }
+                append(it.title)
+            }
+
+            departmentParent?.let {
+                ifNotEmpty { append(", ") }
+                append(it.title)
+            }
+        }
+    }

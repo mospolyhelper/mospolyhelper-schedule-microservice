@@ -56,4 +56,11 @@ object MosPolyDb {
         block: suspend () -> T
     ): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
+
+    suspend fun <T> transactionCatching(
+        block: suspend () -> T
+    ): Result<T> =
+        kotlin.runCatching {
+            newSuspendedTransaction(Dispatchers.IO) { block() }
+        }
 }

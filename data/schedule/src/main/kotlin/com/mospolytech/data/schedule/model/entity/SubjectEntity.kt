@@ -13,7 +13,6 @@ class SubjectEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var title by SubjectsDb.title
     var type by SubjectsDb.type
 
-
     fun toModel(): LessonSubjectInfo {
         return LessonSubjectInfo(
             id = id.value.toString(),
@@ -22,3 +21,10 @@ class SubjectEntity(id: EntityID<UUID>) : UUIDEntity(id) {
         )
     }
 }
+
+val SubjectEntity.description
+    get() = buildString {
+        type?.let {
+            append(type)
+        }
+    }

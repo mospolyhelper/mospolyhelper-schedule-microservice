@@ -2,6 +2,7 @@ package com.mospolytech.data.schedule.model.entity
 
 import com.mospolytech.data.schedule.model.db.PlacesDb
 import com.mospolytech.domain.base.model.Location
+import com.mospolytech.domain.base.utils.ifNotEmpty
 import com.mospolytech.domain.schedule.model.place.PlaceInfo
 import com.mospolytech.domain.schedule.model.place.PlaceTypes
 import org.jetbrains.exposed.dao.UUIDEntity
@@ -64,3 +65,39 @@ class PlaceEntity(id: EntityID<UUID>) : UUIDEntity(id) {
         }
     }
 }
+
+val PlaceEntity.description2: String
+    get() {
+        return when (type) {
+            PlaceTypes.Building -> buildString {
+                street?.let {
+                    append(street)
+                }
+
+                building?.let {
+                    ifNotEmpty { append(", ") }
+                    append("$building-й корус")
+                }
+
+                floor?.let {
+                    ifNotEmpty { append(", ") }
+                    append("$floor-й этаж")
+                }
+            }
+            PlaceTypes.Online -> buildString {
+                url?.let {
+                    append(url)
+                }
+            }
+            PlaceTypes.Other -> buildString {
+                description?.let {
+                    append(description)
+                }
+            }
+            PlaceTypes.Unclassified -> buildString {
+                description?.let {
+                    append(description)
+                }
+            }
+        }
+    }

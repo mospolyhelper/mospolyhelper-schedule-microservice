@@ -1,6 +1,7 @@
 package com.mospolytech.data.peoples.model.entity
 
 import com.mospolytech.data.peoples.model.db.*
+import com.mospolytech.domain.base.utils.ifNotEmpty
 import com.mospolytech.domain.peoples.model.Group
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
@@ -25,3 +26,22 @@ class GroupEntity(id: EntityID<String>) : Entity<String>(id) {
         )
     }
 }
+
+val GroupEntity.description
+    get() = buildString {
+        course?.let { append("$course-й курс") }
+
+        direction?.let {
+            ifNotEmpty { append(", ") }
+            append(it.title)
+        }
+
+        faculty?.let {
+            ifNotEmpty { append(", ") }
+            if (it.titleShort != null) {
+                append(it.titleShort)
+            } else {
+                append(it.title)
+            }
+        }
+    }

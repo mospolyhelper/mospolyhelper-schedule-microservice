@@ -5,6 +5,7 @@ import com.mospolytech.data.peoples.model.db.StudentsDb.nullable
 import com.mospolytech.data.peoples.model.entity.StudentEntity.Companion.referrersOn
 import com.mospolytech.domain.peoples.model.Student
 import com.mospolytech.domain.peoples.model.StudentShort
+import com.mospolytech.domain.peoples.model.description
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -52,7 +53,7 @@ class StudentSafeEntity(id: EntityID<String>) : Entity<String>(id) {
         )
     }
 
-    private fun fullName(): String {
+    fun fullName(): String {
         return buildString {
             append(lastName)
             append(" ")
@@ -74,3 +75,10 @@ class StudentSafeEntity(id: EntityID<String>) : Entity<String>(id) {
         )
     }
 }
+
+val StudentSafeEntity.description
+    get() = buildString {
+        group?.let {
+            append(it.description)
+        }
+    }
