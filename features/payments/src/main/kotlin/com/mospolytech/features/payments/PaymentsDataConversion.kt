@@ -7,4 +7,3 @@ import io.ktor.util.converters.*
 fun DataConversion.Configuration.paymentsDataConversion() {
     setEnumConverter(PaymentType::values)
 }
-

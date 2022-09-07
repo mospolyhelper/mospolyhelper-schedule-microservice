@@ -66,7 +66,7 @@ fun PersonalResponse.toModel(): Personal {
         group = this.user.group,
         specialty = this.user.specialty,
         specialization = this.user.specialization.ifEmpty { null },
-        degreeLength = this.user.degreeLength.filter{ it.isDigit() },
+        degreeLength = this.user.degreeLength.filter { it.isDigit() },
         educationForm = this.user.educationForm,
         finance = this.user.finance,
         degreeLevel = this.user.degreeLevel,

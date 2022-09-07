@@ -1,8 +1,6 @@
 package com.mospolytech.data.peoples.model.entity
 
 import com.mospolytech.data.peoples.model.db.*
-import com.mospolytech.data.peoples.model.db.StudentsDb.nullable
-import com.mospolytech.data.peoples.model.entity.StudentEntity.Companion.referrersOn
 import com.mospolytech.domain.peoples.model.Student
 import com.mospolytech.domain.peoples.model.StudentShort
 import com.mospolytech.domain.peoples.model.description
@@ -28,7 +26,6 @@ class StudentSafeEntity(id: EntityID<String>) : Entity<String>(id) {
     var years by StudentsDb.years
     var code by StudentsDb.code
     var branch by StudentBranchEntity referencedOn StudentsDb.branch
-
 
     fun toModel(): Student {
         return Student(

@@ -9,17 +9,13 @@ import com.mospolytech.data.peoples.model.entity.TeacherEntity
 import com.mospolytech.data.peoples.model.entity.TeacherSafeEntity
 import com.mospolytech.domain.base.model.PagingDTO
 import com.mospolytech.domain.peoples.model.Teacher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.*
-import kotlin.math.ceil
 
 class TeachersRemoteDS {
     suspend fun getTeacher(name: String) = MosPolyDb.transaction {
         TeacherSafeEntity.find { TeachersDb.name eq name }
             .firstOrNull()
             ?.toModel()
-
     }
 
     suspend fun getTeachers() = MosPolyDb.transaction {
@@ -37,7 +33,7 @@ class TeachersRemoteDS {
             val list = TeacherSafeEntity.find { TeachersDb.name.lowerCase() like "%${query.lowercase()}%" }
                 .orderBy(TeachersDb.name to SortOrder.ASC)
                 .limit(pageSize, offset.toLong())
-                .map{ it.toModel() }
+                .map { it.toModel() }
 
             PagingDTO(
                 count = list.size,
@@ -100,8 +96,3 @@ class TeachersRemoteDS {
         }
     }
 }
-
-
-
-
-

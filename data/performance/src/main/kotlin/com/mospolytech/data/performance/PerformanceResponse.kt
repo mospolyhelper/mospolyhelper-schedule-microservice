@@ -16,26 +16,26 @@ data class PerformanceResponseDto(
 
 @Serializable
 data class PerformanceResponse(
-    val id : Int,
+    val id: Int,
     @SerialName("bill_num")
-    val billNum : String,
+    val billNum: String,
     @SerialName("bill_type")
-    val billType : String,
+    val billType: String,
     @SerialName("doc_type")
-    val docType : String,
-    val name : String,
+    val docType: String,
+    val name: String,
     @SerialName("exam_date")
-    val examDate : String,
+    val examDate: String,
     @SerialName("exam_time")
-    val examTime : String,
-    val grade : String,
+    val examTime: String,
+    val grade: String,
     @SerialName("ticket_num")
-    val ticketNum : String,
-    val teacher : String,
-    val course : Int,
+    val ticketNum: String,
+    val teacher: String,
+    val course: Int,
     @SerialName("exam_type")
-    val examType : String,
-    val chair : String
+    val examType: String,
+    val chair: String
 )
 
 fun PerformanceResponse.toModel(): Performance {

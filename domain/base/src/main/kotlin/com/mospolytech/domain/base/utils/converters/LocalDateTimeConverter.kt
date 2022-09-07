@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @Serializer(forClass = LocalDateTime::class)
-object LocalDateTimeConverter: KSerializer<LocalDateTime> {
+object LocalDateTimeConverter : KSerializer<LocalDateTime> {
     private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
     override fun serialize(encoder: Encoder, value: LocalDateTime) {

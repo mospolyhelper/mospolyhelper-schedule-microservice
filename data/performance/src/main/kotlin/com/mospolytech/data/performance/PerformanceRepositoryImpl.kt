@@ -1,13 +1,13 @@
 package com.mospolytech.data.performance
 
-import com.mospolytech.domain.perfomance.model.SemestersWithCourse
 import com.mospolytech.domain.perfomance.model.Performance
+import com.mospolytech.domain.perfomance.model.SemestersWithCourse
 import com.mospolytech.domain.perfomance.repository.PerformanceRepository
 import java.time.Month
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
-class PerformanceRepositoryImpl(private val service: PerformanceService): PerformanceRepository {
+class PerformanceRepositoryImpl(private val service: PerformanceService) : PerformanceRepository {
 
     override suspend fun getCourses(token: String): Result<List<Int>> {
         return runCatching {
@@ -37,7 +37,7 @@ class PerformanceRepositoryImpl(private val service: PerformanceService): Perfor
             var maxSemester = maxCourse * 2 - 1
             if (lastExamMonth.value > Month.FEBRUARY.value && lastExamMonth.value < Month.SEPTEMBER.value) maxSemester++
             val coursesWithSemesters = mutableMapOf<Int, Int>().apply {
-                val semestersInCourse = ceil(maxSemester.toDouble()/maxCourse.toDouble()).roundToInt()
+                val semestersInCourse = ceil(maxSemester.toDouble() / maxCourse.toDouble()).roundToInt()
                 for (semester in 1..maxSemester) {
                     put(semester, ceil(semester.toDouble() / semestersInCourse).roundToInt())
                 }

@@ -1,7 +1,7 @@
 package com.mospolytech.domain.perfomance.repository
 
-import com.mospolytech.domain.perfomance.model.SemestersWithCourse
 import com.mospolytech.domain.perfomance.model.Performance
+import com.mospolytech.domain.perfomance.model.SemestersWithCourse
 
 interface PerformanceRepository {
     suspend fun getCourses(token: String): Result<List<Int>>

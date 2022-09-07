@@ -1,6 +1,5 @@
 package com.mospolytech.data.schedule.model.db
 
-import com.mospolytech.data.peoples.model.db.GroupsDb
 import org.jetbrains.exposed.sql.Table
 
 object LessonToPlacesDb : Table() {

@@ -46,7 +46,7 @@ class LessonsRemoteDS {
                 groupsId.forEach { groupId ->
                     val group = LessonToGroupsDb.select {
                         LessonToGroupsDb.lesson eq UUID.fromString(id) and
-                                (LessonToGroupsDb.group eq groupId)
+                            (LessonToGroupsDb.group eq groupId)
                     }.firstOrNull()
 
                     if (group == null) {
@@ -57,7 +57,6 @@ class LessonsRemoteDS {
                     }
                 }
             }
-
 
             if (id == null) {
                 id = LessonsDb.insertAndGetId {
@@ -145,7 +144,7 @@ class LessonsRemoteDS {
             }
 
             query.andWhere {
-                LessonsDb.subject eq  UUID.fromString(subjectId)
+                LessonsDb.subject eq UUID.fromString(subjectId)
             }
 
             query.andWhere {

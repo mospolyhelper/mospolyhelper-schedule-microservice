@@ -10,7 +10,6 @@ import com.mospolytech.domain.schedule.model.place.PlaceOccupancyTimeRange
 import com.mospolytech.domain.schedule.repository.FreePlacesRepository
 import com.mospolytech.domain.schedule.repository.LessonsRepository
 import com.mospolytech.domain.schedule.repository.PlacesRepository
-import com.mospolytech.domain.schedule.utils.filterByPlaces
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toJavaLocalTime
@@ -38,7 +37,7 @@ class FreePlacesRepositoryImpl(
 
         lessons.forEach { lessonAndTimes ->
             lessonAndTimes.times.forEach { lessonDateTime ->
-                lessonDateTime.toDateTimeRanges().forEach last@ { dateTimeRange ->
+                lessonDateTime.toDateTimeRanges().forEach last@{ dateTimeRange ->
                     val dailyOccupancy = resMap.getOrPut(dateTimeRange.start.date) { mutableListOf() }
                     val newTimeRange = TempPlaceOccupancyTimeRange(
                         timeFrom = dateTimeRange.start.time.toJavaLocalTime(),
@@ -62,7 +61,7 @@ class FreePlacesRepositoryImpl(
                     val itemToMove = dailyOccupancy[indexToInsert]
 
                     // if newTimeRange intersect next item (itemToMove)
-                    if (newTimeRange.timeTo >= itemToMove.timeFrom ) {
+                    if (newTimeRange.timeTo >= itemToMove.timeFrom) {
                         itemToMove += newTimeRange
                         fixRemainingIntersectionsAfter(indexToInsert, dailyOccupancy)
                     } else {

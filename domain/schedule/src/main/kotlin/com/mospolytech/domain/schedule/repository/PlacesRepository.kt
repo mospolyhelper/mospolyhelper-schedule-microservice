@@ -31,7 +31,6 @@ interface PlacesRepository {
         description: String? = null
     ): String
 
-
     suspend fun get(id: String): PlaceInfo?
     suspend fun getAll(): List<PlaceInfo>
 }

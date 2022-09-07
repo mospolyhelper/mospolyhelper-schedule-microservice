@@ -18,6 +18,5 @@ fun Routing.sourcesRoutesV1(repository: ScheduleRepository) {
                 call.respond(repository.getSourceList(it.type))
             }
         }
-
     }
 }

@@ -1,8 +1,6 @@
 package com.mospolytech.data.schedule.model.db
 
-import com.mospolytech.domain.base.model.Location
 import com.mospolytech.domain.schedule.model.place.PlaceTypes
-import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.dao.id.UUIDTable
 
 object PlacesDb : UUIDTable() {

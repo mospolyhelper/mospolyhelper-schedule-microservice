@@ -1,7 +1,6 @@
 package com.mospolytech.domain.peoples.repository
 
 import com.mospolytech.domain.base.model.PagingDTO
-import com.mospolytech.domain.peoples.model.Student
 import com.mospolytech.domain.peoples.model.Teacher
 
 interface TeachersRepository {

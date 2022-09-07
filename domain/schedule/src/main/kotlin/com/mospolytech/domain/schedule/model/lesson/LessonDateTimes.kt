@@ -1,11 +1,9 @@
 package com.mospolytech.domain.schedule.model.lesson
 
 import com.mospolytech.domain.base.utils.atTime
-import com.mospolytech.domain.base.utils.converters.LocalDateConverter
 import kotlinx.datetime.*
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration.Companion.days
-import kotlin.time.ExperimentalTime
 
 @Serializable
 data class LessonDateTime(

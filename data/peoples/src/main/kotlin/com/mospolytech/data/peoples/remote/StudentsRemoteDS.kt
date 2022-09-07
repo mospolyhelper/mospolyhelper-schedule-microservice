@@ -4,13 +4,9 @@ import com.mospolytech.data.base.upsert
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.peoples.model.db.*
 import com.mospolytech.data.peoples.model.entity.*
-import com.mospolytech.domain.base.model.EducationType
 import com.mospolytech.domain.base.model.PagingDTO
-import com.mospolytech.domain.base.utils.converters.LocalDateConverter.decode
-import com.mospolytech.domain.peoples.model.EducationForm
 import com.mospolytech.domain.peoples.model.Student
 import org.jetbrains.exposed.sql.*
-import kotlin.math.ceil
 
 class StudentsRemoteDS {
     suspend fun getStudents() = MosPolyDb.transaction {
@@ -33,13 +29,12 @@ class StudentsRemoteDS {
                 .slice(StudentsDb.columns)
                 .select {
                     (GroupsDb.title like query) or
-                            (StudentsDb.lastName.lowerCase() like "%${query.lowercase()}%")
+                        (StudentsDb.lastName.lowerCase() like "%${query.lowercase()}%")
                 }.orderBy(
                     StudentsDb.lastName to SortOrder.ASC,
                     StudentsDb.firstName to SortOrder.ASC,
                     StudentsDb.middleName to SortOrder.ASC
                 )
-
 
             val list = StudentSafeEntity.wrapRows(query)
                 .limit(pageSize, offset.toLong())
@@ -52,7 +47,6 @@ class StudentsRemoteDS {
                 data = list
             )
         }
-
 
     suspend fun getStudents(group: String) =
         MosPolyDb.transaction {
@@ -233,17 +227,12 @@ class StudentsRemoteDS {
 
     suspend fun clearData() {
         MosPolyDb.transaction {
-                StudentsDb.deleteAll()
-                StudentBranchesDb.deleteAll()
-                StudentDirectionsDb.deleteAll()
-                StudentFacultiesDb.deleteAll()
-                StudentSpecializationsDb.deleteAll()
-                GroupsDb.deleteAll()
+            StudentsDb.deleteAll()
+            StudentBranchesDb.deleteAll()
+            StudentDirectionsDb.deleteAll()
+            StudentFacultiesDb.deleteAll()
+            StudentSpecializationsDb.deleteAll()
+            GroupsDb.deleteAll()
         }
     }
 }
-
-
-
-
-

@@ -2,7 +2,6 @@ package com.mospolytech.data.schedule.model.response
 
 import com.mospolytech.domain.base.utils.converters.LocalDateConverter
 import com.mospolytech.domain.base.utils.converters.LocalTimeConverter
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 import java.time.LocalTime
@@ -17,4 +16,3 @@ data class ScheduleResponse(
     val copyright: String,
     val contents: Map<String, ApiSchedule>
 )
-

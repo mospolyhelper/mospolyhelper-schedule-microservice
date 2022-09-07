@@ -1,20 +1,15 @@
 package com.mospolytech.data.peoples.repository
 
 import com.mospolytech.data.peoples.model.xml.toModel
-import com.mospolytech.data.peoples.remote.StudentsRemoteDS
 import com.mospolytech.data.peoples.remote.TeachersRemoteDS
-import com.mospolytech.data.peoples.service.StudentsService
 import com.mospolytech.data.peoples.service.TeachersService
-import com.mospolytech.domain.peoples.model.Student
 import com.mospolytech.domain.peoples.model.Teacher
-import com.mospolytech.domain.peoples.repository.StudentsRepository
 import com.mospolytech.domain.peoples.repository.TeachersRepository
-import com.mospolytech.domain.personal.repository.PersonalRepository
 
 class TeachersRepositoryImpl(
     teachersService: TeachersService,
     private val teachersDS: TeachersRemoteDS
-): TeachersRepository {
+) : TeachersRepository {
 
     private val teachersLocalCache by lazy {
         teachersService.getTeachers()
@@ -34,7 +29,6 @@ class TeachersRepositoryImpl(
         }
     }
 
-
     override suspend fun updateData(recreateDb: Boolean) {
         if (recreateDb) {
             teachersDS.deleteTables()
@@ -47,5 +41,4 @@ class TeachersRepositoryImpl(
             teachersDS.addTeacher(it)
         }
     }
-
 }

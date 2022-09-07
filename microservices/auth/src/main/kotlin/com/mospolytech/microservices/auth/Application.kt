@@ -1,9 +1,9 @@
 package com.mospolytech.microservices.auth
 
 import com.mospolytech.features.auth.authRoutesV1
-import org.koin.ktor.ext.get
 import com.mospolytech.features.base.plugins.*
 import io.ktor.server.application.*
+import org.koin.ktor.ext.get
 
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)

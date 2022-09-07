@@ -1,6 +1,5 @@
 package com.mospolytech.data.peoples.model.xml
 
-import com.mospolytech.domain.base.model.EducationType
 import com.mospolytech.domain.peoples.model.*
 import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.serialization.SerialName
@@ -224,7 +223,7 @@ fun StudentXml.toModel(): Student {
 //        "Очная" -> EducationForm.FullTime
 //        else -> null
 //    }
-    //val payment = studentPayment.title
+    // val payment = studentPayment.title
 //    val payment = when (studentPayment.title) {
 //        "Бюджетная основа" -> EducationForm.Correspondence
 //        "Полное возмещение затрат" -> EducationForm.Evening
@@ -313,6 +312,3 @@ fun StudentEducationGroupXml.toModel(course: Int?, faculty: StudentFaculty, dire
         )
     }
 }
-
-
-

@@ -2,7 +2,6 @@ package com.mospolytech.data.schedule.repository
 
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.peoples.model.db.TeachersDb
-import com.mospolytech.data.peoples.model.entity.TeacherEntity
 import com.mospolytech.data.peoples.model.entity.TeacherSafeEntity
 import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.schedule.repository.TeachersRepository

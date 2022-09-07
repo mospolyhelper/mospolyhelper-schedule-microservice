@@ -9,4 +9,3 @@ fun DataConversion.Configuration.scheduleDataConversion() {
     setEnumConverter(ScheduleSources::values)
     setEnumConverter(ScheduleInfoObject::values)
 }
-

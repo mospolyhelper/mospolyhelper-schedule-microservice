@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 
 object MosPolyDb {
 
-    //private val log = LoggerFactory.getLogger(this::class.java)
+    // private val log = LoggerFactory.getLogger(this::class.java)
 
     fun connectAndMigrate(config: ApplicationConfig) {
 //        log.info("Initialising database")

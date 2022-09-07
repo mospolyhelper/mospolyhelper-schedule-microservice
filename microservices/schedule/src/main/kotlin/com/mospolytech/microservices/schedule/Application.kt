@@ -2,12 +2,12 @@ package com.mospolytech.microservices.schedule
 
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.features.auth.authRoutesV1
-import org.koin.ktor.ext.get
 import com.mospolytech.features.base.plugins.*
 import com.mospolytech.features.schedule.scheduleDataConversion
 import com.mospolytech.features.schedule.scheduleRoutes
 import io.ktor.server.application.*
 import io.ktor.server.plugins.dataconversion.*
+import org.koin.ktor.ext.get
 
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)

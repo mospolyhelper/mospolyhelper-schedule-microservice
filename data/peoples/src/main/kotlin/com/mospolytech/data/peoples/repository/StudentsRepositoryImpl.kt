@@ -11,7 +11,7 @@ class StudentsRepositoryImpl(
     studentsService: StudentsService,
     private val studentsDS: StudentsRemoteDS,
     private val personalRepository: PersonalRepository
-): StudentsRepository {
+) : StudentsRepository {
 
     private val studentsLocalCache by lazy {
         studentsService.getStudents()
@@ -38,9 +38,8 @@ class StudentsRepositoryImpl(
             studentsDS.deleteTables()
             studentsDS.createTables()
         } else {
-            //studentsDS.clearData()
+            // studentsDS.clearData()
         }
         studentsDS.addStudents(studentsLocalCache)
     }
-
 }

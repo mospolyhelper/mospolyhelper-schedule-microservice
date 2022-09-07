@@ -1,7 +1,6 @@
 package com.mospolytech.domain.payments.repository
 
 import com.mospolytech.domain.payments.model.Contracts
-import com.mospolytech.domain.payments.model.Payments
 import com.mospolytech.domain.payments.model.PaymentType
 
 interface PaymentsRepository {

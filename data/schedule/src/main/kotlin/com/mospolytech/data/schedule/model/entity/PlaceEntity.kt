@@ -25,7 +25,6 @@ class PlaceEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var lng by PlacesDb.lng
     var description by PlacesDb.description
 
-
     fun toModel(): PlaceInfo {
         return when (type) {
             PlaceTypes.Building -> PlaceInfo.Building(

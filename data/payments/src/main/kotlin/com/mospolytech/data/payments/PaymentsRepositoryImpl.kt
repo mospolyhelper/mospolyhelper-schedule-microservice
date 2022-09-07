@@ -7,7 +7,7 @@ import com.mospolytech.domain.payments.model.PaymentType.Dormitory
 import com.mospolytech.domain.payments.model.PaymentType.Education
 import com.mospolytech.domain.payments.repository.PaymentsRepository
 
-class PaymentsRepositoryImpl(private val service: PaymentsService): PaymentsRepository {
+class PaymentsRepositoryImpl(private val service: PaymentsService) : PaymentsRepository {
 
     override suspend fun getPaymentTypes(token: String): Result<List<PaymentType>> {
         return runCatching {

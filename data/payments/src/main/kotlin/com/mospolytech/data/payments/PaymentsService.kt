@@ -1,6 +1,5 @@
 package com.mospolytech.data.payments
 
-import com.mospolytech.data.payments.response.ContractsResponse
 import com.mospolytech.data.payments.response.Response
 import io.ktor.client.*
 import io.ktor.client.call.*

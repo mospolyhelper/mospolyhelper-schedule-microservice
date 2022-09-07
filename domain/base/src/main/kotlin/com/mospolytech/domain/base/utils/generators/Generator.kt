@@ -4,14 +4,14 @@ import kotlin.random.Random
 
 object Generator {
 
-    private val charPoolName : List<Char> = ('а'..'я') + ('А'..'я') + listOf(' ')
-    private val charPoolId : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+    private val charPoolName: List<Char> = ('а'..'я') + ('А'..'я') + listOf(' ')
+    private val charPoolId: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 
     fun randomString(length: Int = 20): String =
         (1..length)
-        .map { _ -> Random.nextInt(0, charPoolName.size) }
-        .map(charPoolName::get)
-        .joinToString("")
+            .map { _ -> Random.nextInt(0, charPoolName.size) }
+            .map(charPoolName::get)
+            .joinToString("")
 
     fun generateStringId(length: Int = 10): String =
         (1..length)

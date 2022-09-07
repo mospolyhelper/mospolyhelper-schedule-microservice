@@ -1,9 +1,7 @@
 package com.mospolytech.data.schedule.repository
 
 import com.mospolytech.data.common.db.MosPolyDb
-import com.mospolytech.data.schedule.model.db.LessonTypesDb
 import com.mospolytech.data.schedule.model.db.PlacesDb
-import com.mospolytech.data.schedule.model.entity.LessonTypeEntity
 import com.mospolytech.data.schedule.model.entity.PlaceEntity
 import com.mospolytech.domain.base.model.Location
 import com.mospolytech.domain.schedule.model.place.PlaceInfo
@@ -14,11 +12,10 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.mapLazy
 import java.util.*
-import javax.management.monitor.StringMonitor
 
 class PlacesRepositoryImpl : PlacesRepository {
     private val map = mutableMapOf<PlaceCacheKey, String>()
-    
+
     override suspend fun addBuilding(
         title: String,
         areaAlias: String?,
@@ -69,8 +66,8 @@ class PlacesRepositoryImpl : PlacesRepository {
     }
 
     override suspend fun addOnline(
-        title: String, 
-        url: String?, 
+        title: String,
+        url: String?,
         description: String?
     ): String {
         return MosPolyDb.transaction {
@@ -85,8 +82,8 @@ class PlacesRepositoryImpl : PlacesRepository {
             if (id == null) {
                 id = PlaceEntity.find {
                     PlacesDb.title eq title and
-                            (PlacesDb.type eq PlaceTypes.Online) and
-                            (PlacesDb.url eq url)
+                        (PlacesDb.type eq PlaceTypes.Online) and
+                        (PlacesDb.url eq url)
                 }
                     .mapLazy { it.toModel() }
                     .firstOrNull()
@@ -109,7 +106,7 @@ class PlacesRepositoryImpl : PlacesRepository {
     }
 
     override suspend fun addOther(
-        title: String, 
+        title: String,
         description: String?
     ): String {
         return MosPolyDb.transaction {
@@ -124,7 +121,7 @@ class PlacesRepositoryImpl : PlacesRepository {
             if (id == null) {
                 id = PlaceEntity.find {
                     PlacesDb.title eq title and
-                            (PlacesDb.type eq PlaceTypes.Other)
+                        (PlacesDb.type eq PlaceTypes.Other)
                 }
                     .mapLazy { it.toModel() }
                     .firstOrNull()
@@ -146,7 +143,7 @@ class PlacesRepositoryImpl : PlacesRepository {
     }
 
     override suspend fun addUnclassified(
-        title: String, 
+        title: String,
         description: String?
     ): String {
         return MosPolyDb.transaction {
@@ -161,7 +158,7 @@ class PlacesRepositoryImpl : PlacesRepository {
             if (id == null) {
                 id = PlaceEntity.find {
                     PlacesDb.title eq title and
-                            (PlacesDb.type eq PlaceTypes.Unclassified)
+                        (PlacesDb.type eq PlaceTypes.Unclassified)
                 }
                     .mapLazy { it.toModel() }
                     .firstOrNull()

@@ -16,9 +16,9 @@ class LessonDateTimesRemoteDS {
                 LessonDateTimeEntity.insertIfNotExist(
                     op = {
                         LessonDateTimesDb.startDate eq lessonDateTime.startDate and
-                                (LessonDateTimesDb.endDate eq lessonDateTime.endDate) and
-                                (LessonDateTimesDb.startTime eq lessonDateTime.time.start) and
-                                (LessonDateTimesDb.endTime eq lessonDateTime.time.end)
+                            (LessonDateTimesDb.endDate eq lessonDateTime.endDate) and
+                            (LessonDateTimesDb.startTime eq lessonDateTime.time.start) and
+                            (LessonDateTimesDb.endTime eq lessonDateTime.time.end)
                     }
                 ) {
                     startDate = lessonDateTime.startDate
@@ -35,9 +35,9 @@ class LessonDateTimesRemoteDS {
             LessonDateTimeEntity.insertIfNotExist(
                 op = {
                     LessonDateTimesDb.startDate eq lessonDateTime.startDate and
-                            (LessonDateTimesDb.endDate eq lessonDateTime.endDate) and
-                            (LessonDateTimesDb.startTime eq lessonDateTime.time.start) and
-                            (LessonDateTimesDb.endTime eq lessonDateTime.time.end)
+                        (LessonDateTimesDb.endDate eq lessonDateTime.endDate) and
+                        (LessonDateTimesDb.startTime eq lessonDateTime.time.start) and
+                        (LessonDateTimesDb.endTime eq lessonDateTime.time.end)
                 }
             ) {
                 startDate = lessonDateTime.startDate

@@ -15,7 +15,6 @@ class LessonTypeEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var description by LessonTypesDb.description
     var isImportant by LessonTypesDb.isImportant
 
-
     fun toModel(): LessonTypeInfo {
         return LessonTypeInfo(
             id = id.value.toString(),

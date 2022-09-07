@@ -3,7 +3,7 @@ package com.mospolytech.features.base.utils
 import kotlin.reflect.full.createType
 
 inline fun <reified T : Enum<T>>
-        io.ktor.util.converters.DataConversion.Configuration.setEnumConverter(
+io.ktor.util.converters.DataConversion.Configuration.setEnumConverter(
     crossinline values1: () -> Array<T>
 ) {
     convert<T>(T::class.createType()) {
@@ -19,7 +19,6 @@ inline fun <reified T : Enum<T>>
                     } else {
                         listOf(it)
                     }
-
                 }.toString()
             )
         }

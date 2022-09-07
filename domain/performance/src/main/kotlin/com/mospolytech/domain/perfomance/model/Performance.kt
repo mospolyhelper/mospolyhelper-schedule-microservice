@@ -8,20 +8,20 @@ import java.time.LocalTime
 
 @Serializable
 data class Performance(
-    val id : Int,
-    val billNum : String,
-    val billType : String?,
-    val docType : String,
-    val name : String,
+    val id: Int,
+    val billNum: String,
+    val billType: String?,
+    val docType: String,
+    val name: String,
     @Serializable(with = LocalDateConverter::class)
-    val date : LocalDate?,
+    val date: LocalDate?,
     @Serializable(with = LocalTimeConverter::class)
     val time: LocalTime?,
-    val grade : String,
-    val ticketNum : String?,
-    val teacher : String,
-    val course : Int,
-    val semester : Int,
-    val examType : String,
-    val chair : String
+    val grade: String,
+    val ticketNum: String?,
+    val teacher: String,
+    val course: Int,
+    val semester: Int,
+    val examType: String,
+    val chair: String
 )

@@ -90,6 +90,3 @@ fun EmployeeInfo.toModel(): Teacher {
         email = email
     )
 }
-
-
-

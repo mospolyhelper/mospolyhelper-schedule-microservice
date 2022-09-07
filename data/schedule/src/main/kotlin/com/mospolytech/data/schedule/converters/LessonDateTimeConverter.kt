@@ -30,7 +30,6 @@ class LessonDateTimeConverter(
         val dateTo = parseDate(apiLesson.dt, LocalDate.MAX)
         val dates = getDates(day, isByDate, dateFrom, dateTo)
 
-
         val dateTimes = convertLessonDateTime(
             dates,
             timeStart,
@@ -84,7 +83,6 @@ class LessonDateTimeConverter(
             )
         )
     }
-
 
     private fun parseDate(date: String?, default: LocalDate): LocalDate {
         return if (date == null) {

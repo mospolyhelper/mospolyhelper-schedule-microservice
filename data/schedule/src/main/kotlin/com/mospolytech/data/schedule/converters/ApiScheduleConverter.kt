@@ -4,19 +4,9 @@ import com.mospolytech.data.schedule.model.response.ApiGroup
 import com.mospolytech.data.schedule.model.response.ApiLesson
 import com.mospolytech.data.schedule.model.response.ScheduleResponse
 import com.mospolytech.data.schedule.model.response.ScheduleSessionResponse
-import com.mospolytech.data.schedule.remote.LessonDateTimesRemoteDS
-import com.mospolytech.data.schedule.remote.LessonsRemoteDS
-import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
-import com.mospolytech.domain.schedule.model.lesson.LessonTime
 import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
 import com.mospolytech.domain.schedule.model.pack.CompactLessonFeatures
-import kotlinx.datetime.toKotlinLocalDate
 import org.slf4j.LoggerFactory
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 
 class ApiScheduleConverter(
     private val lessonDateTimeConverter: LessonDateTimeConverter,
@@ -86,7 +76,7 @@ fun mergeLessons(vararg lessonsList: List<CompactLessonAndTimes>): List<CompactL
             }
         }
     }
-    //resList.sort()
+    // resList.sort()
     return resList
 }
 
@@ -100,11 +90,11 @@ fun CompactLessonAndTimes.mergeByGroup(other: CompactLessonAndTimes): CompactLes
 
 fun CompactLessonAndTimes.canMergeByGroup(other: CompactLessonAndTimes): Boolean {
     return lesson.canMergeByGroup(other.lesson) &&
-            times == other.times
+        times == other.times
 }
 
 fun CompactLessonFeatures.canMergeByGroup(other: CompactLessonFeatures): Boolean {
     return subjectId == other.subjectId &&
-            placesId == other.placesId &&
-            teachersId == other.teachersId
+        placesId == other.placesId &&
+        teachersId == other.teachersId
 }

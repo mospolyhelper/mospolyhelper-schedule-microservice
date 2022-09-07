@@ -14,9 +14,7 @@ val appModules = listOf(
     baseDataModule,
     scheduleDataModule,
 
-
     scheduleDomainModule,
-
 
     scheduleFeatureModule,
 

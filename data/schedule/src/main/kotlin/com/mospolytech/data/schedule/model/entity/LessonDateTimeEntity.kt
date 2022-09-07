@@ -16,7 +16,6 @@ class LessonDateTimeEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var startTime by LessonDateTimesDb.startTime
     var endTime by LessonDateTimesDb.endTime
 
-
     fun toModel(): LessonDateTime {
         return LessonDateTime(
             startDate = startDate,

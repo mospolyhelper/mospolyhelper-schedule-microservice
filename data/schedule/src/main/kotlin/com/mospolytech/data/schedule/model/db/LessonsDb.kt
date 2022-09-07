@@ -1,6 +1,5 @@
 package com.mospolytech.data.schedule.model.db
 
-import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.dao.id.UUIDTable
 
 object LessonsDb : UUIDTable() {

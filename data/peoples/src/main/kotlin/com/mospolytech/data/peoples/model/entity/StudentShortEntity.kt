@@ -1,9 +1,6 @@
 package com.mospolytech.data.peoples.model.entity
 
 import com.mospolytech.data.peoples.model.db.*
-import com.mospolytech.data.peoples.model.db.StudentsDb.nullable
-import com.mospolytech.data.peoples.model.entity.StudentEntity.Companion.referrersOn
-import com.mospolytech.domain.peoples.model.Student
 import com.mospolytech.domain.peoples.model.StudentShort
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
@@ -19,9 +16,6 @@ class StudentShortEntity(id: EntityID<String>) : Entity<String>(id) {
     var avatar by StudentsDb.avatar
     var group by GroupEntity optionalReferencedOn StudentsDb.group
     var course by StudentsDb.course
-
-
-
 
     private fun fullName(): String {
         return buildString {

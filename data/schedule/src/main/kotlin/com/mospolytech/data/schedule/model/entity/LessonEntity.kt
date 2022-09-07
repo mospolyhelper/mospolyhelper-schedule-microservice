@@ -1,7 +1,6 @@
 package com.mospolytech.data.schedule.model.entity
 
 import com.mospolytech.data.peoples.model.entity.GroupEntity
-import com.mospolytech.data.peoples.model.entity.TeacherEntity
 import com.mospolytech.data.peoples.model.entity.TeacherSafeEntity
 import com.mospolytech.data.schedule.model.db.*
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
@@ -21,7 +20,6 @@ class LessonEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var groups by GroupEntity via LessonToGroupsDb
     var places by PlaceEntity via LessonToPlacesDb
     var dateTimes by LessonDateTimeEntity via LessonToLessonDateTimesDb
-
 
     fun toLessonModel(): CompactLessonFeatures {
         return CompactLessonFeatures(

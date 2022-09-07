@@ -4,7 +4,6 @@ import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.peoples.model.db.*
 import com.mospolytech.data.peoples.model.entity.StudentEntity
 import com.mospolytech.data.schedule.converters.ApiScheduleConverter
-import com.mospolytech.data.schedule.local.ScheduleCacheDS
 import com.mospolytech.data.schedule.model.db.*
 import com.mospolytech.data.schedule.model.entity.LessonEntity
 import com.mospolytech.data.schedule.service.ScheduleService
@@ -18,11 +17,6 @@ import com.mospolytech.domain.schedule.model.pack.CompactSchedule
 import com.mospolytech.domain.schedule.model.pack.ScheduleInfo
 import com.mospolytech.domain.schedule.model.place.PlaceInfo
 import com.mospolytech.domain.schedule.repository.LessonsRepository
-import com.mospolytech.domain.schedule.utils.filterByPlaces
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
 import org.jetbrains.exposed.sql.*
 import java.util.UUID
 
@@ -238,7 +232,6 @@ class LessonsRepositoryImpl(
         val groups: MutableCollection<Group> = LinkedHashSet()
         val places: MutableCollection<PlaceInfo> = LinkedHashSet()
         val lessonsList = mutableListOf<CompactLessonAndTimes>()
-
 
         LessonEntity.wrapRows(query).forEach {
             types.add(it.type.toModel())

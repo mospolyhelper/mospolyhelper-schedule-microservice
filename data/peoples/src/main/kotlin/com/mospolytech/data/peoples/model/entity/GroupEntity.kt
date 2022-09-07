@@ -15,7 +15,6 @@ class GroupEntity(id: EntityID<String>) : Entity<String>(id) {
     var faculty by StudentFacultyEntity optionalReferencedOn GroupsDb.faculty
     var direction by StudentDirectionEntity optionalReferencedOn GroupsDb.direction
 
-
     fun toModel(): Group {
         return Group(
             id = id.value,

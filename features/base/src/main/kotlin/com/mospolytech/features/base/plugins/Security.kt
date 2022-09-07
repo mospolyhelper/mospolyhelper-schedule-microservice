@@ -1,7 +1,5 @@
 package com.mospolytech.features.base.plugins
 
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
 import com.mospolytech.features.base.AuthConfigs
 import com.mospolytech.features.base.MpuPrincipal
 import com.mospolytech.features.base.mpuAuth

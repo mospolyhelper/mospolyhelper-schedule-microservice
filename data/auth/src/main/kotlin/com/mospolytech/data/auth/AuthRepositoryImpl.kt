@@ -1,7 +1,5 @@
 package com.mospolytech.data.auth
 
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
 import com.mospolytech.domain.auth.AuthRepository
 import java.util.*
 

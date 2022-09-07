@@ -1,10 +1,7 @@
 package com.mospolytech.data.peoples.model.entity
 
 import com.mospolytech.data.peoples.model.db.*
-import com.mospolytech.data.peoples.model.db.StudentsDb.nullable
-import com.mospolytech.data.peoples.model.entity.StudentEntity.Companion.referrersOn
 import com.mospolytech.domain.peoples.model.Student
-import com.mospolytech.domain.peoples.model.StudentShort
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -30,7 +27,6 @@ class StudentEntity(id: EntityID<String>) : Entity<String>(id) {
     var dormitory by StudentsDb.dormitory
     var dormitoryRoom by StudentsDb.dormitoryRoom
     var branch by StudentBranchEntity referencedOn StudentsDb.branch
-
 
     fun toModel(): Student {
         return Student(
