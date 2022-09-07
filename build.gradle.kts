@@ -3,14 +3,6 @@ plugins {
     kotlin("plugin.serialization")
 }
 
-buildscript {
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
-    }
-}
-
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
@@ -22,12 +14,6 @@ val kotlinx_datetime: String by project
 val postgresql: String by project
 
 allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
-    }
-
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         kotlinOptions.freeCompilerArgs += listOf(
             "-Xuse-experimental=io.ktor.server.locations.KtorExperimentalLocationsAPI",
@@ -38,6 +24,7 @@ allprojects {
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
+    apply(plugin = "ktlint")
 
     dependencies {
         implementation("io.ktor:ktor-server-auth:$ktor_version")
@@ -87,4 +74,3 @@ subprojects {
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     }
 }
-

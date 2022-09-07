@@ -1,6 +1,5 @@
 package com.mospolytech.data.schedule.repository
 
-import com.mospolytech.domain.base.utils.time
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
 import com.mospolytech.domain.schedule.model.lesson.toDateTimeRanges
 import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
@@ -14,6 +13,7 @@ import com.mospolytech.domain.schedule.repository.PlacesRepository
 import com.mospolytech.domain.schedule.utils.filterByPlaces
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.toJavaLocalTime
 import java.time.LocalTime
 
 class FreePlacesRepositoryImpl(
@@ -41,8 +41,8 @@ class FreePlacesRepositoryImpl(
                 lessonDateTime.toDateTimeRanges().forEach last@ { dateTimeRange ->
                     val dailyOccupancy = resMap.getOrPut(dateTimeRange.start.date) { mutableListOf() }
                     val newTimeRange = TempPlaceOccupancyTimeRange(
-                        timeFrom = dateTimeRange.start.time,
-                        timeTo = dateTimeRange.endInclusive.time,
+                        timeFrom = dateTimeRange.start.time.toJavaLocalTime(),
+                        timeTo = dateTimeRange.endInclusive.time.toJavaLocalTime(),
                         value = 1.0
                     )
 

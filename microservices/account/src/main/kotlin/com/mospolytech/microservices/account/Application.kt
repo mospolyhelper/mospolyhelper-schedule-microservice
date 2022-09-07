@@ -1,6 +1,5 @@
 package com.mospolytech.microservices.account
 
-
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.features.applications.applicationsRoutesV1
 import com.mospolytech.features.auth.authRoutesV1

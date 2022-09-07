@@ -77,7 +77,10 @@ data class StudentInfoXml(
     val id: String,
     @XmlElement(true)
     @SerialName("ДатаРождения")
-    val birthday: String
+    val birthday: String,
+    @XmlElement(true)
+    @SerialName("GUIDЗачетки")
+    val recordBookId: String,
 )
 @kotlinx.serialization.Serializable
 @SerialName("ФакультетСтудента")
@@ -240,7 +243,7 @@ fun StudentXml.toModel(): Student {
     val branch = studentBranch.toModel()
 
     return Student(
-        id = studentInfo.id,
+        id = studentInfo.recordBookId,
         firstName = studentInfo.firstName,
         lastName = studentInfo.lastName,
         middleName = studentInfo.middleName,

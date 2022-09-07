@@ -64,13 +64,13 @@ fun Application.peoplesRoutesV1(
                         call.respondResult(studentsRepository.getClassmates(token))
                     }
                 }
-//                route("/update-students") {
-//                    get {
-//                        val recreateDb = call.request.queryParameters["recreate"] == "1"
-//                        studentsRepository.updateData(recreateDb)
-//                        call.respond("updated")
-//                    }
-//                }
+                route("/update-students") {
+                    get {
+                        val recreateDb = call.request.queryParameters["recreate"] == "1"
+                        studentsRepository.updateData(recreateDb)
+                        call.respond("updated")
+                    }
+                }
 //                route("/update-teachers") {
 //                    get {
 //                        val recreateDb = call.request.queryParameters["recreate"] == "1"

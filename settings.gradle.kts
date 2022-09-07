@@ -6,11 +6,19 @@ pluginManagement {
         google()
         mavenCentral()
     }
-    val kotlinVersion = "1.6.20"
+    val kotlinVersion = "1.7.10"
 
     plugins {
         kotlin("plugin.serialization") version kotlinVersion apply false
         id("org.jetbrains.kotlin.jvm") version kotlinVersion apply false
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
     }
 }
 
