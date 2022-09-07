@@ -13,7 +13,7 @@ dependencies {
     ktlint("com.pinterest:ktlint:$ktlintVersion")
 }
 
-task<JavaExec>("ktlint") {
+task<JavaExec>("ktlintCheck") {
     group = "verification"
     description = "Check Kotlin code style."
     mainClass.set("com.pinterest.ktlint.Main")

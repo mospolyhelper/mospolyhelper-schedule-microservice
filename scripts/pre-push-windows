@@ -1,8 +1,8 @@
-#!/bin/bash
+#!C:/Program\ Files/Git/usr/bin/sh.exe
 
 echo "Running lint check..."
 
-./gradlew app:ktlintCheck --daemon
+./gradlew ktlintCheck --daemon
 
 status=$?
 
