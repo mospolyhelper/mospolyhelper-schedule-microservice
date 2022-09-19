@@ -1,5 +1,6 @@
 package com.mospolytech.data.common.db
 
+import com.mospolytech.domain.base.AppConfig
 import io.ktor.server.config.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
@@ -9,20 +10,17 @@ object MosPolyDb {
 
     // private val log = LoggerFactory.getLogger(this::class.java)
 
-    fun connectAndMigrate(config: ApplicationConfig) {
+    fun connectAndMigrate(config: AppConfig) {
 //        log.info("Initialising database")
 //        val pool = hikari()
 //        Database.connect(pool)
 //        runFlyway(pool)
 
-        val url = config.propertyOrNull("postgres.url")?.getString().orEmpty()
-        val login = config.propertyOrNull("postgres.login")?.getString().orEmpty()
-        val password = config.propertyOrNull("postgres.password")?.getString().orEmpty()
         Database.connect(
-            url = url,
-            driver = "org.postgresql.Driver",
-            user = login,
-            password = password
+            url = config.url,
+            driver = config.driver,
+            user = config.login,
+            password = config.password
         )
     }
 

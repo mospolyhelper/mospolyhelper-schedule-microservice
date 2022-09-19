@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(project(Modules.Domain.Auth))
-    api(project(Modules.Domain.Personal))
-    api(project(Modules.Features.Base))
+    api(projects.domain.auth)
+    api(projects.domain.personal)
+    api(projects.features.base)
 }

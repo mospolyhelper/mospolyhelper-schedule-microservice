@@ -1,9 +1,7 @@
 package com.mospolytech.domain.schedule.model.lesson
 
-import com.mospolytech.domain.base.utils.atTime
 import kotlinx.datetime.*
 import kotlinx.serialization.Serializable
-import kotlin.time.Duration.Companion.days
 
 @Serializable
 data class LessonDateTime(

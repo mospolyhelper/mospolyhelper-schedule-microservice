@@ -12,6 +12,7 @@ val exposed_version: String by project
 val xmlutil_version: String by project
 val kotlinx_datetime: String by project
 val postgresql: String by project
+val quartzVersion: String by project
 
 allprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -29,6 +30,7 @@ subprojects {
     dependencies {
         implementation("io.ktor:ktor-server-auth:$ktor_version")
         implementation("io.ktor:ktor-server-core:$ktor_version")
+        implementation("io.ktor:ktor-server-config-yaml:$ktor_version")
         implementation("io.ktor:ktor-server-host-common:$ktor_version")
         implementation("io.ktor:ktor-server-status-pages:$ktor_version")
         implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
@@ -68,6 +70,8 @@ subprojects {
         implementation("org.postgresql:postgresql:$postgresql")
 
         implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime")
+
+        implementation("org.quartz-scheduler:quartz:$quartzVersion")
 
 
         testImplementation("io.ktor:ktor-server-tests:$ktor_version")

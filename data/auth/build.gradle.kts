@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    api(project(Modules.Data.Base))
-    api(project(Modules.Domain.Auth))
+    api(projects.data.base)
+    api(projects.domain.auth)
 }

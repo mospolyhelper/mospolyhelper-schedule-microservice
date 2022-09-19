@@ -23,9 +23,7 @@ dependencyResolutionManagement {
 }
 
 include(":microservices")
-include(":microservices:auth")
-include(":microservices:schedule")
-include(":microservices:account")
+include(":microservices:edugma")
 
 include(":workers")
 include(":workers:schedule")

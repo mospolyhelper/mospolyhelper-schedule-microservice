@@ -1,6 +1,8 @@
 package com.mospolytech.data.schedule.converters
 
-import java.time.LocalTime
+import com.mospolytech.domain.base.utils.MAX
+import com.mospolytech.domain.base.utils.MIN
+import kotlinx.datetime.LocalTime
 
 object LessonTimeConverter {
     enum class LessonTimes(
@@ -8,40 +10,40 @@ object LessonTimeConverter {
         val end: LocalTime
     ) {
         Pair1(
-            LocalTime.of(9, 0),
-            LocalTime.of(10, 30)
+            LocalTime(9, 0),
+            LocalTime(10, 30)
         ),
         Pair2(
-            LocalTime.of(10, 40),
-            LocalTime.of(12, 10)
+            LocalTime(10, 40),
+            LocalTime(12, 10)
         ),
         Pair3(
-            LocalTime.of(12, 20),
-            LocalTime.of(13, 50)
+            LocalTime(12, 20),
+            LocalTime(13, 50)
         ),
         Pair4(
-            LocalTime.of(14, 30),
-            LocalTime.of(16, 0)
+            LocalTime(14, 30),
+            LocalTime(16, 0)
         ),
         Pair5(
-            LocalTime.of(16, 10),
-            LocalTime.of(17, 40)
+            LocalTime(16, 10),
+            LocalTime(17, 40)
         ),
         Pair6(
-            LocalTime.of(17, 50),
-            LocalTime.of(19, 20)
+            LocalTime(17, 50),
+            LocalTime(19, 20)
         ),
         Pair6Evening(
-            LocalTime.of(18, 20),
-            LocalTime.of(19, 40)
+            LocalTime(18, 20),
+            LocalTime(19, 40)
         ),
         Pair7(
-            LocalTime.of(19, 30),
-            LocalTime.of(21, 0)
+            LocalTime(19, 30),
+            LocalTime(21, 0)
         ),
         Pair7Evening(
-            LocalTime.of(19, 50),
-            LocalTime.of(21, 10)
+            LocalTime(19, 50),
+            LocalTime(21, 10)
         ),
         Undefined(
             LocalTime.MIN,

@@ -15,6 +15,7 @@ import io.ktor.util.*
 import kotlinx.serialization.Serializable
 import java.util.*
 
+// TODO: Удалить
 private const val LK_TOKEN = "mospolytechLkToken"
 fun Application.authRoutesV1(
     repository: AuthRepository,

@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    api(project(Modules.Features.Base))
-    api(project(Modules.Domain.Payments))
+    api(projects.features.base)
+    api(projects.domain.payments)
 }

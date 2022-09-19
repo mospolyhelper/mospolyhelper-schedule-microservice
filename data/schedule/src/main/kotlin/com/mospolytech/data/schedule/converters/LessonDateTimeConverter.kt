@@ -2,14 +2,15 @@ package com.mospolytech.data.schedule.converters
 
 import com.mospolytech.data.schedule.model.response.ApiLesson
 import com.mospolytech.data.schedule.remote.LessonDateTimesRemoteDS
+import com.mospolytech.domain.base.utils.MAX
+import com.mospolytech.domain.base.utils.MIN
 import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
 import com.mospolytech.domain.schedule.model.lesson.LessonTime
-import kotlinx.datetime.toKotlinLocalDate
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.LocalTime
+import kotlinx.datetime.*
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import kotlin.time.Duration
+import java.time.LocalDate as JavaLocalDate
 
 class LessonDateTimeConverter(
     private val lessonDateTimesRemoteDS: LessonDateTimesRemoteDS
@@ -40,7 +41,7 @@ class LessonDateTimeConverter(
 
     private fun getDates(day: String, isByDate: Boolean, dateFrom: LocalDate, dateTo: LocalDate): Pair<LocalDate, LocalDate?> {
         return if (isByDate) {
-            val date = LocalDate.parse(day, dateFormatter)
+            val date = JavaLocalDate.parse(day, dateFormatter).toKotlinLocalDate()
             date to null
         } else {
             val dayOfWeek = DayOfWeek.of(day.toIntOrNull() ?: 1)
@@ -54,18 +55,27 @@ class LessonDateTimeConverter(
         val fromDayOfWeek = day.dayOfWeek.value
         val daysToAdd = (dayOfWeek.value - fromDayOfWeek).toLong()
         return if (daysToAdd >= 0)
-            day.plusDays(daysToAdd)
+            day + daysToAdd.toDayPeriod()
         else
-            day.plusDays(daysToAdd + 7L)
+            day + (daysToAdd + 7L).toDayPeriod()
     }
 
     private fun getClosestDayNotLater(day: LocalDate, dayOfWeek: DayOfWeek): LocalDate {
         val toDayOfWeek = day.dayOfWeek.value
         val daysToAdd = (dayOfWeek.value - toDayOfWeek).toLong()
         return if (daysToAdd <= 0)
-            day.plusDays(daysToAdd)
+            day + daysToAdd.toDayPeriod()
         else
-            day.plusDays(daysToAdd - 7L)
+            day + (daysToAdd - 7L).toDayPeriod()
+    }
+
+    private fun Long.toDayPeriod(): DatePeriod {
+        return DatePeriod(days = toInt())
+    }
+    private fun Duration.toDatePeriod(): DatePeriod {
+        return DatePeriod(
+            days = this.inWholeDays.toInt()
+        )
     }
 
     private fun convertLessonDateTime(
@@ -75,8 +85,8 @@ class LessonDateTimeConverter(
     ): LessonDateTime {
 
         return LessonDateTime(
-            startDate = dates.first.toKotlinLocalDate(),
-            endDate = dates.second?.toKotlinLocalDate(),
+            startDate = dates.first,
+            endDate = dates.second,
             time = LessonTime(
                 start = timeStart,
                 end = timeEnd
@@ -88,7 +98,7 @@ class LessonDateTimeConverter(
         return if (date == null) {
             default
         } else try {
-            LocalDate.parse(date, dateFormatter)
+            JavaLocalDate.parse(date, dateFormatter).toKotlinLocalDate()
         } catch (e: DateTimeParseException) {
             default
         }

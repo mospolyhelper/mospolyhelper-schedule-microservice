@@ -1,0 +1,15 @@
+ktor:
+  deployment:
+    port: 8003
+  application:
+    modules:
+      - com.mospolytech.microservices.account.ApplicationKt.module
+
+jwt:
+  secret: $JWT_SECRET
+
+postgres:
+  url: $PG_URL
+  driver: "org.postgresql.Driver"
+  login: $PG_LOGIN
+  password: $PG_PASSWORD

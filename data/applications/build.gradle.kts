@@ -6,6 +6,6 @@ kotlin {
 }
 
 dependencies {
-    api(project(Modules.Data.Base))
-    api(project(Modules.Domain.Applications))
+    api(projects.data.base)
+    api(projects.domain.applications)
 }

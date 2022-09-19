@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-    api(project(Modules.Domain.Base))
-    implementation(project(Modules.Domain.Peoples))
+    api(projects.domain.base)
+    implementation(projects.domain.peoples)
 }
