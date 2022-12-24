@@ -11,7 +11,7 @@ import java.util.*
 
 @Serializable
 data class PerformanceResponseDto(
-    val academicPerformance: List<PerformanceResponse>
+    val academicPerformance: List<PerformanceResponse>,
 )
 
 @Serializable
@@ -35,7 +35,7 @@ data class PerformanceResponse(
     val course: Int,
     @SerialName("exam_type")
     val examType: String,
-    val chair: String
+    val chair: String,
 )
 
 fun PerformanceResponse.toModel(): Performance {
@@ -55,7 +55,7 @@ fun PerformanceResponse.toModel(): Performance {
         course = course,
         semester = semester,
         examType = examType,
-        chair = chair
+        chair = chair,
     )
 }
 

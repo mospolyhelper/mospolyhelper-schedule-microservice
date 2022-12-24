@@ -5,7 +5,7 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 
 class PersonalService(
-    private val client: HttpClient
+    private val client: HttpClient,
 ) {
     companion object {
         private const val BaseUrl = "https://e.mospolytech.ru"

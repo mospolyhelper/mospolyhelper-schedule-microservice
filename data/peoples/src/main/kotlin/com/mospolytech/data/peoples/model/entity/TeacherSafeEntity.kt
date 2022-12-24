@@ -30,7 +30,7 @@ class TeacherSafeEntity(id: EntityID<String>) : Entity<String>(id) {
             department = department?.toModel(),
             email = email,
             sex = sex,
-            birthday = null
+            birthday = null,
         )
     }
 }

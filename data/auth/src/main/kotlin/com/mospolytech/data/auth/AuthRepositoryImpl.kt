@@ -4,7 +4,7 @@ import com.mospolytech.domain.auth.AuthRepository
 import java.util.*
 
 class AuthRepositoryImpl(
-    private val service: AuthService
+    private val service: AuthService,
 ) : AuthRepository {
 
     override suspend fun getToken(login: String, password: String): Result<String> {

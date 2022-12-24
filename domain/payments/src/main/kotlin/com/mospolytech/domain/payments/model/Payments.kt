@@ -24,5 +24,5 @@ data class Payments(
     val balanceCurrent: String,
     @Serializable(with = LocalDateConverter::class)
     val lastPaymentDate: LocalDate?,
-    val payments: List<Payment>
+    val payments: List<Payment>,
 )

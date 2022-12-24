@@ -8,5 +8,5 @@ import java.time.LocalDate
 data class Payment(
     @Serializable(LocalDateConverter::class)
     val date: LocalDate,
-    val value: String
+    val value: String,
 )

@@ -6,7 +6,9 @@ import com.mospolytech.data.peoples.model.db.*
 import com.mospolytech.data.peoples.model.entity.*
 import com.mospolytech.domain.base.model.PagingDTO
 import com.mospolytech.domain.peoples.model.Student
+import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.*
+import kotlin.sequences.Sequence
 
 class StudentsRemoteDS {
     suspend fun getStudents() = MosPolyDb.transaction {
@@ -14,7 +16,7 @@ class StudentsRemoteDS {
             .orderBy(
                 StudentsDb.lastName to SortOrder.ASC,
                 StudentsDb.firstName to SortOrder.ASC,
-                StudentsDb.middleName to SortOrder.ASC
+                StudentsDb.middleName to SortOrder.ASC,
             )
             .map { it.toModel() }
     }
@@ -33,7 +35,7 @@ class StudentsRemoteDS {
                 }.orderBy(
                     StudentsDb.lastName to SortOrder.ASC,
                     StudentsDb.firstName to SortOrder.ASC,
-                    StudentsDb.middleName to SortOrder.ASC
+                    StudentsDb.middleName to SortOrder.ASC,
                 )
 
             val list = StudentSafeEntity.wrapRows(query)
@@ -44,7 +46,7 @@ class StudentsRemoteDS {
                 count = list.size,
                 previousPage = previousPage,
                 nextPage = nextPage,
-                data = list
+                data = list,
             )
         }
 
@@ -56,7 +58,7 @@ class StudentsRemoteDS {
                 }.orderBy(
                     StudentsDb.lastName to SortOrder.ASC,
                     StudentsDb.firstName to SortOrder.ASC,
-                    StudentsDb.middleName to SortOrder.ASC
+                    StudentsDb.middleName to SortOrder.ASC,
                 )
 
             StudentSafeEntity.wrapRows(query)
@@ -70,35 +72,17 @@ class StudentsRemoteDS {
                 .orderBy(
                     StudentsDb.lastName to SortOrder.ASC,
                     StudentsDb.firstName to SortOrder.ASC,
-                    StudentsDb.middleName to SortOrder.ASC
+                    StudentsDb.middleName to SortOrder.ASC,
                 )
                 .map { it.toModel() }
         }
 
     suspend fun addStudent(student: Student) {
         MosPolyDb.transaction {
-            val groupEntity = student.group?.let { group ->
-                val facultyEntity = group.faculty?.let { faculty ->
-                    StudentFacultyEntity.upsert(faculty.id) {
-                        title = faculty.title
-                        titleShort = faculty.titleShort
-                    }
-                }
+            val facultyEntity = getStudentFacultyEntity(student)
+            val directionEntity = getStudentDirectionEntity(student)
 
-                val directionEntity = group.direction?.let { direction ->
-                    StudentDirectionEntity.upsert(direction.id) {
-                        title = direction.title
-                        code = direction.code
-                    }
-                }
-
-                GroupEntity.upsert(group.id) {
-                    title = group.title
-                    course = group.course
-                    faculty = facultyEntity
-                    direction = directionEntity
-                }
-            }
+            val groupEntity = getGroupEntity(student, facultyEntity, directionEntity)
 
             val specializationEntity = student.specialization?.let { specialization ->
                 StudentSpecializationEntity.upsert(specialization.id) {
@@ -119,8 +103,8 @@ class StudentsRemoteDS {
                 sex = student.sex
                 avatar = student.avatar
                 birthday = student.birthday
-//                faculty = facultyEntity
-//                direction = directionEntity
+                faculty = facultyEntity
+                direction = directionEntity
                 specialization = specializationEntity
                 educationType = student.educationType
                 educationForm = student.educationForm
@@ -136,31 +120,13 @@ class StudentsRemoteDS {
         }
     }
 
-    suspend fun addStudents(students: List<Student>) {
+    suspend fun addStudents(students: Sequence<Student>) {
         MosPolyDb.transaction {
             students.forEach { student ->
-                val groupEntity = student.group?.let { group ->
-                    val facultyEntity = group.faculty?.let { faculty ->
-                        StudentFacultyEntity.upsert(faculty.id) {
-                            title = faculty.title
-                            titleShort = faculty.titleShort
-                        }
-                    }
+                val facultyEntity = getStudentFacultyEntity(student)
+                val directionEntity = getStudentDirectionEntity(student)
 
-                    val directionEntity = group.direction?.let { direction ->
-                        StudentDirectionEntity.upsert(direction.id) {
-                            title = direction.title
-                            code = direction.code
-                        }
-                    }
-
-                    GroupEntity.upsert(group.id) {
-                        title = group.title
-                        course = group.course
-                        faculty = facultyEntity
-                        direction = directionEntity
-                    }
-                }
+                val groupEntity = getGroupEntity(student, facultyEntity, directionEntity)
 
                 val specializationEntity = student.specialization?.let { specialization ->
                     StudentSpecializationEntity.upsert(specialization.id) {
@@ -178,11 +144,14 @@ class StudentsRemoteDS {
                     firstName = student.firstName
                     lastName = student.lastName
                     middleName = student.middleName
+
+                    status = student.status
+
                     sex = student.sex
                     avatar = student.avatar
                     birthday = student.birthday
-//                faculty = facultyEntity
-//                direction = directionEntity
+                    faculty = facultyEntity
+                    direction = directionEntity
                     specialization = specializationEntity
                     educationType = student.educationType
                     educationForm = student.educationForm
@@ -194,7 +163,41 @@ class StudentsRemoteDS {
                     dormitory = student.dormitory
                     dormitoryRoom = student.dormitoryRoom
                     branch = branchEntity
+                    lastUpdate = Clock.System.now()
                 }
+            }
+        }
+    }
+
+    private fun getStudentFacultyEntity(student: Student): StudentFacultyEntity? {
+        return student.faculty?.let {
+            StudentFacultyEntity.upsert(it.id) {
+                title = it.title
+                titleShort = it.titleShort
+            }
+        }
+    }
+
+    private fun getStudentDirectionEntity(student: Student): StudentDirectionEntity? {
+        return student.direction?.let {
+            StudentDirectionEntity.upsert(it.id) {
+                title = it.title
+                code = it.code
+            }
+        }
+    }
+
+    private fun getGroupEntity(
+        student: Student,
+        facultyEntity: StudentFacultyEntity?,
+        directionEntity: StudentDirectionEntity?,
+    ): GroupEntity? {
+        return student.group?.let { group ->
+            GroupEntity.upsert(group.id) {
+                title = group.title
+                course = group.course
+                faculty = facultyEntity
+                direction = directionEntity
             }
         }
     }
@@ -207,7 +210,7 @@ class StudentsRemoteDS {
                 StudentDirectionsDb,
                 StudentFacultiesDb,
                 StudentSpecializationsDb,
-                GroupsDb
+                GroupsDb,
             )
         }
     }
@@ -220,7 +223,7 @@ class StudentsRemoteDS {
                 StudentDirectionsDb,
                 StudentFacultiesDb,
                 StudentSpecializationsDb,
-                GroupsDb
+                GroupsDb,
             )
         }
     }

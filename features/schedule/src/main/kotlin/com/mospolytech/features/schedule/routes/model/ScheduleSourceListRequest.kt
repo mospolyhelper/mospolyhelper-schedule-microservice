@@ -5,5 +5,5 @@ import io.ktor.server.locations.*
 
 @Location("/{type}")
 data class ScheduleSourceListRequest(
-    val type: ScheduleSources
+    val type: ScheduleSources,
 )

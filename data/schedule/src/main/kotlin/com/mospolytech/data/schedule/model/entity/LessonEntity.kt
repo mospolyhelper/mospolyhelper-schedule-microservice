@@ -41,7 +41,7 @@ class LessonEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     fun toFullModel(): CompactLessonAndTimes {
         return CompactLessonAndTimes(
             lesson = toLessonModel(),
-            times = toLessonTimeModel()
+            times = toLessonTimeModel(),
         )
     }
 }

@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PlaceDailyOccupancy(
     val date: LocalDate,
-    val values: List<PlaceOccupancyTimeRange>
+    val values: List<PlaceOccupancyTimeRange>,
 )

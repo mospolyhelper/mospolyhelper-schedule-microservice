@@ -17,7 +17,7 @@ class LessonTypesRepositoryImpl : LessonTypesRepository {
         title: String,
         shortTitle: String,
         description: String,
-        isImportant: Boolean
+        isImportant: Boolean,
     ): String {
         return MosPolyDb.transaction {
             var id = map[title]

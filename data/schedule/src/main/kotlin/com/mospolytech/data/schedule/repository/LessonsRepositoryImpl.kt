@@ -22,7 +22,7 @@ import java.util.UUID
 
 class LessonsRepositoryImpl(
     private val service: ScheduleService,
-    private val converter: ApiScheduleConverter
+    private val converter: ApiScheduleConverter,
 ) : LessonsRepository {
     override suspend fun updateSchedule() {
         val semester = service.getSchedules()
@@ -249,8 +249,8 @@ class LessonsRepositoryImpl(
                 subjectsInfo = subjects.toList(),
                 teachersInfo = teachers.toList(),
                 groupsInfo = groups.toList(),
-                placesInfo = places.toList()
-            )
+                placesInfo = places.toList(),
+            ),
         )
     }
 }

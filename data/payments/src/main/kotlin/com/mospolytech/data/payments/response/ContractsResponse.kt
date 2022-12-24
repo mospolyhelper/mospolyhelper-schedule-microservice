@@ -12,13 +12,13 @@ import java.util.*
 
 @Serializable
 data class Response(
-    val contracts: ContractsResponse
+    val contracts: ContractsResponse,
 )
 
 @Serializable
 data class ContractsResponse(
     val education: List<PaymentsResponse>,
-    val dormitory: List<PaymentsResponse>
+    val dormitory: List<PaymentsResponse>,
 )
 
 @Serializable
@@ -58,13 +58,13 @@ data class PaymentsResponse(
     val lastPaymentDate: String,
     val payments: List<PaymentResponse>,
     val agreements: List<AgreementsResponse>,
-    val paygraph: List<PaygraphResponse>
+    val paygraph: List<PaygraphResponse>,
 )
 
 @Serializable
 data class PaymentResponse(
     val date: String,
-    val value: String
+    val value: String,
 )
 
 @Serializable
@@ -81,7 +81,7 @@ data class AgreementsResponse(
     @SerialName("signed_user_date")
     val signedUserDate: String,
     @SerialName("signed_user_time")
-    val signedUserTime: String
+    val signedUserTime: String,
 )
 
 @Serializable
@@ -98,7 +98,7 @@ data class PaygraphResponse(
     val sumPrice: String,
     val sum: String,
     @SerialName("sum_pay")
-    val sumPay: String
+    val sumPay: String,
 )
 
 fun ContractsResponse.toModel(): Contracts {
@@ -127,7 +127,7 @@ fun PaymentsResponse.toModel(): Payments {
         balance = balance,
         balanceCurrent = balanceCurrdate,
         lastPaymentDate = lastPayment,
-        payments = payments.map { it.toModel() }
+        payments = payments.map { it.toModel() },
     )
 }
 

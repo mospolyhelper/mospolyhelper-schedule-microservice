@@ -3,7 +3,7 @@ ktor:
     port: 8003
   application:
     modules:
-      - com.mospolytech.microservices.account.ApplicationKt.module
+      - com.mospolytech.microservices.edugma.ApplicationKt.module
 
 jwt:
   secret: $JWT_SECRET
@@ -13,3 +13,14 @@ postgres:
   driver: "org.postgresql.Driver"
   login: $PG_LOGIN
   password: $PG_PASSWORD
+
+urls:
+  getStudents: $GET_STUDENTS_URL
+  getStaff: $GET_STAFF_URL
+
+auth:
+  getStudents: $GET_STUDENTS_AUTH
+  getStaff: $GET_STAFF_AUTH
+
+admin:
+  key: $ADMIN_KEY

@@ -1,8 +1,8 @@
 package com.mospolytech.data.schedule.model.db
 
 import org.jetbrains.exposed.dao.id.UUIDTable
-import org.jetbrains.exposed.sql.javatime.time
 import org.jetbrains.exposed.sql.kotlin.datetime.date
+import org.jetbrains.exposed.sql.kotlin.datetime.time
 
 object LessonDateTimesDb : UUIDTable() {
     val startDate = date("start_date")

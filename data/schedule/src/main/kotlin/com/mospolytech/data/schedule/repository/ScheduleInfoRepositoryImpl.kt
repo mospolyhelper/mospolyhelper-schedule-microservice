@@ -82,7 +82,7 @@ class ScheduleInfoRepositoryImpl : ScheduleInfoRepository {
                     id = it.id.value.toString(),
                     title = it.title,
                     description = it.description,
-                    avatar = null
+                    avatar = null,
                 )
             }.toList()
         }
@@ -95,7 +95,7 @@ class ScheduleInfoRepositoryImpl : ScheduleInfoRepository {
                     id = it.id.value.toString(),
                     title = it.title,
                     description = it.description,
-                    avatar = null
+                    avatar = null,
                 )
             }.toList()
         }
@@ -108,7 +108,7 @@ class ScheduleInfoRepositoryImpl : ScheduleInfoRepository {
                     id = it.id.value,
                     title = it.name,
                     description = it.description,
-                    avatar = null
+                    avatar = null,
                 )
             }.toList()
         }
@@ -121,7 +121,7 @@ class ScheduleInfoRepositoryImpl : ScheduleInfoRepository {
                     id = it.id.value,
                     title = it.title,
                     description = it.description,
-                    avatar = null
+                    avatar = null,
                 )
             }.toList()
         }
@@ -134,7 +134,7 @@ class ScheduleInfoRepositoryImpl : ScheduleInfoRepository {
                     id = it.id.value.toString(),
                     title = it.title,
                     description = it.description2,
-                    avatar = null
+                    avatar = null,
                 )
             }.toList()
         }
@@ -147,7 +147,7 @@ class ScheduleInfoRepositoryImpl : ScheduleInfoRepository {
                     id = it.id.value,
                     title = it.fullName(),
                     description = it.description,
-                    avatar = null
+                    avatar = null,
                 )
             }.toList()
         }

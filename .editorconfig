@@ -16,7 +16,7 @@ indent_size = 4
 ij_kotlin_allow_trailing_comma=true
 ij_kotlin_allow_trailing_comma_on_call_site=true
 # noinspection EditorConfigKeyCorrectness
-disabled_rules=annotation,no-empty-first-line-in-method-block,no-wildcard-imports,package-name
+ktlint_disabled_rules=filename,annotation,no-empty-first-line-in-method-block,no-wildcard-imports,package-name
 
 [*.md]
 trim_trailing_whitespace = false

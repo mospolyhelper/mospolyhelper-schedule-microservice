@@ -14,7 +14,7 @@ class StudentSpecializationEntity(id: EntityID<String>) : Entity<String>(id) {
     fun toModel(): StudentSpecialization {
         return StudentSpecialization(
             id = id.value,
-            title = title
+            title = title,
         )
     }
 }

@@ -6,7 +6,7 @@ import com.mospolytech.domain.base.utils.capitalized
 import com.mospolytech.domain.schedule.repository.PlacesRepository
 
 class LessonPlacesConverter(
-    private val placesRepository: PlacesRepository
+    private val placesRepository: PlacesRepository,
 ) {
     suspend fun convertPlaces(auditoriums: List<ApiLesson.Auditory>, url: String = ""): List<String> {
         return auditoriums.map { processAuditorium(it.title, url) }
@@ -16,10 +16,11 @@ class LessonPlacesConverter(
 
     private suspend fun processAuditorium(auditorium: String, url: String): String {
         val regGroups = regex.find(auditorium)?.groupValues
-        val (url2, rawTitle0) = if (regGroups != null)
+        val (url2, rawTitle0) = if (regGroups != null) {
             regGroups.getOrNull(1) to regGroups.getOrNull(2)
-        else
+        } else {
             null to null
+        }
 
         val parsedHtml = rawTitle0 ?: auditorium
         val rawTitle = parsedHtml.trim()
@@ -53,25 +54,27 @@ class LessonPlacesConverter(
 
     private fun parseEmoji(raw: String): Pair<String, String> {
         val emoji = emojis.firstOrNull { raw.contains(it.first) }
-        return if (emoji == null)
+        return if (emoji == null) {
             raw.trim() to ""
-        else
+        } else {
             raw.replace(emoji.first, "").trim() to emoji.second
+        }
     }
 
     private suspend fun parsePlace(place: String, url: String = ""): String {
         return parserChain.firstNotNullOfOrNull {
             val matchResult = place.parseBy(patterns = it.patterns.toTypedArray())
-            if (matchResult == null)
+            if (matchResult == null) {
                 null
-            else
+            } else {
                 it.placeFactory(matchResult, listOf(url))
+            }
         } ?: placesRepository.addUnclassified(place)
     }
 
     data class PlaceParserPack(
         val patterns: List<String>,
-        val placeFactory: suspend MatchResult.(List<String>) -> String
+        val placeFactory: suspend MatchResult.(List<String>) -> String,
     ) {
         constructor(vararg patterns: String, placeFactory: suspend MatchResult.(List<String>) -> String) :
             this(patterns.toList(), placeFactory)
@@ -105,7 +108,7 @@ class LessonPlacesConverter(
                     "5" -> Location(55.705504, 37.646804)
                     "6" -> Location(55.704282, 37.646083)
                     else -> null
-                }
+                },
             )
         },
         PlaceParserPack("""^пр\s*((\d)(\d).+)$""") {
@@ -120,7 +123,7 @@ class LessonPlacesConverter(
                     "1" -> Location(55.833268, 37.544180)
                     "2" -> Location(55.833708, 37.543758)
                     else -> null
-                }
+                },
             )
         },
         PlaceParserPack("""^пр\s*ВЦ\s*\d+\s*\(((\d)(\d).+)\)$""") {
@@ -137,7 +140,7 @@ class LessonPlacesConverter(
                     "1" -> Location(55.833268, 37.544180)
                     "2" -> Location(55.833708, 37.543758)
                     else -> null
-                }
+                },
             )
         },
         PlaceParserPack("""^пр\s(ФО[\s-]*\d+)$""") {
@@ -148,7 +151,7 @@ class LessonPlacesConverter(
                 building = "2",
                 floor = "4",
                 auditorium = groupValues[1],
-                location = Location(55.833708, 37.543758)
+                location = Location(55.833708, 37.543758),
             )
         },
         PlaceParserPack("""^м\s*((\d)(\d).+)$""") {
@@ -164,7 +167,7 @@ class LessonPlacesConverter(
                 location = when (building) {
                     "3" -> Location(55.837459, 37.533427)
                     else -> null
-                }
+                },
             )
         },
         PlaceParserPack("""^м\s*(эстамп)$""") {
@@ -172,7 +175,7 @@ class LessonPlacesConverter(
                 title = groupValues[0],
                 areaAlias = "Михалковская",
                 street = "Михалковская улица, 7",
-                location = Location(55.837131, 37.533649)
+                location = Location(55.837131, 37.533649),
             )
         },
         PlaceParserPack("""^(\d)пк\s*((\d).+)$""") {
@@ -189,7 +192,7 @@ class LessonPlacesConverter(
                     "1" -> Location(55.819439, 37.663351)
                     "2" -> Location(55.819287, 37.664276)
                     else -> null
-                }
+                },
             )
         },
         PlaceParserPack("""^пк\s*((\d).+)$""") {
@@ -200,7 +203,7 @@ class LessonPlacesConverter(
                 building = "1",
                 floor = groupValues[2],
                 auditorium = groupValues[1],
-                location = Location(55.819439, 37.663351)
+                location = Location(55.819439, 37.663351),
             )
         },
         PlaceParserPack("""^([АБВНH]|Нд)\s*(\d).+$""") {
@@ -221,7 +224,7 @@ class LessonPlacesConverter(
                     "Нд" -> Location(55.780300, 37.709753)
                     "Л" -> Location(55.781164, 37.710555)
                     else -> null
-                }
+                },
             )
         },
         PlaceParserPack("""^(А)[\s-]?ОМД$""") {
@@ -243,7 +246,7 @@ class LessonPlacesConverter(
                     "Л" -> Location(55.781164, 37.710555)
                     else -> null
                 },
-                description = "Лаборатория обработки материалов давлением"
+                description = "Лаборатория обработки материалов давлением",
             )
         },
         PlaceParserPack("""^Зал\s+№*(\d)[_]*$""") {
@@ -300,7 +303,7 @@ class LessonPlacesConverter(
                 areaAlias = "Спортивный зал №$gymNumber",
                 street = street,
                 location = location,
-                description = description
+                description = description,
             )
         },
         PlaceParserPack("""^м[\s\p{P}]*спорт[\s\p{P}]*зал[\p{P}]*$""") {
@@ -311,7 +314,7 @@ class LessonPlacesConverter(
                 location = Location(55.837495, 37.532223),
                 description = "Учебные и тренировочные занятия: " +
                     "Зал спортивных игр, тренажерный зал, залы настольного тенниса, " +
-                    "спортивных единоборств, фехтования, физической реабилитации"
+                    "спортивных единоборств, фехтования, физической реабилитации",
             )
         },
         PlaceParserPack("""^Автозаводская\s+(\d)$""") {
@@ -324,7 +327,7 @@ class LessonPlacesConverter(
                 floor = "8",
                 location = Location(55.837495, 37.532223),
                 description = "Учебные и тренировочные занятия: " +
-                    "Тренажерный зал, армрестлинг, аскетбол, дартс, настольный теннис, эстетическая гимнастика"
+                    "Тренажерный зал, армрестлинг, аскетбол, дартс, настольный теннис, эстетическая гимнастика",
             )
         },
         PlaceParserPack("""^АВ[\s\p{P}]*Спортзал$""") {
@@ -335,7 +338,7 @@ class LessonPlacesConverter(
                 floor = "8",
                 location = Location(55.837495, 37.532223),
                 description = "Учебные и тренировочные занятия: " +
-                    "Тренажерный зал, армрестлинг, аскетбол, дартс, настольный теннис, эстетическая гимнастика"
+                    "Тренажерный зал, армрестлинг, аскетбол, дартс, настольный теннис, эстетическая гимнастика",
             )
         },
         PlaceParserPack("""^(.*Измайлово.*)$""") {
@@ -346,7 +349,7 @@ class LessonPlacesConverter(
                 location = Location(55.800985, 37.806210),
                 description = "Учебные и тренировочные занятия: " +
                     "Тренажерный зал, волейбол, дартс, настольный теннис, степ-аэробика, " +
-                    "футбол/футзал (уличная площадка), фитнес-аэробика"
+                    "футбол/футзал (уличная площадка), фитнес-аэробика",
             )
         },
         PlaceParserPack("""^[_\s\.]*Ц?ПД[_\s\.\d]*$""", """^Проектная\sдеятельность$""") {
@@ -355,35 +358,35 @@ class LessonPlacesConverter(
         PlaceParserPack(
             """^[_-]*(LMS|ЛМС)[_-]*$""",
             """^Обучение\s+в\s+(LMS|ЛМС)$""",
-            """^Обучение\s+(LMS|ЛМС)$"""
+            """^Обучение\s+(LMS|ЛМС)$""",
         ) {
             placesRepository.addOnline(
                 title = "Обучение в ЛМС",
-                url = it.firstOrNull()
+                url = it.firstOrNull(),
             )
         },
         PlaceParserPack("""^Webex$""") {
             placesRepository.addOnline(
                 title = "Видеоконференция в Webex",
-                url = it.firstOrNull()
+                url = it.firstOrNull(),
             )
         },
         PlaceParserPack("""^Webinar$""") {
             placesRepository.addOnline(
                 title = "Онлайн лекция в Webinar",
-                url = it.firstOrNull()
+                url = it.firstOrNull(),
             )
         },
         PlaceParserPack("""^Online\sкурс$""") {
             placesRepository.addOnline(
                 title = "Онлайн курс",
-                url = it.firstOrNull()
+                url = it.firstOrNull(),
             )
         },
         PlaceParserPack("""^Онлайн$""") {
             placesRepository.addOnline(
                 title = "Онлайн курс",
-                url = it.firstOrNull()
+                url = it.firstOrNull(),
             )
         },
         PlaceParserPack(*otherMap.keys.toTypedArray()) {
@@ -391,17 +394,18 @@ class LessonPlacesConverter(
 
             val description1 = otherMap.toList().firstNotNullOf { (key, value) ->
                 val regex = Regex(key, RegexOption.IGNORE_CASE)
-                if (regex.containsMatchIn(title))
+                if (regex.containsMatchIn(title)) {
                     regex.replace(title, value)
-                else
+                } else {
                     null
+                }
             }
 
             placesRepository.addOther(
                 title = title,
-                description = description1
+                description = description1,
             )
-        }
+        },
     )
 
     private fun String.parseBy(vararg patterns: String): MatchResult? {

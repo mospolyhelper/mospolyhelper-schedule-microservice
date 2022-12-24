@@ -9,7 +9,7 @@ import io.ktor.server.locations.*
 import io.ktor.server.routing.*
 
 fun Routing.scheduleInfoRoutesV1(
-    repository: ScheduleInfoRepository
+    repository: ScheduleInfoRepository,
 ) {
     route("/schedule") {
         route("/info") {

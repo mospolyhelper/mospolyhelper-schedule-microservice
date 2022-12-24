@@ -13,10 +13,14 @@ class StudentEntity(id: EntityID<String>) : Entity<String>(id) {
     var lastName by StudentsDb.lastName
     var middleName by StudentsDb.middleName
 
+    var status by StudentsDb.status
+
     var sex by StudentsDb.sex
     var birthday by StudentsDb.birthday
     var avatar by StudentsDb.avatar
     var group by GroupEntity optionalReferencedOn StudentsDb.group
+    var faculty by StudentFacultyEntity optionalReferencedOn StudentsDb.faculty
+    var direction by StudentDirectionEntity optionalReferencedOn StudentsDb.direction
     var specialization by StudentSpecializationEntity optionalReferencedOn StudentsDb.specialization
     var educationType by StudentsDb.educationType
     var educationForm by StudentsDb.educationForm
@@ -27,6 +31,7 @@ class StudentEntity(id: EntityID<String>) : Entity<String>(id) {
     var dormitory by StudentsDb.dormitory
     var dormitoryRoom by StudentsDb.dormitoryRoom
     var branch by StudentBranchEntity referencedOn StudentsDb.branch
+    var lastUpdate by StudentsDb.lastUpdate
 
     fun toModel(): Student {
         return Student(
@@ -34,9 +39,14 @@ class StudentEntity(id: EntityID<String>) : Entity<String>(id) {
             firstName = firstName,
             lastName = lastName,
             middleName = middleName,
+
+            status = status,
+
             sex = sex,
             avatar = avatar,
             birthday = birthday,
+            faculty = faculty?.toModel(),
+            direction = direction?.toModel(),
             specialization = specialization?.toModel(),
             educationType = educationType,
             educationForm = educationForm,
@@ -47,7 +57,7 @@ class StudentEntity(id: EntityID<String>) : Entity<String>(id) {
             code = code,
             dormitory = dormitory,
             dormitoryRoom = dormitoryRoom,
-            branch = branch.toModel()
+            branch = branch.toModel(),
         )
     }
 

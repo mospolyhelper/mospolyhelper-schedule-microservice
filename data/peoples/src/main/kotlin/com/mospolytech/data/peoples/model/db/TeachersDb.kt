@@ -4,6 +4,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.kotlin.datetime.date
+import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
 object TeachersDb : IdTable<String>() {
     override val id: Column<EntityID<String>> = text("id").entityId()
@@ -16,6 +17,7 @@ object TeachersDb : IdTable<String>() {
     val email = text("email").nullable()
     val sex = text("sex").nullable()
     val birthday = date("birthday").nullable()
+    val lastUpdate = timestamp("last_update")
 
     override val primaryKey = PrimaryKey(id)
 }

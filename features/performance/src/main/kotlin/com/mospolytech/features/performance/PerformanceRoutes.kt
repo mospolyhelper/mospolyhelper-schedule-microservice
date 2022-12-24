@@ -46,7 +46,7 @@ fun Application.performanceRoutesV1(repository: PerformanceRepository) {
 
 @Location("/{semester}")
 data class SemesterRequest(
-    val semester: String
+    val semester: String,
 )
 
 @Location("/")

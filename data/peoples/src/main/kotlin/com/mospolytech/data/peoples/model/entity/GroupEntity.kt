@@ -21,7 +21,7 @@ class GroupEntity(id: EntityID<String>) : Entity<String>(id) {
             title = title,
             course = course,
             faculty = faculty?.toModel(),
-            direction = direction?.toModel()
+            direction = direction?.toModel(),
         )
     }
 }

@@ -7,7 +7,7 @@ interface LessonTypesRepository {
         title: String,
         shortTitle: String,
         description: String,
-        isImportant: Boolean
+        isImportant: Boolean,
     ): String
     suspend fun get(id: String): LessonTypeInfo?
     suspend fun getAll(): List<LessonTypeInfo>

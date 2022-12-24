@@ -4,18 +4,22 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.kotlin.datetime.date
+import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
 object StudentsDb : IdTable<String>() {
     override val id: Column<EntityID<String>> = text("id").entityId()
     val firstName = text("first_name")
     val lastName = text("last_name")
     val middleName = text("middle_name").nullable()
+
+    val status = text("status")
+
     val sex = text("sex").nullable()
     val birthday = date("birthday").nullable()
     val avatar = text("avatar").nullable()
     val group = reference("group", GroupsDb).nullable()
-//    val faculty = reference("faculty", StudentFacultiesDb)
-//    val direction = reference("direction", StudentDirectionsDb)
+    val faculty = reference("faculty", StudentFacultiesDb).nullable()
+    val direction = reference("direction", StudentDirectionsDb).nullable()
     val specialization = reference("specialization", StudentSpecializationsDb).nullable()
     val educationType = text("education_type")
     val educationForm = text("education_form")
@@ -26,6 +30,7 @@ object StudentsDb : IdTable<String>() {
     val dormitory = text("dormitory").nullable()
     val dormitoryRoom = text("dormitory_room").nullable()
     val branch = reference("branch", StudentBranchesDb)
+    val lastUpdate = timestamp("last_update")
 
     override val primaryKey = PrimaryKey(id)
 }

@@ -5,5 +5,5 @@ class ScheduleObject(
     val id: String,
     val title: String,
     val description: String,
-    val avatar: String?
+    val avatar: String?,
 )

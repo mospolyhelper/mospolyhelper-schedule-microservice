@@ -80,13 +80,17 @@ fun EmployeeInfo.toModel(): Teacher {
         grade = post,
         departmentParent = Department(
             id = departmentParentGuid,
-            title = departmentParent
+            title = departmentParent,
         ),
-        department = if (department != null && departmentGuid != null) Department(
-            id = departmentGuid,
-            title = department
-        ) else null,
+        department = if (department != null && departmentGuid != null) {
+            Department(
+                id = departmentGuid,
+                title = department,
+            )
+        } else {
+            null
+        },
         sex = Sex,
-        email = email
+        email = email,
     )
 }

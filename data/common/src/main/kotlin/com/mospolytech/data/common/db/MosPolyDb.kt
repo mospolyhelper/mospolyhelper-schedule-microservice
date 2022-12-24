@@ -20,7 +20,7 @@ object MosPolyDb {
             url = config.url,
             driver = config.driver,
             user = config.login,
-            password = config.password
+            password = config.password,
         )
     }
 
@@ -51,12 +51,12 @@ object MosPolyDb {
 //    }
 
     suspend fun <T> transaction(
-        block: suspend () -> T
+        block: suspend () -> T,
     ): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
 
     suspend fun <T> transactionCatching(
-        block: suspend () -> T
+        block: suspend () -> T,
     ): Result<T> =
         kotlin.runCatching {
             newSuspendedTransaction(Dispatchers.IO) { block() }

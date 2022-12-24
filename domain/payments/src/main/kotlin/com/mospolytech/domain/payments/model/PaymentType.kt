@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 enum class PaymentType {
     @SerialName("dormitory")
     Dormitory,
+
     @SerialName("education")
-    Education
+    Education,
 }

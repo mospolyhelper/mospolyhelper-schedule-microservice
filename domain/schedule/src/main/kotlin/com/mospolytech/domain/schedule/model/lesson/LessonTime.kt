@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LessonTime(
     val start: LocalTime,
-    val end: LocalTime
+    val end: LocalTime,
 ) : Comparable<LessonTime> {
     override fun compareTo(other: LessonTime): Int {
         val start = this.start.compareTo(other.start)

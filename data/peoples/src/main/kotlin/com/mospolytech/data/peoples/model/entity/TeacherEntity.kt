@@ -18,6 +18,7 @@ class TeacherEntity(id: EntityID<String>) : Entity<String>(id) {
     var email by TeachersDb.email
     var sex by TeachersDb.sex
     var birthday by TeachersDb.birthday
+    var lastUpdate by TeachersDb.lastUpdate
 
     fun toModel(): Teacher {
         return Teacher(
@@ -30,7 +31,7 @@ class TeacherEntity(id: EntityID<String>) : Entity<String>(id) {
             department = department?.toModel(),
             email = email,
             sex = sex,
-            birthday = birthday
+            birthday = birthday,
         )
     }
 }

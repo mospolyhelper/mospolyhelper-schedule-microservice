@@ -39,27 +39,27 @@ class PlaceEntity(id: EntityID<UUID>) : UUIDEntity(id) {
                     lng?.let { lng ->
                         Location(
                             lat = lat,
-                            lng = lng
+                            lng = lng,
                         )
                     }
                 },
-                description = description
+                description = description,
             )
             PlaceTypes.Online -> PlaceInfo.Online(
                 id = id.value.toString(),
                 title = title,
                 url = url,
-                description = description
+                description = description,
             )
             PlaceTypes.Other -> PlaceInfo.Other(
                 id = id.value.toString(),
                 title = title,
-                description = description
+                description = description,
             )
             PlaceTypes.Unclassified -> PlaceInfo.Unclassified(
                 id = id.value.toString(),
                 title = title,
-                description = description
+                description = description,
             )
         }
     }

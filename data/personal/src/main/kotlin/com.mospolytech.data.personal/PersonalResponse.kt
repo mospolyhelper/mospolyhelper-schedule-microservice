@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter
 
 @Serializable
 data class PersonalResponse(
-    val user: User
+    val user: User,
 ) {
     @Serializable
     data class User(
@@ -36,7 +36,7 @@ data class PersonalResponse(
         val degreeLevel: String,
         val enterYear: String,
         val orders: List<String>,
-        val subdivisions: List<Subdivision>? = null
+        val subdivisions: List<Subdivision>? = null,
     )
 
     @Serializable
@@ -72,7 +72,7 @@ fun PersonalResponse.toModel(): Personal {
         degreeLevel = this.user.degreeLevel,
         enterYear = this.user.enterYear,
         orders = this.user.orders.map { it.toModel() },
-        subdivisions = this.user.subdivisions?.map { it.toModel() }
+        subdivisions = this.user.subdivisions?.map { it.toModel() },
     )
 }
 
@@ -120,6 +120,6 @@ private fun PersonalResponse.Subdivision.toModel(): Subdivision {
         jobType = this.jobType,
         status = this.status,
         subdivision = this.subdivision,
-        wage = this.wage
+        wage = this.wage,
     )
 }

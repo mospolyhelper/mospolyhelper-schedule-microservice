@@ -6,5 +6,5 @@ import io.ktor.server.locations.*
 @Location("/{type}/{key}")
 data class ScheduleInfoRequest(
     val type: ScheduleInfoObject,
-    val key: String
+    val key: String,
 )

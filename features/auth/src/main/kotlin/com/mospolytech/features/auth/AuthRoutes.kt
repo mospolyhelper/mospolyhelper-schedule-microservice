@@ -19,7 +19,7 @@ import java.util.*
 private const val LK_TOKEN = "mospolytechLkToken"
 fun Application.authRoutesV1(
     repository: AuthRepository,
-    personalRepository: PersonalRepository
+    personalRepository: PersonalRepository,
 ) {
     routing {
         val secret = environment?.config?.propertyOrNull("jwt.secret")?.getString().orEmpty()
@@ -49,16 +49,16 @@ private fun String.createJwt(secretKey: String) = JWT
 
 enum class ValidationFields {
     UserType,
-    ScheduleKey
+    ScheduleKey,
 }
 
 @Serializable
 data class LoginRequest(
     val login: String,
-    val password: String
+    val password: String,
 )
 
 @Serializable
 data class TokenResponse(
-    val token: String
+    val token: String,
 )

@@ -35,7 +35,7 @@ class StudentShortEntity(id: EntityID<String>) : Entity<String>(id) {
             name = fullName(),
             avatar = avatar,
             course = course,
-            group = group?.toModel()
+            group = group?.toModel(),
         )
     }
 }

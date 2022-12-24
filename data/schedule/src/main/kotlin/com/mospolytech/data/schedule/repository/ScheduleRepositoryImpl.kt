@@ -24,7 +24,7 @@ class ScheduleRepositoryImpl(
     private val teachersRepository: TeachersRepository,
     private val groupsRepository: GroupsRepository,
     private val placesRepository: PlacesRepository,
-    private val studentsRepository: StudentsRepository
+    private val studentsRepository: StudentsRepository,
 ) : ScheduleRepository {
 //    private suspend fun getLessons(source: ScheduleSource): List<CompactLessonAndTimes> {
 //        val lessons = lessonsRepository.getLessons()

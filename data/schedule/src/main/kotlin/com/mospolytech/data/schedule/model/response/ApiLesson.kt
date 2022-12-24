@@ -17,11 +17,11 @@ data class ApiLesson(
     val week: String = "",
     val align: String = "",
     @SerialName("e_link")
-    val eLink: String?
+    val eLink: String?,
 ) {
     @Serializable
     data class Auditory(
         val title: String,
-        val color: String
+        val color: String,
     )
 }

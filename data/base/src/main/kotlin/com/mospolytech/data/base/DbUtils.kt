@@ -12,7 +12,7 @@ fun <T : Entity<ID>, ID : Comparable<ID>> EntityClass<ID, T>.upsert(value: ID, i
 
 fun <T : Entity<ID>, ID : Comparable<ID>> EntityClass<ID, T>.insertIfNotExist(
     op: SqlExpressionBuilder.() -> Op<Boolean>,
-    init: T.() -> Unit
+    init: T.() -> Unit,
 ): T {
     val existed = find(op).firstOrNull()
     return existed ?: new(init)

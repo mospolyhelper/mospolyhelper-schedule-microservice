@@ -19,7 +19,7 @@ class LessonDateTimesRemoteDS {
                             (LessonDateTimesDb.endDate eq lessonDateTime.endDate) and
                             (LessonDateTimesDb.startTime eq lessonDateTime.time.start) and
                             (LessonDateTimesDb.endTime eq lessonDateTime.time.end)
-                    }
+                    },
                 ) {
                     startDate = lessonDateTime.startDate
                     endDate = lessonDateTime.endDate
@@ -38,7 +38,7 @@ class LessonDateTimesRemoteDS {
                         (LessonDateTimesDb.endDate eq lessonDateTime.endDate) and
                         (LessonDateTimesDb.startTime eq lessonDateTime.time.start) and
                         (LessonDateTimesDb.endTime eq lessonDateTime.time.end)
-                }
+                },
             ) {
                 startDate = lessonDateTime.startDate
                 endDate = lessonDateTime.endDate

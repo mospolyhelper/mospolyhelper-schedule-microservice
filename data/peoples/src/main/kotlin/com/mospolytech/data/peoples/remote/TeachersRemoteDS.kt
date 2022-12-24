@@ -9,7 +9,9 @@ import com.mospolytech.data.peoples.model.entity.TeacherEntity
 import com.mospolytech.data.peoples.model.entity.TeacherSafeEntity
 import com.mospolytech.domain.base.model.PagingDTO
 import com.mospolytech.domain.peoples.model.Teacher
+import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.*
+import kotlin.sequences.Sequence
 
 class TeachersRemoteDS {
     suspend fun getTeacher(name: String) = MosPolyDb.transaction {
@@ -39,34 +41,37 @@ class TeachersRemoteDS {
                 count = list.size,
                 previousPage = previousPage,
                 nextPage = nextPage,
-                data = list
+                data = list,
             )
         }
 
-    suspend fun addTeacher(teacher: Teacher) {
+    suspend fun addTeachers(teachers: Sequence<Teacher>) {
         MosPolyDb.transaction {
-            val newDepartmentParent = teacher.departmentParent?.let {
-                DepartmentEntity.upsert(it.id) {
-                    title = it.title
+            teachers.forEach { teacher ->
+                val newDepartmentParent = teacher.departmentParent?.let {
+                    DepartmentEntity.upsert(it.id) {
+                        title = it.title
+                    }
                 }
-            }
 
-            val newDepartment = teacher.department?.let {
-                DepartmentEntity.upsert(it.id) {
-                    title = it.title
+                val newDepartment = teacher.department?.let {
+                    DepartmentEntity.upsert(it.id) {
+                        title = it.title
+                    }
                 }
-            }
 
-            TeacherEntity.upsert(teacher.id) {
-                name = teacher.name
-                avatar = teacher.avatar
-                stuffType = teacher.stuffType
-                grade = teacher.grade
-                departmentParent = newDepartmentParent
-                department = newDepartment
-                email = teacher.email
-                sex = teacher.sex
-                birthday = teacher.birthday
+                TeacherEntity.upsert(teacher.id) {
+                    name = teacher.name
+                    avatar = teacher.avatar
+                    stuffType = teacher.stuffType
+                    grade = teacher.grade
+                    departmentParent = newDepartmentParent
+                    department = newDepartment
+                    email = teacher.email
+                    sex = teacher.sex
+                    birthday = teacher.birthday
+                    lastUpdate = Clock.System.now()
+                }
             }
         }
     }
@@ -75,7 +80,7 @@ class TeachersRemoteDS {
         MosPolyDb.transaction {
             SchemaUtils.create(
                 TeachersDb,
-                DepartmentsDb
+                DepartmentsDb,
             )
         }
     }
@@ -91,7 +96,7 @@ class TeachersRemoteDS {
         MosPolyDb.transaction {
             SchemaUtils.drop(
                 TeachersDb,
-                DepartmentsDb
+                DepartmentsDb,
             )
         }
     }

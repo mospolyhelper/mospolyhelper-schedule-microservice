@@ -8,4 +8,22 @@ class AppConfigImpl(private val config: ApplicationConfig) : AppConfig {
     override val driver: String by lazy { config.propertyOrNull("postgres.driver")?.getString().orEmpty() }
     override val login: String by lazy { config.propertyOrNull("postgres.login")?.getString().orEmpty() }
     override val password: String by lazy { config.propertyOrNull("postgres.password")?.getString().orEmpty() }
+
+    override val adminKey: String by lazy {
+        config.propertyOrNull("admin.key")?.getString().orEmpty()
+    }
+
+    override val getStudentsUrl: String by lazy {
+        config.propertyOrNull("urls.getStudents")?.getString().orEmpty()
+    }
+    override val getStudentsAuth: String by lazy {
+        config.propertyOrNull("auth.getStudents")?.getString().orEmpty()
+    }
+
+    override val getStaffUrl: String by lazy {
+        config.propertyOrNull("urls.getStaff")?.getString().orEmpty()
+    }
+    override val getStaffAuth: String by lazy {
+        config.propertyOrNull("auth.getStaff")?.getString().orEmpty()
+    }
 }

@@ -15,8 +15,11 @@ class StudentSafeEntity(id: EntityID<String>) : Entity<String>(id) {
     var lastName by StudentsDb.lastName
     var middleName by StudentsDb.middleName
 
+    var status by StudentsDb.status
     var sex by StudentsDb.sex
     var avatar by StudentsDb.avatar
+    var faculty by StudentFacultyEntity optionalReferencedOn StudentsDb.faculty
+    var direction by StudentDirectionEntity optionalReferencedOn StudentsDb.direction
     var group by GroupEntity optionalReferencedOn StudentsDb.group
     var specialization by StudentSpecializationEntity optionalReferencedOn StudentsDb.specialization
     var educationType by StudentsDb.educationType
@@ -46,7 +49,10 @@ class StudentSafeEntity(id: EntityID<String>) : Entity<String>(id) {
             code = code,
             dormitory = null,
             dormitoryRoom = null,
-            branch = branch.toModel()
+            branch = branch.toModel(),
+            status = status,
+            faculty = faculty?.toModel(),
+            direction = direction?.toModel(),
         )
     }
 
@@ -68,7 +74,7 @@ class StudentSafeEntity(id: EntityID<String>) : Entity<String>(id) {
             name = fullName(),
             avatar = avatar,
             course = course,
-            group = group?.toModel()
+            group = group?.toModel(),
         )
     }
 }

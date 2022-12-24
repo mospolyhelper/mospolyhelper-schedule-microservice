@@ -24,13 +24,13 @@ class PlacesRepositoryImpl : PlacesRepository {
         floor: String?,
         auditorium: String?,
         location: Location?,
-        description: String?
+        description: String?,
     ): String {
         return MosPolyDb.transaction {
             val key = PlaceCacheKey(
                 title = title,
                 url = null,
-                type = PlaceTypes.Building
+                type = PlaceTypes.Building,
             )
 
             var id = map[key]
@@ -68,13 +68,13 @@ class PlacesRepositoryImpl : PlacesRepository {
     override suspend fun addOnline(
         title: String,
         url: String?,
-        description: String?
+        description: String?,
     ): String {
         return MosPolyDb.transaction {
             val key = PlaceCacheKey(
                 title = title,
                 url = url,
-                type = PlaceTypes.Online
+                type = PlaceTypes.Online,
             )
 
             var id = map[key]
@@ -107,13 +107,13 @@ class PlacesRepositoryImpl : PlacesRepository {
 
     override suspend fun addOther(
         title: String,
-        description: String?
+        description: String?,
     ): String {
         return MosPolyDb.transaction {
             val key = PlaceCacheKey(
                 title = title,
                 url = null,
-                type = PlaceTypes.Other
+                type = PlaceTypes.Other,
             )
 
             var id = map[key]
@@ -144,13 +144,13 @@ class PlacesRepositoryImpl : PlacesRepository {
 
     override suspend fun addUnclassified(
         title: String,
-        description: String?
+        description: String?,
     ): String {
         return MosPolyDb.transaction {
             val key = PlaceCacheKey(
                 title = title,
                 url = null,
-                type = PlaceTypes.Unclassified
+                type = PlaceTypes.Unclassified,
             )
 
             var id = map[key]
@@ -196,6 +196,6 @@ class PlacesRepositoryImpl : PlacesRepository {
     private data class PlaceCacheKey(
         val title: String,
         val url: String?,
-        val type: PlaceTypes
+        val type: PlaceTypes,
     )
 }

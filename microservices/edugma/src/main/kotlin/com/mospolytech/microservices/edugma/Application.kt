@@ -24,7 +24,7 @@ fun Application.module() {
     configureSecurity()
     configureRouting()
     configureSerialization()
-    configureMonitoring()
+    configureMonitoring(get())
     configureHTTP()
     configureDi(appModules)
     setRoutes()
@@ -39,8 +39,8 @@ fun Application.setRoutes() {
     paymentsRoutesV1(get())
     personalRoutesV1(get())
     performanceRoutesV1(get())
-    peoplesRoutesV1(get(), get())
-    scheduleRoutes(get(), get(), get(), get(), get())
+    peoplesRoutesV1(get(), get(), get())
+    scheduleRoutes(get(), get(), get(), get(), get(), get())
 }
 
 fun Application.setDataConversions() {

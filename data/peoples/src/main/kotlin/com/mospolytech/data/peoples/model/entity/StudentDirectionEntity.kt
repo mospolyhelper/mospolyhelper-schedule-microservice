@@ -16,7 +16,7 @@ class StudentDirectionEntity(id: EntityID<String>) : Entity<String>(id) {
         return StudentDirection(
             id = id.value,
             title = title,
-            code = code
+            code = code,
         )
     }
 }

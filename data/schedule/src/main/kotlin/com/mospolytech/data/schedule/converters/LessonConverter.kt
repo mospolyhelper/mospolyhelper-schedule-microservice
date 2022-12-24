@@ -16,7 +16,7 @@ class LessonConverter(
     suspend fun convertLesson(
         apiLesson: ApiLesson,
         apiGroups: List<ApiGroup>,
-        timesId: List<String>
+        timesId: List<String>,
     ): String {
         val subjectId = lessonSubjectsConverter.convertTitle(apiLesson.sbj)
         val typeId = lessonTypeConverter.convertType(apiLesson.type, apiLesson.sbj)
@@ -30,7 +30,7 @@ class LessonConverter(
             teachersId = teachersId,
             groupsId = groupsId,
             placesId = placesId,
-            lessonDateTimesId = timesId
+            lessonDateTimesId = timesId,
         )
     }
 }

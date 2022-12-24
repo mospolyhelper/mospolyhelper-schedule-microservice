@@ -35,7 +35,8 @@ fun Application.paymentsRoutesV1(repository: PaymentsRepository) {
 
 @Location("/{type}")
 data class PaymentsTypeRequest(
-    val type: PaymentType
+    val type: PaymentType,
 )
+
 @Location("/")
 object NoPaymentsType

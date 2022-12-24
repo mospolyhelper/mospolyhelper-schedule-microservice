@@ -3,7 +3,7 @@ package com.mospolytech.data.schedule.converters
 import com.mospolytech.domain.schedule.repository.LessonTypesRepository
 
 class LessonTypeConverter(
-    private val lessonTypesRepository: LessonTypesRepository
+    private val lessonTypesRepository: LessonTypesRepository,
 ) {
     suspend fun convertType(type: String, title: String): String {
         return fixType(type, title).invoke()
@@ -25,7 +25,7 @@ class LessonTypeConverter(
         LectureAndPractice,
         LectureAndLaboratory,
         PracticeAndLaboratory,
-        Other
+        Other,
     }
 
     private val LessonTypes.info
@@ -34,7 +34,7 @@ class LessonTypeConverter(
                 title = "Другое",
                 shortTitle = "Другое",
                 description = "",
-                isImportant = false
+                isImportant = false,
             )
         }
 
@@ -45,7 +45,7 @@ class LessonTypeConverter(
                     title = "Курсовой проект",
                     shortTitle = "Курсовой проект",
                     description = "",
-                    isImportant = true
+                    isImportant = true,
                 )
             }
             ),
@@ -55,7 +55,7 @@ class LessonTypeConverter(
                     title = "Экзамен",
                     shortTitle = "Экзамен",
                     description = "",
-                    isImportant = true
+                    isImportant = true,
                 )
             }
             ),
@@ -65,7 +65,7 @@ class LessonTypeConverter(
                     title = "Зачёт",
                     shortTitle = "Зачёт",
                     description = "",
-                    isImportant = true
+                    isImportant = true,
                 )
             }
             ),
@@ -75,7 +75,7 @@ class LessonTypeConverter(
                     title = "Зачёт с оценкой",
                     shortTitle = "Зачёт с оценкой",
                     description = "",
-                    isImportant = true
+                    isImportant = true,
                 )
             }
             ),
@@ -85,7 +85,7 @@ class LessonTypeConverter(
                     title = "Экзаменационный просмотр",
                     shortTitle = "Экз. просмотр",
                     description = "",
-                    isImportant = true
+                    isImportant = true,
                 )
             }
             ),
@@ -95,7 +95,7 @@ class LessonTypeConverter(
                     title = "Экзаменационный кафедральный просмотр",
                     shortTitle = "Экз. каф. просмотр",
                     description = "",
-                    isImportant = true
+                    isImportant = true,
                 )
             }
             ),
@@ -105,7 +105,7 @@ class LessonTypeConverter(
                     title = "Консультация",
                     shortTitle = "Консультация",
                     description = "",
-                    isImportant = false
+                    isImportant = false,
                 )
             }
             ),
@@ -115,7 +115,7 @@ class LessonTypeConverter(
                     title = "Лабораторная работа",
                     shortTitle = "Лаб. работа",
                     description = "",
-                    isImportant = false
+                    isImportant = false,
                 )
             }
             ),
@@ -125,7 +125,7 @@ class LessonTypeConverter(
                     title = "Практика",
                     shortTitle = "Практика",
                     description = "",
-                    isImportant = false
+                    isImportant = false,
                 )
             }
             ),
@@ -135,7 +135,7 @@ class LessonTypeConverter(
                     title = "Лекция",
                     shortTitle = "Лекция",
                     description = "",
-                    isImportant = false
+                    isImportant = false,
                 )
             }
             ),
@@ -145,7 +145,7 @@ class LessonTypeConverter(
                     title = "Установочная лекция",
                     shortTitle = "Установочная лекция",
                     description = "",
-                    isImportant = false
+                    isImportant = false,
                 )
             }
             ),
@@ -155,7 +155,7 @@ class LessonTypeConverter(
                     title = "Лекция, практика, лабораторная работа",
                     shortTitle = "Лекц., практ., лаб.",
                     description = "",
-                    isImportant = false
+                    isImportant = false,
                 )
             }
             ),
@@ -165,7 +165,7 @@ class LessonTypeConverter(
                     title = "Лекция и практика",
                     shortTitle = "Лекц. и практ.",
                     description = "",
-                    isImportant = false
+                    isImportant = false,
                 )
             }
             ),
@@ -175,7 +175,7 @@ class LessonTypeConverter(
                     title = "Лекция и лабораторная работа",
                     shortTitle = "Лекц. и лаб.",
                     description = "",
-                    isImportant = false
+                    isImportant = false,
                 )
             }
             ),
@@ -185,7 +185,7 @@ class LessonTypeConverter(
                     title = "Практика и лабораторная работа",
                     shortTitle = "Практ. и лаб.",
                     description = "",
-                    isImportant = false
+                    isImportant = false,
                 )
             }
             ),
@@ -195,16 +195,16 @@ class LessonTypeConverter(
                     title = "Другое",
                     shortTitle = "Другое",
                     description = "",
-                    isImportant = false
+                    isImportant = false,
                 )
             }
-            )
+            ),
     )
 
     class LessonTypeParserPack(
         val sourceGroupType: String,
         val sourceTeacherType: String,
-        val fixedType: LessonTypes
+        val fixedType: LessonTypes,
     )
 
     private val lessonParserPacks = listOf(
@@ -220,7 +220,7 @@ class LessonTypeConverter(
         LessonTypeParserPack("Лекция", "Лек", LessonTypes.Lecture),
         LessonTypeParserPack("Установочная лекция", "Уст", LessonTypes.KeyLecture),
         LessonTypeParserPack("Лекция+практика", "лек.+пр.", LessonTypes.LectureAndPractice),
-        LessonTypeParserPack("Другое", "Дру", LessonTypes.Other)
+        LessonTypeParserPack("Другое", "Дру", LessonTypes.Other),
     )
 
     private val PRACTICE_SHORT = "Пр"
@@ -241,7 +241,7 @@ class LessonTypeConverter(
                         title = type,
                         shortTitle = type,
                         description = "",
-                        isImportant = false
+                        isImportant = false,
                     )
                 }
             )

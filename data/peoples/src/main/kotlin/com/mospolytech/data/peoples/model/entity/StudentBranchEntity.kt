@@ -14,7 +14,7 @@ class StudentBranchEntity(id: EntityID<String>) : Entity<String>(id) {
     fun toModel(): StudentBranch {
         return StudentBranch(
             id = id.value,
-            title = title
+            title = title,
         )
     }
 }

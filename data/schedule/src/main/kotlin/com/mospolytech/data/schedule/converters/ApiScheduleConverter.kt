@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory
 
 class ApiScheduleConverter(
     private val lessonDateTimeConverter: LessonDateTimeConverter,
-    private val lessonConverter: LessonConverter
+    private val lessonConverter: LessonConverter,
 ) {
     private val logger = LoggerFactory.getLogger("com.mospolytech.data.schedule.converters")
 
@@ -22,7 +22,7 @@ class ApiScheduleConverter(
             convertLessons(
                 apiSchedule.grid.toList(),
                 listOf(apiSchedule.group),
-                apiSchedule.isSession
+                apiSchedule.isSession,
             )
         }
     }
@@ -35,7 +35,7 @@ class ApiScheduleConverter(
             convertLessons(
                 apiSchedule.grid.toList(),
                 listOf(apiSchedule.group),
-                apiSchedule.isSession
+                apiSchedule.isSession,
             )
         }
     }
@@ -43,7 +43,7 @@ class ApiScheduleConverter(
     private suspend fun convertLessons(
         days: List<Pair<String, Map<String, List<ApiLesson>>>>,
         groups: List<ApiGroup>,
-        isByDate: Boolean
+        isByDate: Boolean,
     ) {
         val groupIsEvening = (groups.firstOrNull()?.evening ?: 0) != 0
 
@@ -83,8 +83,8 @@ fun mergeLessons(vararg lessonsList: List<CompactLessonAndTimes>): List<CompactL
 fun CompactLessonAndTimes.mergeByGroup(other: CompactLessonAndTimes): CompactLessonAndTimes {
     return this.copy(
         lesson = lesson.copy(
-            groupsId = (lesson.groupsId + other.lesson.groupsId).sorted()
-        )
+            groupsId = (lesson.groupsId + other.lesson.groupsId).sorted(),
+        ),
     )
 }
 

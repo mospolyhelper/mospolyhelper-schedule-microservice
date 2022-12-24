@@ -8,17 +8,10 @@ import com.mospolytech.domain.peoples.repository.StudentsRepository
 import com.mospolytech.domain.personal.repository.PersonalRepository
 
 class StudentsRepositoryImpl(
-    studentsService: StudentsService,
+    private val studentsService: StudentsService,
     private val studentsDS: StudentsRemoteDS,
-    private val personalRepository: PersonalRepository
+    private val personalRepository: PersonalRepository,
 ) : StudentsRepository {
-
-    private val studentsLocalCache by lazy {
-        studentsService.getStudents()
-            .map { it.toModel() }
-            .distinctBy { it.id }
-            .toList()
-    }
 
     override suspend fun getStudents(name: String, page: Int, pageSize: Int) =
         studentsDS.getStudentsPaging(name, pageSize, page)
@@ -38,8 +31,10 @@ class StudentsRepositoryImpl(
             studentsDS.deleteTables()
             studentsDS.createTables()
         } else {
-            // studentsDS.clearData()
+            studentsDS.clearData()
         }
-        studentsDS.addStudents(studentsLocalCache)
+        val studentsFile = studentsService.downloadStudents()
+        val students = studentsService.parseStudents(studentsFile).map { it.toModel() }
+        studentsDS.addStudents(students)
     }
 }

@@ -41,6 +41,7 @@ subprojects {
         implementation("io.ktor:ktor-server-locations:$ktor_version")
         implementation("io.ktor:ktor-server-auth:$ktor_version")
         implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
+        implementation("io.ktor:ktor-server-websockets:$ktor_version")
 
 
         implementation("io.ktor:ktor-client-core:$ktor_version")

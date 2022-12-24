@@ -9,9 +9,14 @@ data class Student(
     val firstName: String,
     val lastName: String,
     val middleName: String?,
+
+    val status: String,
+
     val sex: String?,
     val avatar: String?,
     val birthday: LocalDate?,
+    val faculty: StudentFaculty?,
+    val direction: StudentDirection?,
     val group: Group?,
     val specialization: StudentSpecialization?,
     val educationType: String,

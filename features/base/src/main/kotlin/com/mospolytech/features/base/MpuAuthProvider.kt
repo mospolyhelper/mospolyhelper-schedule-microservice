@@ -43,7 +43,7 @@ class MpuAuthenticationProvider(private val secret: String, config: Configuratio
     class Configuration(private val secret: String, name: String?) : AuthenticationProvider.Config(name) {
         internal var authenticationFunction: AuthenticationFunction<MpuCredential> = {
             throw NotImplementedError(
-                "JWT auth validate function is not specified. Use jwt { validate { ... } } to fix."
+                "JWT auth validate function is not specified. Use jwt { validate { ... } } to fix.",
             )
         }
 
@@ -55,9 +55,9 @@ class MpuAuthenticationProvider(private val secret: String, config: Configuratio
                 UnauthorizedResponse(
                     HttpAuthHeader.Parameterized(
                         scheme,
-                        mapOf(HttpAuthHeader.Parameters.Realm to "realm")
-                    )
-                )
+                        mapOf(HttpAuthHeader.Parameters.Realm to "realm"),
+                    ),
+                ),
             )
         }
 
@@ -88,7 +88,7 @@ class MpuAuthenticationProvider(private val secret: String, config: Configuratio
 
             context.bearerChallenge(
                 AuthenticationFailedCause.InvalidCredentials,
-                challengeFunction
+                challengeFunction,
             )
         } catch (cause: Throwable) {
             val message = cause.message ?: cause.javaClass.simpleName
@@ -101,7 +101,7 @@ class MpuAuthenticationProvider(private val secret: String, config: Configuratio
 fun AuthenticationConfig.mpuAuth(
     name: String?,
     jwtSecret: String,
-    configure: MpuAuthenticationProvider.Configuration.() -> Unit
+    configure: MpuAuthenticationProvider.Configuration.() -> Unit,
 ) {
     val provider = MpuAuthenticationProvider.Configuration(jwtSecret, name).apply(configure).build()
     register(provider)
@@ -114,12 +114,12 @@ typealias MpuAuthChallengeFunction =
     suspend MpuAuthChallengeContext.(defaultScheme: String) -> Unit
 
 class MpuAuthChallengeContext(
-    val call: ApplicationCall
+    val call: ApplicationCall,
 )
 
 private fun AuthenticationContext.bearerChallenge(
     cause: AuthenticationFailedCause,
-    challengeFunction: MpuAuthChallengeFunction
+    challengeFunction: MpuAuthChallengeFunction,
 ) {
     challenge(CustomAuthKey, cause) { challenge, call ->
         challengeFunction(MpuAuthChallengeContext(call), "Bearer")
@@ -133,7 +133,7 @@ private suspend fun verifyAndValidate(
     secret: String,
     call: ApplicationCall,
     token: HttpAuthHeader,
-    validate: suspend ApplicationCall.(Payload) -> Principal?
+    validate: suspend ApplicationCall.(Payload) -> Principal?,
 ): Principal? {
     val jwt = try {
         token.getBlob(secret)

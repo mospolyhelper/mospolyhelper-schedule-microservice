@@ -5,4 +5,12 @@ interface AppConfig {
     val driver: String
     val login: String
     val password: String
+
+    val adminKey: String
+
+    val getStudentsUrl: String
+    val getStudentsAuth: String
+
+    val getStaffUrl: String
+    val getStaffAuth: String
 }

@@ -14,7 +14,7 @@ class DepartmentEntity(id: EntityID<String>) : Entity<String>(id) {
     fun toModel(): Department {
         return Department(
             id = id.value,
-            title = title
+            title = title,
         )
     }
 }

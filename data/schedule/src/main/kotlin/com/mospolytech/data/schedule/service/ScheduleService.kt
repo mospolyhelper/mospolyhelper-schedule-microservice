@@ -7,7 +7,7 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 
 class ScheduleService(
-    private val client: HttpClient
+    private val client: HttpClient,
 ) {
     companion object {
         private const val BaseUrl = "https://rasp.dmami.ru"

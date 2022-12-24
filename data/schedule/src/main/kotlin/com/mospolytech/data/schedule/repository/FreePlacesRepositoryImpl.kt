@@ -17,7 +17,7 @@ import java.time.LocalTime
 
 class FreePlacesRepositoryImpl(
     private val lessonsRepository: LessonsRepository,
-    private val placesRepository: PlacesRepository
+    private val placesRepository: PlacesRepository,
 ) : FreePlacesRepository {
 
     override suspend fun getPlaces(filters: PlaceFilters): Map<PlaceInfo, Int> {
@@ -42,7 +42,7 @@ class FreePlacesRepositoryImpl(
                     val newTimeRange = TempPlaceOccupancyTimeRange(
                         timeFrom = dateTimeRange.start.time.toJavaLocalTime(),
                         timeTo = dateTimeRange.endInclusive.time.toJavaLocalTime(),
-                        value = 1.0
+                        value = 1.0,
                     )
 
                     // search for first timeRange where startTime is greater
@@ -81,16 +81,16 @@ class FreePlacesRepositoryImpl(
                         PlaceOccupancyTimeRange(
                             timeFrom = it.timeFrom,
                             timeTo = it.timeTo,
-                            value = it.value
+                            value = it.value,
                         )
-                    }
+                    },
             )
         }
     }
 
     private fun fixRemainingIntersectionsAfter(
         currentIndex: Int,
-        dailyOccupancy: MutableList<TempPlaceOccupancyTimeRange>
+        dailyOccupancy: MutableList<TempPlaceOccupancyTimeRange>,
     ) {
         val nextIndex = currentIndex + 1
         val currItem = dailyOccupancy[currentIndex]
@@ -109,7 +109,7 @@ class FreePlacesRepositoryImpl(
 
     private fun fixRemainingIntersectionsBefore(
         currentIndex: Int,
-        dailyOccupancy: MutableList<TempPlaceOccupancyTimeRange>
+        dailyOccupancy: MutableList<TempPlaceOccupancyTimeRange>,
     ) {
         var prevIndex = currentIndex - 1
         val currItem = dailyOccupancy[currentIndex]
@@ -136,13 +136,13 @@ class FreePlacesRepositoryImpl(
     private data class TempPlaceOccupancyTimeRange(
         var timeFrom: LocalTime,
         var timeTo: LocalTime,
-        var value: Double
+        var value: Double,
     )
 
     private fun arrangePlacesByLessons(
         lessons: List<CompactLessonAndTimes>,
         dateTimeFrom: LocalDateTime,
-        dateTimeTo: LocalDateTime
+        dateTimeTo: LocalDateTime,
     ): Map<String, List<CompactLessonAndTimes>> {
         return lessons.flatMap { it.lesson.placesId }
             .toSortedSet()
@@ -153,7 +153,7 @@ class FreePlacesRepositoryImpl(
         placeId: String,
         lessons: List<CompactLessonAndTimes>,
         dateTimeFrom: LocalDateTime,
-        dateTimeTo: LocalDateTime
+        dateTimeTo: LocalDateTime,
     ): List<CompactLessonAndTimes> {
         return lessons.filter { it.lesson.placesId.any { it == placeId } && it.times.any { it in dateTimeFrom..dateTimeTo } }
     }

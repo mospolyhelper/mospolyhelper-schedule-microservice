@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class LessonDateTime(
     val startDate: LocalDate,
     val endDate: LocalDate?,
-    val time: LessonTime
+    val time: LessonTime,
 )
 
 fun LessonDateTime.toDateTimeRanges(): List<ClosedRange<LocalDateTime>> {

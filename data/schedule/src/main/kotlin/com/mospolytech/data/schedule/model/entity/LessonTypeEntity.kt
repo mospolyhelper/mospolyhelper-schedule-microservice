@@ -21,7 +21,7 @@ class LessonTypeEntity(id: EntityID<UUID>) : UUIDEntity(id) {
             title = title,
             shortTitle = shortTitle,
             description = description,
-            isImportant = isImportant
+            isImportant = isImportant,
         )
     }
 }

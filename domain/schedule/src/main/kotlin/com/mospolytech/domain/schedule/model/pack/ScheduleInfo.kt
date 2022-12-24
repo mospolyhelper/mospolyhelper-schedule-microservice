@@ -13,5 +13,5 @@ data class ScheduleInfo(
     val subjectsInfo: List<LessonSubjectInfo>,
     val teachersInfo: List<Teacher>,
     val groupsInfo: List<Group>,
-    val placesInfo: List<PlaceInfo>
+    val placesInfo: List<PlaceInfo>,
 )

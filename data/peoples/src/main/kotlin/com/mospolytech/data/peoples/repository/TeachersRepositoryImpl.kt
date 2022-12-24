@@ -7,16 +7,9 @@ import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.peoples.repository.TeachersRepository
 
 class TeachersRepositoryImpl(
-    teachersService: TeachersService,
-    private val teachersDS: TeachersRemoteDS
+    private val teachersService: TeachersService,
+    private val teachersDS: TeachersRemoteDS,
 ) : TeachersRepository {
-
-    private val teachersLocalCache by lazy {
-        teachersService.getTeachers()
-            .map { it.toModel() }
-            .distinctBy { it.id }
-            .toList()
-    }
 
     override suspend fun getTeachers(name: String, page: Int, pageSize: Int) =
         teachersDS.getTeachersPaging(name, pageSize, page)
@@ -37,8 +30,8 @@ class TeachersRepositoryImpl(
             teachersDS.clearData()
         }
 
-        teachersLocalCache.forEach {
-            teachersDS.addTeacher(it)
-        }
+        val teachersFile = teachersService.downloadTeachers()
+        val teachers = teachersService.parseTeachers(teachersFile).map { it.toModel() }
+        teachersDS.addTeachers(teachers)
     }
 }

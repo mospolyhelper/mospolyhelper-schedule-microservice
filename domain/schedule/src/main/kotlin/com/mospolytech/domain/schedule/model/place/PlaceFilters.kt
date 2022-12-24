@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 data class PlaceFilters(
     val ids: List<String>,
     val dateTimeFrom: LocalDateTime,
-    val dateTimeTo: LocalDateTime
+    val dateTimeTo: LocalDateTime,
 )

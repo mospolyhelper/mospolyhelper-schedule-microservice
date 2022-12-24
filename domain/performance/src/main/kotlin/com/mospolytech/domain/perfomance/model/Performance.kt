@@ -23,5 +23,5 @@ data class Performance(
     val course: Int,
     val semester: Int,
     val examType: String,
-    val chair: String
+    val chair: String,
 )

@@ -6,7 +6,7 @@ interface GroupsRepository {
     suspend fun getOrPut(
         title: String,
         course: String,
-        isEvening: Boolean
+        isEvening: Boolean,
     ): String
     suspend fun get(id: String): Group?
 

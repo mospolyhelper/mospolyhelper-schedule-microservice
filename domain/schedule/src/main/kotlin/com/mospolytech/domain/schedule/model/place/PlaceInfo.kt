@@ -39,7 +39,7 @@ sealed class PlaceInfo : Comparable<PlaceInfo> {
         val floor: String? = null,
         val auditorium: String? = null,
         val location: Location? = null,
-        val description: String? = null
+        val description: String? = null,
     ) : PlaceInfo()
 
     @Serializable
@@ -48,7 +48,7 @@ sealed class PlaceInfo : Comparable<PlaceInfo> {
         override val id: String,
         override val title: String,
         val url: String? = null,
-        val description: String? = null
+        val description: String? = null,
     ) : PlaceInfo()
 
     @Serializable
@@ -56,7 +56,7 @@ sealed class PlaceInfo : Comparable<PlaceInfo> {
     data class Other(
         override val id: String,
         override val title: String,
-        val description: String? = null
+        val description: String? = null,
     ) : PlaceInfo()
 
     @Serializable
@@ -64,7 +64,7 @@ sealed class PlaceInfo : Comparable<PlaceInfo> {
     data class Unclassified(
         override val id: String,
         override val title: String,
-        val description: String? = null
+        val description: String? = null,
     ) : PlaceInfo()
 }
 

@@ -15,7 +15,7 @@ class GroupsRepositoryImpl : GroupsRepository {
     override suspend fun getOrPut(
         title: String,
         course: String,
-        isEvening: Boolean
+        isEvening: Boolean,
     ): String {
         return MosPolyDb.transaction {
             var id = map[title]

@@ -8,7 +8,7 @@ import io.ktor.server.routing.*
 
 fun Routing.lessonsRoutesV1(
     repository: LessonsRepository,
-    scheduleRepository: ScheduleRepository
+    scheduleRepository: ScheduleRepository,
 ) {
     route("/lessons") {
         get {

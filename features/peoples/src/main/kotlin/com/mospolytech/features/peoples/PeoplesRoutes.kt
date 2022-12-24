@@ -1,10 +1,12 @@
 package com.mospolytech.features.peoples
 
+import com.mospolytech.domain.base.AppConfig
 import com.mospolytech.domain.peoples.repository.StudentsRepository
 import com.mospolytech.domain.peoples.repository.TeachersRepository
 import com.mospolytech.features.base.AuthConfigs
 import com.mospolytech.features.base.utils.getTokenOrRespondError
 import com.mospolytech.features.base.utils.respondResult
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.locations.*
@@ -13,7 +15,8 @@ import io.ktor.server.routing.*
 
 fun Application.peoplesRoutesV1(
     studentsRepository: StudentsRepository,
-    teachersRepository: TeachersRepository
+    teachersRepository: TeachersRepository,
+    appConfig: AppConfig,
 ) {
     routing {
         authenticate(AuthConfigs.Mpu, optional = true) {
@@ -66,18 +69,26 @@ fun Application.peoplesRoutesV1(
                 }
                 route("/update-students") {
                     get {
+                        if (call.request.queryParameters["key"] != appConfig.adminKey) {
+                            call.respond(HttpStatusCode.Forbidden, "")
+                            return@get
+                        }
                         val recreateDb = call.request.queryParameters["recreate"] == "1"
                         studentsRepository.updateData(recreateDb)
                         call.respond("updated")
                     }
                 }
-//                route("/update-teachers") {
-//                    get {
-//                        val recreateDb = call.request.queryParameters["recreate"] == "1"
-//                        teachersRepository.updateData(recreateDb)
-//                        call.respond("updated")
-//                    }
-//                }
+                route("/update-teachers") {
+                    get {
+                        if (call.request.queryParameters["key"] != appConfig.adminKey) {
+                            call.respond(HttpStatusCode.Forbidden, "")
+                            return@get
+                        }
+                        val recreateDb = call.request.queryParameters["recreate"] == "1"
+                        teachersRepository.updateData(recreateDb)
+                        call.respond("updated")
+                    }
+                }
             }
         }
     }
@@ -87,14 +98,15 @@ fun Application.peoplesRoutesV1(
 data class NameRequest(
     val name: String = "",
     val page: Int = 1,
-    val pageSize: Int = 100
+    val pageSize: Int = 100,
 )
 
 @Location("/{pageSize}/{page}/")
 data class NoNameRequest(
     val name: String = "",
     val page: Int = 1,
-    val pageSize: Int = 100
+    val pageSize: Int = 100,
 )
+
 @Location("/")
 object Empty

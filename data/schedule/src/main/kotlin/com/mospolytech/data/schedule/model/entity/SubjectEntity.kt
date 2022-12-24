@@ -17,7 +17,7 @@ class SubjectEntity(id: EntityID<UUID>) : UUIDEntity(id) {
         return LessonSubjectInfo(
             id = id.value.toString(),
             title = title,
-            type = type
+            type = type,
         )
     }
 }

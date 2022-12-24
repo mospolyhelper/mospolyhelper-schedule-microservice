@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class ApiSchedule(
     val grid: Map<String, Map<String, List<ApiLesson>>>,
     val group: ApiGroup,
-    val isSession: Boolean
+    val isSession: Boolean,
 )

@@ -19,7 +19,7 @@ class LessonsRemoteDS {
         teachersId: List<String>,
         groupsId: List<String>,
         placesId: List<String>,
-        lessonDateTimesId: List<String>
+        lessonDateTimesId: List<String>,
     ): String {
         return MosPolyDb.transaction {
             val cacheKey = LessonCacheKey(
@@ -27,7 +27,7 @@ class LessonsRemoteDS {
                 subjectId = subjectId,
                 teachersId = teachersId,
                 placesId = placesId,
-                lessonDateTimesId = lessonDateTimesId
+                lessonDateTimesId = lessonDateTimesId,
             )
 
             var id = map[cacheKey]
@@ -38,7 +38,7 @@ class LessonsRemoteDS {
                     subjectId,
                     teachersId,
                     placesId,
-                    lessonDateTimesId
+                    lessonDateTimesId,
                 )
             }
 
@@ -93,7 +93,7 @@ class LessonsRemoteDS {
         subjectId: String,
         teachersId: List<String>,
         placesId: List<String>,
-        lessonDateTimesId: List<String>
+        lessonDateTimesId: List<String>,
     ): String? {
         return MosPolyDb.transaction {
             var isInitialized = false
@@ -160,6 +160,6 @@ class LessonsRemoteDS {
         val subjectId: String,
         val teachersId: List<String>,
         val placesId: List<String>,
-        val lessonDateTimesId: List<String>
+        val lessonDateTimesId: List<String>,
     )
 }

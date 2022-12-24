@@ -6,7 +6,7 @@ import io.ktor.client.request.forms.*
 import io.ktor.http.*
 
 class AuthService(
-    private val client: HttpClient
+    private val client: HttpClient,
 ) {
     companion object {
         private const val BaseUrl = "https://e.mospolytech.ru"
@@ -21,7 +21,7 @@ class AuthService(
             Parameters.build {
                 append("ulogin", login)
                 append("upassword", password)
-            }
+            },
         ).body()
     }
 }

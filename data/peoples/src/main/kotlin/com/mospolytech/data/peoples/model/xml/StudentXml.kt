@@ -56,6 +56,7 @@ data class StudentXml(
     @SerialName("ФилиалСтудента")
     val studentBranch: StudentBranchXml,
 )
+
 @kotlinx.serialization.Serializable
 @SerialName("Студент")
 data class StudentInfoXml(
@@ -81,6 +82,7 @@ data class StudentInfoXml(
     @SerialName("GUIDЗачетки")
     val recordBookId: String,
 )
+
 @kotlinx.serialization.Serializable
 @SerialName("ФакультетСтудента")
 data class StudentFacultyXml(
@@ -94,6 +96,7 @@ data class StudentFacultyXml(
     @SerialName("GUIDФакультетаСтудента")
     val guid: String,
 )
+
 @kotlinx.serialization.Serializable
 @SerialName("СпециальностьСтудента")
 data class StudentDirectionXml(
@@ -107,6 +110,7 @@ data class StudentDirectionXml(
     @SerialName("GUIDСпециальностиСтудента")
     val guid: String,
 )
+
 @kotlinx.serialization.Serializable
 @SerialName("СпециализацияСтудента")
 data class StudentSpecializationXml(
@@ -117,41 +121,47 @@ data class StudentSpecializationXml(
     @SerialName("GUIDСпециализацииСтудента")
     val guid: String,
 )
+
 @kotlinx.serialization.Serializable
 @SerialName("ФормаОбученияСтудента")
 data class StudentFormXml(
     @XmlElement(true)
     @SerialName("Наименование")
-    val title: String
+    val title: String,
 )
+
 @kotlinx.serialization.Serializable
 @SerialName("ВидФинансированияСтудента")
 data class StudentPaymentXml(
     @XmlElement(true)
     @SerialName("Наименование")
-    val title: String
+    val title: String,
 )
+
 @kotlinx.serialization.Serializable
 @SerialName("УровеньОбразованияСтудента")
 data class StudentEducationFormXml(
     @XmlElement(true)
     @SerialName("Наименование")
-    val title: String
+    val title: String,
 )
+
 @kotlinx.serialization.Serializable
 @SerialName("ГодНабораСтудента")
 data class StudentEducationYearXml(
     @XmlElement(true)
     @SerialName("Наименование")
-    val title: String
+    val title: String,
 )
+
 @kotlinx.serialization.Serializable
 @SerialName("НомерКурсаСтудента")
 data class StudentEducationCourseXml(
     @XmlElement(true)
     @SerialName("Наименование")
-    val title: String
+    val title: String,
 )
+
 @kotlinx.serialization.Serializable
 @SerialName("ГруппаСтудента")
 data class StudentEducationGroupXml(
@@ -160,7 +170,7 @@ data class StudentEducationGroupXml(
     val title: String,
     @XmlElement(true)
     @SerialName("GUIDГруппыСтудента")
-    val guid: String
+    val guid: String,
 )
 
 @kotlinx.serialization.Serializable
@@ -168,7 +178,7 @@ data class StudentEducationGroupXml(
 data class StudentCodeXml(
     @XmlElement(true)
     @SerialName("Наименование")
-    val title: String
+    val title: String,
 )
 
 @kotlinx.serialization.Serializable
@@ -176,7 +186,7 @@ data class StudentCodeXml(
 data class DormitoryXml(
     @XmlElement(true)
     @SerialName("Наименование")
-    val title: String
+    val title: String,
 )
 
 @kotlinx.serialization.Serializable
@@ -184,7 +194,7 @@ data class DormitoryXml(
 data class DormitoryRoomXml(
     @XmlElement(true)
     @SerialName("Наименование")
-    val title: String
+    val title: String,
 )
 
 @kotlinx.serialization.Serializable
@@ -192,7 +202,7 @@ data class DormitoryRoomXml(
 data class StudentStatusXml(
     @XmlElement(true)
     @SerialName("Наименование")
-    val title: String
+    val title: String,
 )
 
 @kotlinx.serialization.Serializable
@@ -203,7 +213,7 @@ data class StudentBranchXml(
     val title: String,
     @XmlElement(true)
     @SerialName("GUIDФилиала")
-    val guid: String
+    val guid: String,
 )
 
 private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -246,11 +256,14 @@ fun StudentXml.toModel(): Student {
         firstName = studentInfo.firstName,
         lastName = studentInfo.lastName,
         middleName = studentInfo.middleName,
+
+        status = studentStatus.title,
+
         sex = studentInfo.sex.ifEmpty { null },
         avatar = "https://e.mospolytech.ru/old/img/no_avatar.jpg",
         birthday = date,
-//        faculty = faculty,
-//        direction = direction,
+        faculty = faculty,
+        direction = direction,
         specialization = specialization,
         educationType = studentEducationForm.title,
         educationForm = studentForm.title,
@@ -261,7 +274,7 @@ fun StudentXml.toModel(): Student {
         code = studentCode.title,
         branch = branch,
         dormitory = dormitory.title.ifEmpty { null },
-        dormitoryRoom = dormitoryRoom.title.ifEmpty { null }
+        dormitoryRoom = dormitoryRoom.title.ifEmpty { null },
     )
 }
 
@@ -277,14 +290,14 @@ fun StudentDirectionXml.toModel(): StudentDirection {
     return StudentDirection(
         id = guid,
         title = title,
-        code = code
+        code = code,
     )
 }
 
 fun StudentBranchXml.toModel(): StudentBranch {
     return StudentBranch(
         id = guid,
-        title = title
+        title = title,
     )
 }
 
@@ -308,7 +321,7 @@ fun StudentEducationGroupXml.toModel(course: Int?, faculty: StudentFaculty, dire
             title = title,
             course = course,
             faculty = faculty,
-            direction = direction
+            direction = direction,
         )
     }
 }

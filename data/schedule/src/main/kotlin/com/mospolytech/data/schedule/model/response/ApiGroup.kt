@@ -13,5 +13,5 @@ data class ApiGroup(
     @Serializable(with = LocalDateConverter::class)
     val dateTo: LocalDate,
     val evening: Int,
-    val comment: String
+    val comment: String,
 )
