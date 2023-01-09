@@ -46,8 +46,8 @@ class TeachersRemoteDS {
         }
 
     suspend fun addTeachers(teachers: Sequence<Teacher>) {
-        MosPolyDb.transaction {
-            teachers.forEach { teacher ->
+        teachers.forEach { teacher ->
+            MosPolyDb.transaction {
                 val newDepartmentParent = teacher.departmentParent?.let {
                     DepartmentEntity.upsert(it.id) {
                         title = it.title

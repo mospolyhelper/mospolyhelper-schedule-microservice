@@ -27,13 +27,15 @@ val baseDataModule = module {
 
             install(Logging) {
                 logger = Logger.DEFAULT
-                level = LogLevel.ALL
+                level = LogLevel.INFO
             }
 
             engine {
                 customizeClient {
                     setSSLContext(SSLContextBuilder().loadTrustMaterial(null, TrustAllStrategy.INSTANCE).build())
                     setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+                    socketTimeout = 10_000_000
+                    connectTimeout = 0
                 }
             }
         }

@@ -5,6 +5,7 @@ import com.mospolytech.data.peoples.remote.TeachersRemoteDS
 import com.mospolytech.data.peoples.service.TeachersService
 import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.peoples.repository.TeachersRepository
+import java.io.File
 
 class TeachersRepositoryImpl(
     private val teachersService: TeachersService,
@@ -30,8 +31,13 @@ class TeachersRepositoryImpl(
             teachersDS.clearData()
         }
 
-        val teachersFile = teachersService.downloadTeachers()
-        val teachers = teachersService.parseTeachers(teachersFile).map { it.toModel() }
-        teachersDS.addTeachers(teachers)
+        //val teachersFile = teachersService.downloadTeachers()
+        val teachersFile = File("""C:\Users\tipapro\Downloads\Telegram Desktop\response.xml""")
+        try {
+            val teachers = teachersService.parseTeachers(teachersFile).map { it.toModel() }
+            teachersDS.addTeachers(teachers)
+        } finally {
+            teachersFile.delete()
+        }
     }
 }

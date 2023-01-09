@@ -33,8 +33,13 @@ class StudentsRepositoryImpl(
         } else {
             studentsDS.clearData()
         }
+
         val studentsFile = studentsService.downloadStudents()
-        val students = studentsService.parseStudents(studentsFile).map { it.toModel() }
-        studentsDS.addStudents(students)
+        try {
+            val students = studentsService.parseStudents(studentsFile).map { it.toModel() }
+            studentsDS.addStudents(students)
+        } finally {
+            studentsFile.delete()
+        }
     }
 }

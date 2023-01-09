@@ -18,6 +18,7 @@ class TeacherSafeEntity(id: EntityID<String>) : Entity<String>(id) {
     var department by DepartmentEntity optionalReferencedOn TeachersDb.department
     var email by TeachersDb.email
     var sex by TeachersDb.sex
+    var lastUpdate by TeachersDb.lastUpdate
 
     fun toModel(): Teacher {
         return Teacher(

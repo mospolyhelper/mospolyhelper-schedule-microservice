@@ -29,8 +29,8 @@ class StudentsService(
         }
 
         val inputString = file.readText()
-            .replaceBefore("<m:Студент>", "")
-            .replaceAfterLast("</m:Студент>", "")
+            .replaceBefore("<m:Состав>", "")
+            .replaceAfterLast("</m:Состав>", "")
             .replace("\t\t\t\t", "")
             .replace("m:", "")
 

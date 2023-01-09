@@ -121,8 +121,8 @@ class StudentsRemoteDS {
     }
 
     suspend fun addStudents(students: Sequence<Student>) {
-        MosPolyDb.transaction {
-            students.forEach { student ->
+        students.forEach { student ->
+            MosPolyDb.transaction {
                 val facultyEntity = getStudentFacultyEntity(student)
                 val directionEntity = getStudentDirectionEntity(student)
 

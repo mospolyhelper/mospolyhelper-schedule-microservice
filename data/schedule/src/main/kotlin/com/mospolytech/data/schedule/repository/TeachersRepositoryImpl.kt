@@ -5,6 +5,7 @@ import com.mospolytech.data.peoples.model.db.TeachersDb
 import com.mospolytech.data.peoples.model.entity.TeacherSafeEntity
 import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.schedule.repository.TeachersRepository
+import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.mapLazy
 import java.util.UUID
@@ -33,6 +34,7 @@ class TeachersRepositoryImpl : TeachersRepository {
             if (id == null) {
                 id = TeacherSafeEntity.new(UUID.randomUUID().toString()) {
                     this.name = name
+                    this.lastUpdate = Clock.System.now()
                 }.toModel().id
             }
 
