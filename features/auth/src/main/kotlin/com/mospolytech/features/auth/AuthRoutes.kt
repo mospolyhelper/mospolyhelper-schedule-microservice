@@ -10,8 +10,8 @@ import com.mospolytech.features.base.utils.respondResult
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.util.*
 import kotlinx.serialization.Serializable
 import java.util.*
 
@@ -36,6 +36,13 @@ fun Application.authRoutesV1(
                 val scheduleKeyField = call.parameters[ValidationFields.ScheduleKey.toString().lowercase()]
 
                 call.respondResult(personalRepository.getPersonalInfo(principal!!.token))
+            }
+        }
+
+        authenticate(AuthConfigs.Mpu, optional = true) {
+            get("getLkToken") {
+                val principal: MpuPrincipal? = call.authentication.principal()
+                call.respond(TokenResponse(principal?.token.orEmpty()))
             }
         }
     }
