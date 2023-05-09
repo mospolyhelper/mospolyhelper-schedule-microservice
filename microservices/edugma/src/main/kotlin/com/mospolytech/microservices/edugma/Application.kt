@@ -21,12 +21,12 @@ fun main(args: Array<String>): Unit =
 
 @Suppress("unused")
 fun Application.module() {
+    configureDi(appModules)
     configureSecurity()
     configureRouting()
     configureSerialization()
     configureMonitoring(get())
     configureHTTP()
-    configureDi(appModules)
     setRoutes()
     setDataConversions()
     initDb()
