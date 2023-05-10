@@ -4,11 +4,12 @@ import com.mospolytech.domain.base.model.Department
 import com.mospolytech.domain.peoples.model.Teacher
 import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import nl.adaptivity.xmlutil.serialization.XmlElement
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-@kotlinx.serialization.Serializable
+@Serializable
 @SerialName("ДанныеОРаботнике")
 data class EmployeeInfo(
     @XmlElement(true)

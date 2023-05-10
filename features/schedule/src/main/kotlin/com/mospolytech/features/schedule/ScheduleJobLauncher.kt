@@ -4,7 +4,7 @@ import com.mospolytech.features.base.JobSchedulerManager
 import org.quartz.*
 
 class ScheduleJobLauncher(
-    private val jobSchedulerManager: JobSchedulerManager
+    private val jobSchedulerManager: JobSchedulerManager,
 ) {
     fun launch() {
         val triggerId = "UpdateStudentsJobEveryDay"
@@ -21,7 +21,7 @@ class ScheduleJobLauncher(
         val trigger: Trigger = TriggerBuilder.newTrigger()
             .withIdentity(triggerId, ScheduleUpdateJob.GROUP)
             .withSchedule(
-                CronScheduleBuilder.dailyAtHourAndMinute(1, 44)
+                CronScheduleBuilder.dailyAtHourAndMinute(1, 44),
             )
             .build()
 

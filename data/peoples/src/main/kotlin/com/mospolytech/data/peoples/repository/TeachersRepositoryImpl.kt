@@ -31,7 +31,7 @@ class TeachersRepositoryImpl(
             teachersDS.clearData()
         }
 
-        //val teachersFile = teachersService.downloadTeachers()
+        // val teachersFile = teachersService.downloadTeachers()
         val teachersFile = File("""C:\Users\tipapro\Downloads\Telegram Desktop\response.xml""")
         try {
             val teachers = teachersService.parseTeachers(teachersFile).map { it.toModel() }

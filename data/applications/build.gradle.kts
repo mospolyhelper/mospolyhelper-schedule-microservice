@@ -1,3 +1,7 @@
+plugins {
+    id("data-base")
+}
+
 kotlin {
     sourceSets {
         val main by getting

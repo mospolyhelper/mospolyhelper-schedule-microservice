@@ -1,6 +1,5 @@
 plugins {
     id("data-base")
-    kotlin("plugin.serialization")
 }
 
 dependencies {

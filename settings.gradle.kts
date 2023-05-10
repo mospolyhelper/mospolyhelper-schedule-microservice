@@ -6,12 +6,6 @@ pluginManagement {
         google()
         mavenCentral()
     }
-    val kotlinVersion = "1.8.21"
-
-    plugins {
-        kotlin("plugin.serialization") version kotlinVersion apply false
-        id("org.jetbrains.kotlin.jvm") version kotlinVersion apply false
-    }
 }
 
 dependencyResolutionManagement {
@@ -22,11 +16,9 @@ dependencyResolutionManagement {
     }
 }
 
+includeBuild("convention-plugins")
 include(":microservices")
 include(":microservices:edugma")
-
-include(":workers")
-include(":workers:schedule")
 
 include(":data")
 include(":data:base")

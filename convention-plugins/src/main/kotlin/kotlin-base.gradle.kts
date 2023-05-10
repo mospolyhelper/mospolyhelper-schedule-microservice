@@ -1,6 +1,5 @@
-@file:Suppress("UnstableApiUsage")
-
 plugins {
+    id("ktlint")
     kotlin("jvm")
 }
 
@@ -10,6 +9,3 @@ kotlin {
         val test by getting
     }
 }
-
-group = "com.mospolytech.data"
-version = "com.mospolytech.data"

@@ -8,7 +8,7 @@ enum class EducationType {
     @SerialName("bachelor")
     Bachelor,
 
-    @SerialName("bachelor")
+    @SerialName("specialist")
     Specialist,
 
     @SerialName("magistrate")

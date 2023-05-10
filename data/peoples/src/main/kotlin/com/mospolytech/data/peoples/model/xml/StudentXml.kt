@@ -3,11 +3,12 @@ package com.mospolytech.data.peoples.model.xml
 import com.mospolytech.domain.peoples.model.*
 import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import nl.adaptivity.xmlutil.serialization.XmlElement
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-@kotlinx.serialization.Serializable
+@Serializable
 @SerialName("Состав")
 data class StudentXml(
     @XmlElement(true)
@@ -57,7 +58,7 @@ data class StudentXml(
     val studentBranch: StudentBranchXml,
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 @SerialName("Студент")
 data class StudentInfoXml(
     @XmlElement(true)
@@ -83,7 +84,7 @@ data class StudentInfoXml(
     val recordBookId: String,
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 @SerialName("ФакультетСтудента")
 data class StudentFacultyXml(
     @XmlElement(true)
@@ -97,7 +98,7 @@ data class StudentFacultyXml(
     val guid: String,
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 @SerialName("СпециальностьСтудента")
 data class StudentDirectionXml(
     @XmlElement(true)
@@ -111,7 +112,7 @@ data class StudentDirectionXml(
     val guid: String,
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 @SerialName("СпециализацияСтудента")
 data class StudentSpecializationXml(
     @XmlElement(true)
@@ -122,7 +123,7 @@ data class StudentSpecializationXml(
     val guid: String,
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 @SerialName("ФормаОбученияСтудента")
 data class StudentFormXml(
     @XmlElement(true)
@@ -130,7 +131,7 @@ data class StudentFormXml(
     val title: String,
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 @SerialName("ВидФинансированияСтудента")
 data class StudentPaymentXml(
     @XmlElement(true)
@@ -138,7 +139,7 @@ data class StudentPaymentXml(
     val title: String,
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 @SerialName("УровеньОбразованияСтудента")
 data class StudentEducationFormXml(
     @XmlElement(true)
@@ -146,7 +147,7 @@ data class StudentEducationFormXml(
     val title: String,
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 @SerialName("ГодНабораСтудента")
 data class StudentEducationYearXml(
     @XmlElement(true)
@@ -154,7 +155,7 @@ data class StudentEducationYearXml(
     val title: String,
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 @SerialName("НомерКурсаСтудента")
 data class StudentEducationCourseXml(
     @XmlElement(true)
@@ -162,7 +163,7 @@ data class StudentEducationCourseXml(
     val title: String,
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 @SerialName("ГруппаСтудента")
 data class StudentEducationGroupXml(
     @XmlElement(true)
@@ -173,7 +174,7 @@ data class StudentEducationGroupXml(
     val guid: String,
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 @SerialName("КодСтудента")
 data class StudentCodeXml(
     @XmlElement(true)
@@ -181,7 +182,7 @@ data class StudentCodeXml(
     val title: String,
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 @SerialName("НомерОбщежитияСтудента")
 data class DormitoryXml(
     @XmlElement(true)
@@ -189,7 +190,7 @@ data class DormitoryXml(
     val title: String,
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 @SerialName("КомнатаСтудента")
 data class DormitoryRoomXml(
     @XmlElement(true)
@@ -197,7 +198,7 @@ data class DormitoryRoomXml(
     val title: String,
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 @SerialName("СтатусСтудента")
 data class StudentStatusXml(
     @XmlElement(true)
@@ -205,7 +206,7 @@ data class StudentStatusXml(
     val title: String,
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 @SerialName("ФилиалСтудента")
 data class StudentBranchXml(
     @XmlElement(true)

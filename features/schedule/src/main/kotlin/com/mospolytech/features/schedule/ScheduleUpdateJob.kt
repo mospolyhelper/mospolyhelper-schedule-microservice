@@ -6,8 +6,8 @@ import org.quartz.Job
 import org.quartz.JobExecutionContext
 
 class ScheduleUpdateJob(
-    private val scheduleRepository: ScheduleRepository
-) : Job  {
+    private val scheduleRepository: ScheduleRepository,
+) : Job {
     override fun execute(context: JobExecutionContext?) = runBlocking {
         scheduleRepository.updateData(false)
     }

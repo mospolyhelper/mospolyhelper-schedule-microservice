@@ -111,7 +111,7 @@ fun AuthenticationConfig.mpuAuth(
  * Specifies what to send back if session authentication fails.
  */
 typealias MpuAuthChallengeFunction =
-    suspend MpuAuthChallengeContext.(defaultScheme: String) -> Unit
+suspend MpuAuthChallengeContext.(defaultScheme: String) -> Unit
 
 class MpuAuthChallengeContext(
     val call: ApplicationCall,
