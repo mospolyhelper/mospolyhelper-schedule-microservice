@@ -15,6 +15,7 @@ import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import com.mospolytech.domain.schedule.repository.*
 import com.mospolytech.domain.schedule.utils.*
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.select
 
 class ScheduleRepositoryImpl(
@@ -132,17 +133,15 @@ class ScheduleRepositoryImpl(
                 )
             }
         } else {
-//            MosPolyDb.transaction {
-//                    LessonDateTimesDb.deleteAll()
-//                    LessonsDb.deleteAll()
-//                    LessonToGroupsDb.deleteAll()
-//                    LessonToLessonDateTimesDb.deleteAll()
-//                    LessonToPlacesDb.deleteAll()
-//                    LessonToTeachersDb.deleteAll()
-//                    LessonTypesDb.deleteAll()
-//                    PlacesDb.deleteAll()
-//                    StudentsDb.deleteAll()
-//            }
+            MosPolyDb.transaction {
+                // Сперва очищаем таблицы с перекрёстными ссылками
+                LessonToLessonDateTimesDb.deleteAll()
+                LessonToGroupsDb.deleteAll()
+                LessonToPlacesDb.deleteAll()
+                LessonToTeachersDb.deleteAll()
+
+                LessonsDb.deleteAll()
+            }
         }
         addSchedule()
     }

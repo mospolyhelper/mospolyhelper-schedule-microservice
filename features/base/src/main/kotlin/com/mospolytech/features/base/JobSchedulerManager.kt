@@ -1,6 +1,7 @@
 package com.mospolytech.features.base
 
 import com.mospolytech.domain.base.AppConfig
+import com.mospolytech.features.base.utils.DiJobFactory
 import org.quartz.Scheduler
 import org.quartz.SchedulerFactory
 import org.quartz.impl.StdSchedulerFactory
@@ -33,7 +34,10 @@ class JobSchedulerManager(config: AppConfig) {
             """Trigger {1}.{0} completed firing job {6}.{5} at {4, date, HH:mm:ss MM/dd/yyyy}"""
 
         val schedulerFactory: SchedulerFactory = StdSchedulerFactory(props)
-        scheduler = schedulerFactory.scheduler
+
+        scheduler = schedulerFactory.scheduler.apply {
+            setJobFactory(DiJobFactory())
+        }
     }
 
     fun startScheduler() {

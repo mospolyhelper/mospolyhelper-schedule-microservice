@@ -10,6 +10,7 @@ import com.mospolytech.features.payments.paymentsRoutesV1
 import com.mospolytech.features.peoples.peoplesRoutesV1
 import com.mospolytech.features.performance.performanceRoutesV1
 import com.mospolytech.features.personal.personalRoutesV1
+import com.mospolytech.features.schedule.ScheduleJobLauncher
 import com.mospolytech.features.schedule.scheduleDataConversion
 import com.mospolytech.features.schedule.scheduleRoutes
 import io.ktor.server.application.*
@@ -25,7 +26,6 @@ fun Application.module() {
     configureSecurity()
     configureRouting()
     configureSerialization()
-    configureDi(appModules)
     configureMonitoring(get())
     configureHTTP()
     setRoutes()
@@ -55,6 +55,8 @@ fun Application.initDb() {
     MosPolyDb.connectAndMigrate(get())
 }
 
-fun initJobScheduler(scheduler: JobSchedulerManager) {
+fun Application.initJobScheduler(scheduler: JobSchedulerManager) {
     scheduler.startScheduler()
+    val scheduleJobLauncher = get<ScheduleJobLauncher>()
+    scheduleJobLauncher.launch()
 }

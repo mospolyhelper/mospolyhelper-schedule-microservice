@@ -1,5 +1,6 @@
 package com.mospolytech.domain.base.utils.converters
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -10,6 +11,7 @@ import kotlinx.serialization.encoding.Encoder
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializer(forClass = ZonedDateTime::class)
 object ZonedDateTimeConverter : KSerializer<ZonedDateTime> {
     private val dateFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME

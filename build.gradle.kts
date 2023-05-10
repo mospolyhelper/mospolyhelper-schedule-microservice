@@ -14,13 +14,13 @@ val kotlinx_datetime: String by project
 val postgresql: String by project
 val quartzVersion: String by project
 
-allprojects {
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-        kotlinOptions.freeCompilerArgs += listOf(
-            "-Xuse-experimental=io.ktor.server.locations.KtorExperimentalLocationsAPI",
-        )
-    }
-}
+//allprojects {
+//    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+//        kotlinOptions.freeCompilerArgs += listOf(
+//            "-Xuse-experimental=io.ktor.server.locations.KtorExperimentalLocationsAPI",
+//        )
+//    }
+//}
 
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")

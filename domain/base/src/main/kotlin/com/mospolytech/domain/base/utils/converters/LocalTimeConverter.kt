@@ -1,5 +1,6 @@
 package com.mospolytech.domain.base.utils.converters
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.encoding.Decoder
@@ -7,6 +8,7 @@ import kotlinx.serialization.encoding.Encoder
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializer(forClass = LocalTime::class)
 object LocalTimeConverter : KSerializer<LocalTime> {
     private val dateFormatter = DateTimeFormatter.ISO_LOCAL_TIME
