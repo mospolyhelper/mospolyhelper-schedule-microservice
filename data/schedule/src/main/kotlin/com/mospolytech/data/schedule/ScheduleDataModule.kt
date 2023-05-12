@@ -1,6 +1,13 @@
 package com.mospolytech.data.schedule
 
 import com.mospolytech.data.schedule.converters.*
+import com.mospolytech.data.schedule.converters.dateTime.LessonDateTimeConverter
+import com.mospolytech.data.schedule.converters.groups.LessonGroupsConverter
+import com.mospolytech.data.schedule.converters.lessons.LessonConverter
+import com.mospolytech.data.schedule.converters.places.LessonPlacesConverter
+import com.mospolytech.data.schedule.converters.subjects.LessonSubjectConverter
+import com.mospolytech.data.schedule.converters.teachers.LessonTeachersConverter
+import com.mospolytech.data.schedule.converters.types.LessonTypeConverter
 import com.mospolytech.data.schedule.local.ScheduleCacheDS
 import com.mospolytech.data.schedule.remote.*
 import com.mospolytech.data.schedule.repository.*
@@ -14,7 +21,6 @@ val scheduleDataModule = module {
     singleOf(::ScheduleService)
     singleOf(::ScheduleCacheDS)
     singleOf(::LessonsRemoteDS)
-    singleOf(::LessonDateTimesRemoteDS)
 
     singleOf(::ApiScheduleConverter)
     singleOf(::LessonSubjectConverter)

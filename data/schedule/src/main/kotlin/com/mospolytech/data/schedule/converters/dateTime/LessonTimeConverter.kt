@@ -1,4 +1,4 @@
-package com.mospolytech.data.schedule.converters
+package com.mospolytech.data.schedule.converters.dateTime
 
 import com.mospolytech.domain.base.utils.MAX
 import com.mospolytech.domain.base.utils.MIN

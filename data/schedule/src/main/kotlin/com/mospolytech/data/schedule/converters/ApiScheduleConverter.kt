@@ -1,5 +1,9 @@
 package com.mospolytech.data.schedule.converters
 
+import com.mospolytech.data.schedule.converters.dateTime.ApiDateTimeData
+import com.mospolytech.data.schedule.converters.dateTime.LessonDateTimeConverter
+import com.mospolytech.data.schedule.converters.lessons.ApiLessonData
+import com.mospolytech.data.schedule.converters.lessons.LessonConverter
 import com.mospolytech.data.schedule.model.response.ApiGroup
 import com.mospolytech.data.schedule.model.response.ApiLesson
 import com.mospolytech.data.schedule.model.response.ScheduleResponse
@@ -17,6 +21,40 @@ class ApiScheduleConverter(
     suspend fun convertToLessons(scheduleResponse: ScheduleResponse) {
         val lessons = scheduleResponse.contents.values
 
+        val lessonData = ApiLessonData()
+
+        lessons.forEach { apiSchedule ->
+            lessonData.groups += apiSchedule.group.title
+
+            apiSchedule.grid.forEach { (day, dailyLessons) ->
+                dailyLessons.forEach { (order, lessonsPerOrder) ->
+                    lessonsPerOrder.forEach { lesson ->
+                        lessonData.titles += lesson.sbj
+                        lessonData.types += lesson.type to lesson.sbj
+
+                        lessonData.teachers += lesson.teacher
+
+                        lesson.auditories.forEach { auditory ->
+                            lessonData.places += auditory.title
+                        }
+
+                        val groupIsEvening = apiSchedule.group.evening != 0
+                        val isByDate = apiSchedule.isSession
+
+                        lessonData.dateTimes += ApiDateTimeData(
+                            order = order,
+                            groupIsEvening = groupIsEvening,
+                            apiLesson = lesson,
+                            day = day,
+                            isByDate = isByDate,
+                        )
+                    }
+                }
+            }
+        }
+        logger.debug("Schedule: caching all lesson data")
+        lessonConverter.cacheAll(lessonData)
+
         lessons.forEachIndexed { index, apiSchedule ->
             logger.debug("Schedule: $index / ${lessons.size}")
             convertLessons(
@@ -30,6 +68,40 @@ class ApiScheduleConverter(
     suspend fun convertToLessons(scheduleResponse: ScheduleSessionResponse) {
         val lessons = scheduleResponse.contents
 
+        val lessonData = ApiLessonData()
+
+        lessons.forEach { apiSchedule ->
+            lessonData.groups += apiSchedule.group.title
+
+            apiSchedule.grid.forEach { (day, dailyLessons) ->
+                dailyLessons.forEach { (order, lessonsPerOrder) ->
+                    lessonsPerOrder.forEach { lesson ->
+                        lessonData.titles += lesson.sbj
+                        lessonData.types += lesson.type to lesson.sbj
+
+                        lessonData.teachers += lesson.teacher
+
+                        lesson.auditories.forEach { auditory ->
+                            lessonData.places += auditory.title
+                        }
+
+                        val groupIsEvening = apiSchedule.group.evening != 0
+                        val isByDate = apiSchedule.isSession
+
+                        lessonData.dateTimes += ApiDateTimeData(
+                            order = order,
+                            groupIsEvening = groupIsEvening,
+                            apiLesson = lesson,
+                            day = day,
+                            isByDate = isByDate,
+                        )
+                    }
+                }
+            }
+        }
+        logger.debug("Schedule Session: caching all lesson data")
+        lessonConverter.cacheAll(lessonData)
+
         lessons.forEachIndexed { index, apiSchedule ->
             logger.debug("Schedule Session: $index / ${lessons.size}")
             convertLessons(
@@ -40,6 +112,10 @@ class ApiScheduleConverter(
         }
     }
 
+    fun clearCache() {
+        lessonConverter.clearCache()
+    }
+
     private suspend fun convertLessons(
         days: List<Pair<String, Map<String, List<ApiLesson>>>>,
         groups: List<ApiGroup>,
@@ -48,11 +124,18 @@ class ApiScheduleConverter(
         val groupIsEvening = (groups.firstOrNull()?.evening ?: 0) != 0
 
         days.forEach { (day, dailyLessons) ->
-            dailyLessons.forEach {
-                val (order, lessons) = it
+            dailyLessons.forEach { (order, lessons) ->
                 lessons.forEach { apiLesson ->
                     val timesId =
-                        lessonDateTimeConverter.convertDateTime(order, groupIsEvening, apiLesson, day, isByDate)
+                        lessonDateTimeConverter.getCachedId(
+                            ApiDateTimeData(
+                                order = order,
+                                groupIsEvening = groupIsEvening,
+                                apiLesson = apiLesson,
+                                day = day,
+                                isByDate = isByDate,
+                            ),
+                        )
 
                     lessonConverter.convertLesson(apiLesson, groups, listOf(timesId))
                 }

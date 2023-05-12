@@ -30,6 +30,8 @@ class LessonsRepositoryImpl(
 
         val session = service.getSchedulesSession()
         converter.convertToLessons(session)
+
+        converter.clearCache()
     }
 
     override suspend fun getLessonsByPlaces(placeIds: List<String>): List<CompactLessonAndTimes> {

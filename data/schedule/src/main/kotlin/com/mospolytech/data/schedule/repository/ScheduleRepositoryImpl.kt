@@ -140,6 +140,11 @@ class ScheduleRepositoryImpl(
                 LessonToPlacesDb.deleteAll()
                 LessonToTeachersDb.deleteAll()
 
+//                LessonTypesDb.deleteAll()
+//                SubjectsDb.deleteAll()
+//                LessonDateTimesDb.deleteAll()
+//                PlacesDb.deleteAll()
+
                 LessonsDb.deleteAll()
             }
         }

@@ -21,17 +21,19 @@ class LessonsRemoteDS {
         placesId: List<String>,
         lessonDateTimesId: List<String>,
     ): String {
-        return MosPolyDb.transaction {
-            val cacheKey = LessonCacheKey(
-                typeId = typeId,
-                subjectId = subjectId,
-                teachersId = teachersId,
-                placesId = placesId,
-                lessonDateTimesId = lessonDateTimesId,
-            )
+        val cacheKey = LessonCacheKey(
+            typeId = typeId,
+            subjectId = subjectId,
+            teachersId = teachersId,
+            placesId = placesId,
+            lessonDateTimesId = lessonDateTimesId,
+        )
 
+        val id = MosPolyDb.transaction {
+            // Берём id занятия из кэша
             var id = map[cacheKey]
 
+            // Если в кэше не оказалось, то пробуем найти в бд
             if (id == null) {
                 id = firstOrNullId(
                     typeId,
@@ -82,12 +84,15 @@ class LessonsRemoteDS {
                 }
             }
 
-            map[cacheKey] = id
-
             id
         }
+        map[cacheKey] = id
+        return id
     }
 
+    /**
+     * Поиск id занятия по его параметрам
+     */
     private suspend fun firstOrNullId(
         typeId: String,
         subjectId: String,
