@@ -31,6 +31,7 @@ class LessonsRepositoryImpl(
         val session = service.getSchedulesSession()
         converter.convertToLessons(session)
 
+        converter.pushALlLessons()
         converter.clearCache()
     }
 

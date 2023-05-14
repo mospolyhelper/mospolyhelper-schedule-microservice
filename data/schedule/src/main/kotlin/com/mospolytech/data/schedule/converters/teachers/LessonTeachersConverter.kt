@@ -88,7 +88,7 @@ class LessonTeachersConverter {
     )
 
     private fun cacheDb(raw: ResultRow): Teacher {
-        val id = raw[TeachersDb.id].toString()
+        val id = raw[TeachersDb.id].value
         val model = Teacher(
             id = "",
             name = raw[TeachersDb.name].replace('ё', 'e'),

@@ -53,7 +53,7 @@ class LessonGroupsConverter {
     }
 
     private fun cacheDb(row: ResultRow): Group {
-        val id = row[GroupsDb.id].toString()
+        val id = row[GroupsDb.id].value
         val model = Group(
             id = "",
             title = row[GroupsDb.title],

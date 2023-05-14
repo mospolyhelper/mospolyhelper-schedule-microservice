@@ -9,7 +9,6 @@ import com.mospolytech.data.schedule.converters.subjects.LessonSubjectConverter
 import com.mospolytech.data.schedule.converters.teachers.LessonTeachersConverter
 import com.mospolytech.data.schedule.converters.types.LessonTypeConverter
 import com.mospolytech.data.schedule.local.ScheduleCacheDS
-import com.mospolytech.data.schedule.remote.*
 import com.mospolytech.data.schedule.repository.*
 import com.mospolytech.data.schedule.service.ScheduleService
 import com.mospolytech.domain.schedule.repository.*
@@ -20,7 +19,6 @@ import org.koin.dsl.module
 val scheduleDataModule = module {
     singleOf(::ScheduleService)
     singleOf(::ScheduleCacheDS)
-    singleOf(::LessonsRemoteDS)
 
     singleOf(::ApiScheduleConverter)
     singleOf(::LessonSubjectConverter)

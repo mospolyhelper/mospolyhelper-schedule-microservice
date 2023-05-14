@@ -56,8 +56,8 @@ class ApiScheduleConverter(
         lessonConverter.cacheAll(lessonData)
 
         lessons.forEachIndexed { index, apiSchedule ->
-            logger.debug("Schedule: $index / ${lessons.size}")
-            convertLessons(
+            logger.debug("Schedule: ${index + 1} / ${lessons.size}")
+            convertAndCacheLessons(
                 apiSchedule.grid.toList(),
                 listOf(apiSchedule.group),
                 apiSchedule.isSession,
@@ -103,8 +103,8 @@ class ApiScheduleConverter(
         lessonConverter.cacheAll(lessonData)
 
         lessons.forEachIndexed { index, apiSchedule ->
-            logger.debug("Schedule Session: $index / ${lessons.size}")
-            convertLessons(
+            logger.debug("Schedule Session: ${index + 1} / ${lessons.size}")
+            convertAndCacheLessons(
                 apiSchedule.grid.toList(),
                 listOf(apiSchedule.group),
                 apiSchedule.isSession,
@@ -112,11 +112,15 @@ class ApiScheduleConverter(
         }
     }
 
+    suspend fun pushALlLessons() {
+        lessonConverter.pushAllLessons()
+    }
+
     fun clearCache() {
         lessonConverter.clearCache()
     }
 
-    private suspend fun convertLessons(
+    private suspend fun convertAndCacheLessons(
         days: List<Pair<String, Map<String, List<ApiLesson>>>>,
         groups: List<ApiGroup>,
         isByDate: Boolean,
@@ -137,7 +141,7 @@ class ApiScheduleConverter(
                             ),
                         )
 
-                    lessonConverter.convertLesson(apiLesson, groups, listOf(timesId))
+                    lessonConverter.cacheLesson(apiLesson, groups, listOf(timesId))
                 }
             }
         }
