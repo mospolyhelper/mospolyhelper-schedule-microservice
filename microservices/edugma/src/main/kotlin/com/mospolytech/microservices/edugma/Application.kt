@@ -58,5 +58,6 @@ fun Application.initDb() {
 fun Application.initJobScheduler(scheduler: JobSchedulerManager) {
     scheduler.startScheduler()
     val scheduleJobLauncher = get<ScheduleJobLauncher>()
-    scheduleJobLauncher.launch()
+    // TODO Пока каникулы и не будет расписания
+    //scheduleJobLauncher.launch()
 }

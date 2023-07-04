@@ -19,7 +19,7 @@ class ApiScheduleConverter(
     private val logger = LoggerFactory.getLogger("com.mospolytech.data.schedule.converters")
 
     suspend fun convertToLessons(scheduleResponse: ScheduleResponse) {
-        val lessons = scheduleResponse.contents.values
+        val lessons = scheduleResponse.contents
 
         val lessonData = ApiLessonData()
 
