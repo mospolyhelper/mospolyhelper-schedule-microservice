@@ -13,7 +13,7 @@ class ScheduleUpdateJob(
     }
 
     companion object {
-        const val KEY = "UpdateStudentsJob"
+        const val KEY = "UpdateScheduleJob"
         const val GROUP = "autoupdate"
     }
 }

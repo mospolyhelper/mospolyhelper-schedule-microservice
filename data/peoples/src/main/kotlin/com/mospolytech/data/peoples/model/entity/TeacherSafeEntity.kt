@@ -35,6 +35,7 @@ class TeacherSafeEntity(id: EntityID<String>) : Entity<String>(id) {
         )
     }
 }
+
 val TeacherSafeEntity.description: String
     get() {
         return buildString {

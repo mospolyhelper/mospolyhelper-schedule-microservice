@@ -1,14 +1,14 @@
 [versions]
-kotlin = "1.8.21"
+kotlin = "1.9.10"
 ktlint = "3.14.0"
 
-ktor = "2.3.0"
-logback = "1.4.7"
-prometeus = "1.11.0"
-koin = "3.4.0"
-exposed = "0.41.1"
-xmlutil = "0.86.0"
-kotlinxDatetime = "0.4.0"
+ktor = "2.3.4"
+logback = "1.4.11"
+prometeus = "1.11.4"
+koin = "3.5.0"
+exposed = "0.44.0"
+xmlutil = "0.86.2"
+kotlinxDatetime = "0.4.1"
 postgresql = "42.6.0"
 quartz = "2.3.2"
 
@@ -76,3 +76,4 @@ kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ktor = { id = "io.ktor.plugin", version.ref = "ktor"  }

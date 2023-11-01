@@ -12,11 +12,20 @@ class LessonSubjectConverter {
     private val dbCache = HashMap<LessonSubjectInfo, String>()
 
     private fun convertTitle(rawTitle: String): LessonSubjectInfo {
+        val title = rawTitle
+        val type: String? = null
+        val description = buildString {
+            type?.let {
+                append(type)
+            }
+        }
+
         return converterCache.getOrPut(rawTitle) {
             LessonSubjectInfo(
                 id = "",
-                title = rawTitle,
-                type = null,
+                title = title,
+                type = type,
+                description = description,
             )
         }
     }

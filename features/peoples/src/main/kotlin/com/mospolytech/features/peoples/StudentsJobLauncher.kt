@@ -1,27 +1,27 @@
-package com.mospolytech.features.schedule
+package com.mospolytech.features.peoples
 
 import com.mospolytech.features.base.JobSchedulerManager
 import org.quartz.*
 
-class ScheduleJobLauncher(
+class StudentsJobLauncher(
     private val jobSchedulerManager: JobSchedulerManager,
 ) {
     fun launch() {
-        val triggerId = "UpdateScheduleJobEveryDay"
+        val triggerId = "UpdateStudentsJobEveryDay"
 
         // If a job exists, delete it!
         val jobScheduler = jobSchedulerManager.scheduler
-        val jobKey = JobKey.jobKey(ScheduleUpdateJob.KEY, ScheduleUpdateJob.GROUP)
+        val jobKey = JobKey.jobKey(StudentsUpdateJob.KEY, StudentsUpdateJob.GROUP)
         jobScheduler.deleteJob(jobKey)
 
-        val job: JobDetail = JobBuilder.newJob(ScheduleUpdateJob::class.java)
-            .withIdentity(ScheduleUpdateJob.KEY, ScheduleUpdateJob.GROUP)
+        val job: JobDetail = JobBuilder.newJob(StudentsUpdateJob::class.java)
+            .withIdentity(StudentsUpdateJob.KEY, StudentsUpdateJob.GROUP)
             .build()
 
         val trigger: Trigger = TriggerBuilder.newTrigger()
-            .withIdentity(triggerId, ScheduleUpdateJob.GROUP)
+            .withIdentity(triggerId, StudentsUpdateJob.GROUP)
             .withSchedule(
-                CronScheduleBuilder.monthlyOnDayAndHourAndMinute(4, 1, 10),
+                CronScheduleBuilder.dailyAtHourAndMinute(1, 44),
             )
             .build()
 

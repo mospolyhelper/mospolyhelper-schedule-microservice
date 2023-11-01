@@ -1,5 +1,6 @@
 package com.mospolytech.data.peoples.remote
 
+import com.mospolytech.data.base.createPagingDto
 import com.mospolytech.data.base.upsert
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.peoples.model.db.DepartmentsDb
@@ -7,7 +8,6 @@ import com.mospolytech.data.peoples.model.db.TeachersDb
 import com.mospolytech.data.peoples.model.entity.DepartmentEntity
 import com.mospolytech.data.peoples.model.entity.TeacherEntity
 import com.mospolytech.data.peoples.model.entity.TeacherSafeEntity
-import com.mospolytech.domain.base.model.PagingDTO
 import com.mospolytech.domain.peoples.model.Teacher
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.*
@@ -28,21 +28,12 @@ class TeachersRemoteDS {
 
     suspend fun getTeachersPaging(query: String, pageSize: Int, page: Int) =
         MosPolyDb.transaction {
-            val offset = (page - 1) * pageSize
-            val previousPage = if (page <= 1) null else page - 1
-            val nextPage = if (page <= 1) 2 else page + 1
-
-            val list = TeacherSafeEntity.find { TeachersDb.name.lowerCase() like "%${query.lowercase()}%" }
-                .orderBy(TeachersDb.name to SortOrder.ASC)
-                .limit(pageSize, offset.toLong())
-                .map { it.toModel() }
-
-            PagingDTO(
-                count = list.size,
-                previousPage = previousPage,
-                nextPage = nextPage,
-                data = list,
-            )
+            createPagingDto(pageSize, page) { offset ->
+                TeacherSafeEntity.find { TeachersDb.name.lowerCase() like "%${query.lowercase()}%" }
+                    .orderBy(TeachersDb.name to SortOrder.ASC)
+                    .limit(pageSize, offset.toLong())
+                    .map { it.toModel() }
+            }
         }
 
     suspend fun addTeachers(teachers: Sequence<Teacher>) {

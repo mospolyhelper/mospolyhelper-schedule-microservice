@@ -1,10 +1,10 @@
 package com.mospolytech.data.peoples.remote
 
+import com.mospolytech.data.base.createPagingDto
 import com.mospolytech.data.base.upsert
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.peoples.model.db.*
 import com.mospolytech.data.peoples.model.entity.*
-import com.mospolytech.domain.base.model.PagingDTO
 import com.mospolytech.domain.peoples.model.Student
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.*
@@ -23,31 +23,23 @@ class StudentsRemoteDS {
 
     suspend fun getStudentsPaging(query: String, pageSize: Int, page: Int) =
         MosPolyDb.transaction {
-            val offset = (page - 1) * pageSize
-            val previousPage = if (page <= 1) null else page - 1
-            val nextPage = if (page <= 1) 2 else page + 1
+            createPagingDto(pageSize, page) { offset ->
+                val query = StudentsDb.leftJoin(GroupsDb)
+                    .slice(StudentsDb.columns)
+                    .select {
+                        (GroupsDb.title like query) or
+                            (StudentsDb.lastName.lowerCase() like "%${query.lowercase()}%")
+                    }.orderBy(
+                        StudentsDb.lastName to SortOrder.ASC,
+                        StudentsDb.firstName to SortOrder.ASC,
+                        StudentsDb.middleName to SortOrder.ASC,
+                    )
 
-            val query = StudentsDb.leftJoin(GroupsDb)
-                .slice(StudentsDb.columns)
-                .select {
-                    (GroupsDb.title like query) or
-                        (StudentsDb.lastName.lowerCase() like "%${query.lowercase()}%")
-                }.orderBy(
-                    StudentsDb.lastName to SortOrder.ASC,
-                    StudentsDb.firstName to SortOrder.ASC,
-                    StudentsDb.middleName to SortOrder.ASC,
-                )
-
-            val list = StudentSafeEntity.wrapRows(query)
-                .limit(pageSize, offset.toLong())
-                .mapLazy { it.toModel() }
-                .toList()
-            PagingDTO(
-                count = list.size,
-                previousPage = previousPage,
-                nextPage = nextPage,
-                data = list,
-            )
+                StudentSafeEntity.wrapRows(query)
+                    .limit(pageSize, offset.toLong())
+                    .mapLazy { it.toModel() }
+                    .toList()
+            }
         }
 
     suspend fun getStudents(group: String) =
@@ -75,6 +67,27 @@ class StudentsRemoteDS {
                     StudentsDb.middleName to SortOrder.ASC,
                 )
                 .map { it.toModel() }
+        }
+
+    suspend fun getShortStudents(query: String, pageSize: Int, page: Int) =
+        MosPolyDb.transaction {
+            createPagingDto(pageSize, page) { offset ->
+                val query = StudentsDb.leftJoin(GroupsDb)
+                    .slice(StudentsDb.columns)
+                    .select {
+                        (GroupsDb.title like query) or
+                            (StudentsDb.lastName.lowerCase() like "%${query.lowercase()}%")
+                    }.orderBy(
+                        StudentsDb.lastName to SortOrder.ASC,
+                        StudentsDb.firstName to SortOrder.ASC,
+                        StudentsDb.middleName to SortOrder.ASC,
+                    )
+
+                StudentShortEntity.wrapRows(query)
+                    .limit(pageSize, offset.toLong())
+                    .mapLazy { it.toModel() }
+                    .toList()
+            }
         }
 
     suspend fun addStudent(student: Student) {

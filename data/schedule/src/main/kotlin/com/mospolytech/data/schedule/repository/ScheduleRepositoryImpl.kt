@@ -3,17 +3,17 @@ package com.mospolytech.data.schedule.repository
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.peoples.model.db.*
 import com.mospolytech.data.schedule.model.db.*
+import com.mospolytech.domain.base.model.PagingDTO
+import com.mospolytech.domain.base.utils.map
 import com.mospolytech.domain.peoples.model.description
 import com.mospolytech.domain.peoples.repository.StudentsRepository
 import com.mospolytech.domain.schedule.model.ScheduleComplexFilter
-import com.mospolytech.domain.schedule.model.lesson_subject.description
 import com.mospolytech.domain.schedule.model.pack.CompactSchedule
 import com.mospolytech.domain.schedule.model.place.description
 import com.mospolytech.domain.schedule.model.source.ScheduleSource
 import com.mospolytech.domain.schedule.model.source.ScheduleSourceFull
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import com.mospolytech.domain.schedule.repository.*
-import com.mospolytech.domain.schedule.utils.*
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.select
@@ -45,27 +45,87 @@ class ScheduleRepositoryImpl(
 //        return lessons.filter(filter)
 //    }
 
-    override suspend fun getSourceList(sourceType: ScheduleSources): List<ScheduleSourceFull> {
+    override suspend fun getSourceList(
+        sourceType: ScheduleSources,
+        query: String,
+        page: Int,
+        pageSize: Int,
+    ): PagingDTO<ScheduleSourceFull> {
         return when (sourceType) {
             ScheduleSources.Group -> {
-                groupsRepository.getAll()
-                    .map { ScheduleSourceFull(sourceType, it.id, it.title, it.description, null) }
+                groupsRepository.getPaging(
+                    query = query,
+                    page = page,
+                    pageSize = pageSize,
+                ).map {
+                    ScheduleSourceFull(
+                        type = sourceType,
+                        key = it.id,
+                        title = it.title,
+                        description = it.description,
+                        avatarUrl = null,
+                    )
+                }
             }
             ScheduleSources.Teacher -> {
-                teachersRepository.getAll()
-                    .map { ScheduleSourceFull(sourceType, it.id, it.name, it.description, it.avatar) }
+                teachersRepository.getPaging(
+                    query = query,
+                    page = page,
+                    pageSize = pageSize,
+                ).map {
+                    ScheduleSourceFull(
+                        type = sourceType,
+                        key = it.id,
+                        title = it.name,
+                        description = it.description,
+                        avatarUrl = it.avatar,
+                    )
+                }
             }
             ScheduleSources.Student -> {
-                studentsRepository.getShortStudents()
-                    .map { ScheduleSourceFull(sourceType, it.id, it.name, it.description, it.avatar) }
+                studentsRepository.getShortStudents(
+                    query = query,
+                    page = page,
+                    pageSize = pageSize,
+                ).map {
+                    ScheduleSourceFull(
+                        type = sourceType,
+                        key = it.id,
+                        title = it.name,
+                        description = it.description,
+                        avatarUrl = it.avatar,
+                    )
+                }
             }
             ScheduleSources.Place -> {
-                placesRepository.getAll()
-                    .map { ScheduleSourceFull(sourceType, it.id, it.title, it.description, null) }
+                placesRepository.getPaging(
+                    query = query,
+                    page = page,
+                    pageSize = pageSize,
+                ).map {
+                    ScheduleSourceFull(
+                        type = sourceType,
+                        key = it.id,
+                        title = it.title,
+                        description = it.description,
+                        avatarUrl = null,
+                    )
+                }
             }
             ScheduleSources.Subject -> {
-                lessonSubjectsRepository.getAll()
-                    .map { ScheduleSourceFull(sourceType, it.id, it.title, it.description, null) }
+                lessonSubjectsRepository.getPaging(
+                    query = query,
+                    page = page,
+                    pageSize = pageSize,
+                ).map {
+                    ScheduleSourceFull(
+                        type = sourceType,
+                        key = it.id,
+                        title = it.title,
+                        description = it.description,
+                        avatarUrl = null,
+                    )
+                }
             }
             ScheduleSources.Complex -> error("Can't process ScheduleSources.Complex")
         }

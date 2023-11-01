@@ -7,6 +7,7 @@ import com.mospolytech.features.base.JobSchedulerManager
 import com.mospolytech.features.base.plugins.*
 import com.mospolytech.features.payments.paymentsDataConversion
 import com.mospolytech.features.payments.paymentsRoutesV1
+import com.mospolytech.features.peoples.StudentsJobLauncher
 import com.mospolytech.features.peoples.peoplesRoutesV1
 import com.mospolytech.features.performance.performanceRoutesV1
 import com.mospolytech.features.personal.personalRoutesV1
@@ -57,7 +58,10 @@ fun Application.initDb() {
 
 fun Application.initJobScheduler(scheduler: JobSchedulerManager) {
     scheduler.startScheduler()
+
     val scheduleJobLauncher = get<ScheduleJobLauncher>()
-    // TODO Пока каникулы и не будет расписания
-    //scheduleJobLauncher.launch()
+    scheduleJobLauncher.launch()
+
+    val studentsScheduler = get<StudentsJobLauncher>()
+    studentsScheduler.launch()
 }

@@ -1,21 +1,24 @@
 package com.mospolytech.data.schedule.repository
 
 import com.mospolytech.data.common.db.MosPolyDb
-import com.mospolytech.data.peoples.model.db.*
+import com.mospolytech.data.peoples.model.entity.GroupEntity
 import com.mospolytech.data.peoples.model.entity.StudentEntity
+import com.mospolytech.data.peoples.model.entity.TeacherSafeEntity
+import com.mospolytech.data.peoples.model.entity.description
 import com.mospolytech.data.schedule.converters.ApiScheduleConverter
 import com.mospolytech.data.schedule.model.db.*
 import com.mospolytech.data.schedule.model.entity.LessonEntity
+import com.mospolytech.data.schedule.model.entity.SubjectEntity
 import com.mospolytech.data.schedule.service.ScheduleService
-import com.mospolytech.domain.peoples.model.Group
-import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.schedule.model.ScheduleComplexFilter
-import com.mospolytech.domain.schedule.model.lesson_subject.LessonSubjectInfo
+import com.mospolytech.domain.schedule.model.group.CompactLessonGroup
+import com.mospolytech.domain.schedule.model.lesson_subject.CompactLessonSubjectInfo
 import com.mospolytech.domain.schedule.model.lesson_type.LessonTypeInfo
 import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
 import com.mospolytech.domain.schedule.model.pack.CompactSchedule
 import com.mospolytech.domain.schedule.model.pack.ScheduleInfo
 import com.mospolytech.domain.schedule.model.place.PlaceInfo
+import com.mospolytech.domain.schedule.model.teacher.CompactLessonTeacherInfo
 import com.mospolytech.domain.schedule.repository.LessonsRepository
 import org.jetbrains.exposed.sql.*
 import java.util.UUID
@@ -230,17 +233,17 @@ class LessonsRepositoryImpl(
 
     private fun buildSchedule(query: Query): CompactSchedule {
         val types: MutableCollection<LessonTypeInfo> = LinkedHashSet()
-        val subjects: MutableCollection<LessonSubjectInfo> = LinkedHashSet()
-        val teachers: MutableCollection<Teacher> = LinkedHashSet()
-        val groups: MutableCollection<Group> = LinkedHashSet()
+        val subjects: MutableCollection<CompactLessonSubjectInfo> = LinkedHashSet()
+        val teachers: MutableCollection<CompactLessonTeacherInfo> = LinkedHashSet()
+        val groups: MutableCollection<CompactLessonGroup> = LinkedHashSet()
         val places: MutableCollection<PlaceInfo> = LinkedHashSet()
         val lessonsList = mutableListOf<CompactLessonAndTimes>()
 
         LessonEntity.wrapRows(query).forEach {
             types.add(it.type.toModel())
-            subjects.add(it.subject.toModel())
-            teachers.addAll(it.teachers.map { it.toModel() })
-            groups.addAll(it.groups.map { it.toModel() })
+            subjects.add(it.subject.toLessonSubjectInfo())
+            teachers.addAll(it.teachers.map { it.toLessonTeacherInfo() })
+            groups.addAll(it.groups.map { it.toCompactLessonGroup() })
             places.addAll(it.places.map { it.toModel() })
             lessonsList.add(it.toFullModel())
         }
@@ -256,4 +259,30 @@ class LessonsRepositoryImpl(
             ),
         )
     }
+}
+
+fun TeacherSafeEntity.toLessonTeacherInfo(): CompactLessonTeacherInfo {
+    return CompactLessonTeacherInfo(
+        id = this.id.toString(),
+        name = this.name,
+        description = this.description,
+        avatar = this.avatar,
+    )
+}
+
+fun SubjectEntity.toLessonSubjectInfo(): CompactLessonSubjectInfo {
+    return CompactLessonSubjectInfo(
+        id = id.value.toString(),
+        title = title,
+        type = type,
+        description = description,
+    )
+}
+
+fun GroupEntity.toCompactLessonGroup(): CompactLessonGroup {
+    return CompactLessonGroup(
+        id = id.value,
+        title = title,
+        description = description,
+    )
 }

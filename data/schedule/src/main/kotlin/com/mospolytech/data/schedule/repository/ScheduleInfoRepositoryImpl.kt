@@ -14,7 +14,6 @@ import com.mospolytech.domain.peoples.model.Student
 import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.peoples.model.description
 import com.mospolytech.domain.schedule.model.lesson_subject.LessonSubjectInfo
-import com.mospolytech.domain.schedule.model.lesson_subject.description
 import com.mospolytech.domain.schedule.model.lesson_type.LessonTypeInfo
 import com.mospolytech.domain.schedule.model.place.PlaceInfo
 import com.mospolytech.domain.schedule.model.place.description
