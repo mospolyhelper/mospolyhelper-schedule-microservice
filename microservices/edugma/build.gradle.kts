@@ -4,6 +4,12 @@ plugins {
 
 version = "0.0.1"
 
+ktor {
+    fatJar {
+        archiveFileName.set("edugma.jar")
+    }
+}
+
 dependencies {
     implementation(projects.data.auth)
     implementation(projects.data.performance)
@@ -29,10 +35,4 @@ dependencies {
     implementation(projects.features.applications)
     implementation(projects.features.payments)
     implementation(projects.features.personal)
-
-
-
-
-
-
 }
