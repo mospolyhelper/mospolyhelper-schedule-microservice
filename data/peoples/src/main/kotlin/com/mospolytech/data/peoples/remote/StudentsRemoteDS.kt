@@ -257,12 +257,13 @@ class StudentsRemoteDS {
 
     suspend fun clearData() {
         MosPolyDb.transaction {
+            // TODO Делать умную очискту на основе последней даты
             StudentsDb.deleteAll()
-            StudentBranchesDb.deleteAll()
-            StudentDirectionsDb.deleteAll()
-            StudentFacultiesDb.deleteAll()
-            StudentSpecializationsDb.deleteAll()
-            GroupsDb.deleteAll()
+//            GroupsDb.deleteAll()
+//            StudentBranchesDb.deleteAll()
+//            StudentDirectionsDb.deleteAll()
+//            StudentFacultiesDb.deleteAll()
+//            StudentSpecializationsDb.deleteAll()
         }
     }
 }

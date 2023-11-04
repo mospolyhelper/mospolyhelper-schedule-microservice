@@ -85,8 +85,8 @@ class TeachersRemoteDS {
 
     suspend fun clearData() {
         MosPolyDb.transaction {
-            TeachersDb.deleteAll()
-            DepartmentsDb.deleteAll()
+            // TeachersDb.deleteAll()
+            // DepartmentsDb.deleteAll()
         }
     }
 
