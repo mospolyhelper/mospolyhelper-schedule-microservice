@@ -22,33 +22,27 @@ import com.mospolytech.features.performance.performanceFeaturesModule
 import com.mospolytech.features.personal.personalFeaturesModule
 import com.mospolytech.features.schedule.scheduleFeatureModule
 
-val appModules = listOf(
-    baseDataModule,
-    BaseFeatureModule.di,
-
-    authDataModule,
-
-    applicationsDataModule,
-    applicationsDomainModule,
-    applicationsFeatureModule,
-
-    paymentsDataModule,
-    paymentsDomainModule,
-    paymentsFeatureModule,
-
-    personalDataModule,
-    personalDomainModule,
-    personalFeaturesModule,
-
-    performanceDataModule,
-    performanceDomainModule,
-    performanceFeaturesModule,
-
-    peoplesDataModule,
-    peoplesDomainModule,
-    peoplesFeaturesModule,
-
-    scheduleDataModule,
-    scheduleDomainModule,
-    scheduleFeatureModule,
-)
+val appModules =
+    listOf(
+        baseDataModule,
+        BaseFeatureModule.di,
+        authDataModule,
+        applicationsDataModule,
+        applicationsDomainModule,
+        applicationsFeatureModule,
+        paymentsDataModule,
+        paymentsDomainModule,
+        paymentsFeatureModule,
+        personalDataModule,
+        personalDomainModule,
+        personalFeaturesModule,
+        performanceDataModule,
+        performanceDomainModule,
+        performanceFeaturesModule,
+        peoplesDataModule,
+        peoplesDomainModule,
+        peoplesFeaturesModule,
+        scheduleDataModule,
+        scheduleDomainModule,
+        scheduleFeatureModule,
+    )

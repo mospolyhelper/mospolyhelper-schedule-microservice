@@ -71,35 +71,39 @@ sealed class PlaceInfo : Comparable<PlaceInfo> {
 val PlaceInfo.description: String
     get() {
         return when (this@description) {
-            is PlaceInfo.Building -> buildString {
-                street?.let {
-                    append(street)
-                }
+            is PlaceInfo.Building ->
+                buildString {
+                    street?.let {
+                        append(street)
+                    }
 
-                building?.let {
-                    ifNotEmpty { append(", ") }
-                    append("$building-й корус")
-                }
+                    building?.let {
+                        ifNotEmpty { append(", ") }
+                        append("$building-й корус")
+                    }
 
-                floor?.let {
-                    ifNotEmpty { append(", ") }
-                    append("$floor-й этаж")
+                    floor?.let {
+                        ifNotEmpty { append(", ") }
+                        append("$floor-й этаж")
+                    }
                 }
-            }
-            is PlaceInfo.Online -> buildString {
-                url?.let {
-                    append(url)
+            is PlaceInfo.Online ->
+                buildString {
+                    url?.let {
+                        append(url)
+                    }
                 }
-            }
-            is PlaceInfo.Other -> buildString {
-                description?.let {
-                    append(description)
+            is PlaceInfo.Other ->
+                buildString {
+                    description?.let {
+                        append(description)
+                    }
                 }
-            }
-            is PlaceInfo.Unclassified -> buildString {
-                description?.let {
-                    append(description)
+            is PlaceInfo.Unclassified ->
+                buildString {
+                    description?.let {
+                        append(description)
+                    }
                 }
-            }
         }
     }

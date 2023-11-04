@@ -13,7 +13,6 @@ import org.jetbrains.exposed.sql.mapLazy
 import java.util.*
 
 class LessonSubjectsRepositoryImpl : LessonSubjectsRepository {
-
     override suspend fun get(id: String): LessonSubjectInfo? {
         return MosPolyDb.transaction {
             SubjectEntity.findById(UUID.fromString(id))?.toModel()
@@ -28,7 +27,11 @@ class LessonSubjectsRepositoryImpl : LessonSubjectsRepository {
         }
     }
 
-    override suspend fun getPaging(query: String, pageSize: Int, page: Int): PagingDTO<LessonSubjectInfo> {
+    override suspend fun getPaging(
+        query: String,
+        pageSize: Int,
+        page: Int,
+    ): PagingDTO<LessonSubjectInfo> {
         return MosPolyDb.transaction {
             createPagingDto(pageSize, page) { offset ->
                 SubjectEntity.find { SubjectsDb.title like query }

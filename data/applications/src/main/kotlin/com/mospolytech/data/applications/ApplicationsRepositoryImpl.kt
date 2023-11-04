@@ -4,8 +4,7 @@ import com.mospolytech.domain.applications.model.Application
 import com.mospolytech.domain.applications.repository.ApplicationsRepository
 import java.time.LocalDateTime
 
-class ApplicationsRepositoryImpl() : ApplicationsRepository {
-
+class ApplicationsRepositoryImpl : ApplicationsRepository {
     override fun getApplications(): List<Application> {
         return listOf(
             Application(

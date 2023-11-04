@@ -80,8 +80,9 @@ class StudentSafeEntity(id: EntityID<String>) : Entity<String>(id) {
 }
 
 val StudentSafeEntity.description
-    get() = buildString {
-        group?.let {
-            append(it.description)
+    get() =
+        buildString {
+            group?.let {
+                append(it.description)
+            }
         }
-    }

@@ -39,9 +39,7 @@ class StudentEntity(id: EntityID<String>) : Entity<String>(id) {
             firstName = firstName,
             lastName = lastName,
             middleName = middleName,
-
             status = status,
-
             sex = sex,
             avatar = avatar,
             birthday = birthday,

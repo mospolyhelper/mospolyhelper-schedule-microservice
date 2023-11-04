@@ -17,9 +17,7 @@ import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
 import java.io.File
 
-fun Application.configureMonitoring(
-    appConfig: AppConfig,
-) {
+fun Application.configureMonitoring(appConfig: AppConfig) {
     install(CallLogging) {
         level = Level.INFO
         filter { call -> call.request.path().startsWith("/") }

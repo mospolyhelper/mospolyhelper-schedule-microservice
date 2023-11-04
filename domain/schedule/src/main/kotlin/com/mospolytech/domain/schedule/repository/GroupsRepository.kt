@@ -8,5 +8,9 @@ interface GroupsRepository {
 
     suspend fun getAll(): List<Group>
 
-    suspend fun getPaging(query: String, pageSize: Int, page: Int): PagingDTO<Group>
+    suspend fun getPaging(
+        query: String,
+        pageSize: Int,
+        page: Int,
+    ): PagingDTO<Group>
 }

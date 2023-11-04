@@ -54,12 +54,16 @@ object LessonTimeConverter {
         operator fun component1(): LocalTime {
             return start
         }
+
         operator fun component2(): LocalTime {
             return end
         }
     }
 
-    fun getLocalTime(order: Int, groupIsEvening: Boolean) = when (order) {
+    fun getLocalTime(
+        order: Int,
+        groupIsEvening: Boolean,
+    ) = when (order) {
         0 -> LessonTimes.Pair1
         1 -> LessonTimes.Pair2
         2 -> LessonTimes.Pair3

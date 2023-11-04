@@ -11,13 +11,19 @@ class LessonTypeConverter {
     private val converterCache = HashMap<Pair<String, String>, LessonTypeInfo>()
     private val dbCache = HashMap<LessonTypeInfo, String>()
 
-    private fun convertType(rawType: String, rawTitle: String): LessonTypeInfo {
+    private fun convertType(
+        rawType: String,
+        rawTitle: String,
+    ): LessonTypeInfo {
         return converterCache.getOrPut(rawType to rawTitle) {
             fixType(rawType, rawTitle)
         }
     }
 
-    fun getCachedId(rawType: String, rawTitle: String): String {
+    fun getCachedId(
+        rawType: String,
+        rawTitle: String,
+    ): String {
         val dtoCache = checkNotNull(converterCache[rawType to rawTitle])
         return checkNotNull(dbCache[dtoCache])
     }
@@ -30,12 +36,13 @@ class LessonTypeConverter {
 
             val notInDb = dtoList subtract allDbItems
 
-            val rows = LessonTypesDb.batchInsert(notInDb) { dto ->
-                this[LessonTypesDb.title] = dto.title
-                this[LessonTypesDb.shortTitle] = dto.shortTitle
-                this[LessonTypesDb.description] = dto.description
-                this[LessonTypesDb.isImportant] = dto.isImportant
-            }
+            val rows =
+                LessonTypesDb.batchInsert(notInDb) { dto ->
+                    this[LessonTypesDb.title] = dto.title
+                    this[LessonTypesDb.shortTitle] = dto.shortTitle
+                    this[LessonTypesDb.description] = dto.description
+                    this[LessonTypesDb.isImportant] = dto.isImportant
+                }
 
             LessonTypeEntity.wrapRows(SizedCollection(rows)).forEach { cacheDb(it) }
         }
@@ -59,29 +66,29 @@ class LessonTypeConverter {
         val fixedType: LessonTypes,
     )
 
-    private val lessonParserPacks = listOf(
-        LessonTypeParserPack("КП", "КП", LessonTypes.CourseProject),
-        LessonTypeParserPack("Экзамен", "Экз", LessonTypes.Exam),
-        LessonTypeParserPack("Зачет", "Зач", LessonTypes.Credit),
-        LessonTypeParserPack("ЗСО", "ЗСО", LessonTypes.CreditWithMark), // !!!
-        LessonTypeParserPack("ЭП", "ЭП", LessonTypes.ExaminationReview), // !!!
-        LessonTypeParserPack("ЭКП", "ЭКП", LessonTypes.ExaminationDepartmentalReview), // !!!
-        LessonTypeParserPack("Консультация", "Кон", LessonTypes.Consultation),
-        LessonTypeParserPack("Лаб. работа", "Лаб", LessonTypes.LaboratoryWork),
-        LessonTypeParserPack("Практика", "Пра", LessonTypes.Practice),
-        LessonTypeParserPack("Лекция", "Лек", LessonTypes.Lecture),
-        LessonTypeParserPack("Установочная лекция", "Уст", LessonTypes.KeyLecture),
-        LessonTypeParserPack("Лекция+практика", "лек.+пр.", LessonTypes.LectureAndPractice),
-        LessonTypeParserPack("Другое", "Дру", LessonTypes.Other),
-    )
-
-    private val PRACTICE_SHORT = "Пр"
-    private val LECTURE_SHORT = "Лек"
-    private val LABORATORY_SHORT = "Лаб"
+    private val lessonParserPacks =
+        listOf(
+            LessonTypeParserPack("КП", "КП", LessonTypes.CourseProject),
+            LessonTypeParserPack("Экзамен", "Экз", LessonTypes.Exam),
+            LessonTypeParserPack("Зачет", "Зач", LessonTypes.Credit),
+            LessonTypeParserPack("ЗСО", "ЗСО", LessonTypes.CreditWithMark), // !!!
+            LessonTypeParserPack("ЭП", "ЭП", LessonTypes.ExaminationReview), // !!!
+            LessonTypeParserPack("ЭКП", "ЭКП", LessonTypes.ExaminationDepartmentalReview), // !!!
+            LessonTypeParserPack("Консультация", "Кон", LessonTypes.Consultation),
+            LessonTypeParserPack("Лаб. работа", "Лаб", LessonTypes.LaboratoryWork),
+            LessonTypeParserPack("Практика", "Пра", LessonTypes.Practice),
+            LessonTypeParserPack("Лекция", "Лек", LessonTypes.Lecture),
+            LessonTypeParserPack("Установочная лекция", "Уст", LessonTypes.KeyLecture),
+            LessonTypeParserPack("Лекция+практика", "лек.+пр.", LessonTypes.LectureAndPractice),
+            LessonTypeParserPack("Другое", "Дру", LessonTypes.Other),
+        )
 
     private val regex = Regex("\\(.*?\\)")
 
-    private fun fixType(type: String, lessonTitle: String): LessonTypeInfo {
+    private fun fixType(
+        type: String,
+        lessonTitle: String,
+    ): LessonTypeInfo {
         val fixedType = lessonParserPacks.firstOrNull { it.sourceGroupType.equals(type, true) }
         if (fixedType?.fixedType == LessonTypes.Other) {
             return fixOtherType(type, lessonTitle)
@@ -96,7 +103,10 @@ class LessonTypeConverter {
             )
     }
 
-    private fun fixOtherType(type: String, lessonTitle: String): LessonTypeInfo {
+    private fun fixOtherType(
+        type: String,
+        lessonTitle: String,
+    ): LessonTypeInfo {
         val res = regex.findAll(lessonTitle).joinToString { it.value }
         return if (res.isNotEmpty()) {
             findCombinedShortTypeOrNull(res) ?: LessonTypeInfo(id = "", type, type, "", false)
@@ -119,5 +129,11 @@ class LessonTypeConverter {
             lab -> LessonTypes.LaboratoryWork.toInfo()
             else -> null
         }
+    }
+
+    companion object {
+        private const val PRACTICE_SHORT = "Пр"
+        private const val LECTURE_SHORT = "Лек"
+        private const val LABORATORY_SHORT = "Лаб"
     }
 }

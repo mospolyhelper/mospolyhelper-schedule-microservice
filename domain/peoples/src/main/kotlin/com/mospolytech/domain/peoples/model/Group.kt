@@ -16,20 +16,21 @@ data class Group(
 }
 
 val Group.description
-    get() = buildString {
-        course?.let { append("$course-й курс") }
+    get() =
+        buildString {
+            course?.let { append("$course-й курс") }
 
-        direction?.let {
-            ifNotEmpty { append(", ") }
-            append(direction.title)
-        }
+            direction?.let {
+                ifNotEmpty { append(", ") }
+                append(direction.title)
+            }
 
-        faculty?.let {
-            ifNotEmpty { append(", ") }
-            if (faculty.titleShort != null) {
-                append(faculty.titleShort)
-            } else {
-                append(faculty.title)
+            faculty?.let {
+                ifNotEmpty { append(", ") }
+                if (faculty.titleShort != null) {
+                    append(faculty.titleShort)
+                } else {
+                    append(faculty.title)
+                }
             }
         }
-    }

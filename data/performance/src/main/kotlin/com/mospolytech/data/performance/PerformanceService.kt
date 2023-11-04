@@ -14,7 +14,10 @@ class PerformanceService(
         private const val GetPerformance = "$ApiUrl?getAcademicPerformance="
     }
 
-    suspend fun getPerformanceInfo(token: String, semester: String? = null): PerformanceResponseDto {
+    suspend fun getPerformanceInfo(
+        token: String,
+        semester: String? = null,
+    ): PerformanceResponseDto {
         return client.get(GetPerformance) {
             parameter("token", token)
             parameter("semestr", semester.orEmpty())

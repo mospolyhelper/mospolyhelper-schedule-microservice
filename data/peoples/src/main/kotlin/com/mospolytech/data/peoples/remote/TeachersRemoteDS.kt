@@ -14,42 +14,49 @@ import org.jetbrains.exposed.sql.*
 import kotlin.sequences.Sequence
 
 class TeachersRemoteDS {
-    suspend fun getTeacher(name: String) = MosPolyDb.transaction {
-        TeacherSafeEntity.find { TeachersDb.name eq name }
-            .firstOrNull()
-            ?.toModel()
-    }
-
-    suspend fun getTeachers() = MosPolyDb.transaction {
-        TeacherSafeEntity.all()
-            .orderBy(TeachersDb.name to SortOrder.ASC)
-            .map { it.toModel() }
-    }
-
-    suspend fun getTeachersPaging(query: String, pageSize: Int, page: Int) =
+    suspend fun getTeacher(name: String) =
         MosPolyDb.transaction {
-            createPagingDto(pageSize, page) { offset ->
-                TeacherSafeEntity.find { TeachersDb.name.lowerCase() like "%${query.lowercase()}%" }
-                    .orderBy(TeachersDb.name to SortOrder.ASC)
-                    .limit(pageSize, offset.toLong())
-                    .map { it.toModel() }
-            }
+            TeacherSafeEntity.find { TeachersDb.name eq name }
+                .firstOrNull()
+                ?.toModel()
         }
+
+    suspend fun getTeachers() =
+        MosPolyDb.transaction {
+            TeacherSafeEntity.all()
+                .orderBy(TeachersDb.name to SortOrder.ASC)
+                .map { it.toModel() }
+        }
+
+    suspend fun getTeachersPaging(
+        query: String,
+        pageSize: Int,
+        page: Int,
+    ) = MosPolyDb.transaction {
+        createPagingDto(pageSize, page) { offset ->
+            TeacherSafeEntity.find { TeachersDb.name.lowerCase() like "%${query.lowercase()}%" }
+                .orderBy(TeachersDb.name to SortOrder.ASC)
+                .limit(pageSize, offset.toLong())
+                .map { it.toModel() }
+        }
+    }
 
     suspend fun addTeachers(teachers: Sequence<Teacher>) {
         teachers.forEach { teacher ->
             MosPolyDb.transaction {
-                val newDepartmentParent = teacher.departmentParent?.let {
-                    DepartmentEntity.upsert(it.id) {
-                        title = it.title
+                val newDepartmentParent =
+                    teacher.departmentParent?.let {
+                        DepartmentEntity.upsert(it.id) {
+                            title = it.title
+                        }
                     }
-                }
 
-                val newDepartment = teacher.department?.let {
-                    DepartmentEntity.upsert(it.id) {
-                        title = it.title
+                val newDepartment =
+                    teacher.department?.let {
+                        DepartmentEntity.upsert(it.id) {
+                            title = it.title
+                        }
                     }
-                }
 
                 TeacherEntity.upsert(teacher.id) {
                     name = teacher.name

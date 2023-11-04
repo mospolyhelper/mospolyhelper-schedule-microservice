@@ -14,11 +14,12 @@ class LessonSubjectConverter {
     private fun convertTitle(rawTitle: String): LessonSubjectInfo {
         val title = rawTitle
         val type: String? = null
-        val description = buildString {
-            type?.let {
-                append(type)
+        val description =
+            buildString {
+                type?.let {
+                    append(type)
+                }
             }
-        }
 
         return converterCache.getOrPut(rawTitle) {
             LessonSubjectInfo(
@@ -43,10 +44,11 @@ class LessonSubjectConverter {
 
             val notInDb = dtoList subtract allDbItems
 
-            val rows = SubjectsDb.batchInsert(notInDb) { dto ->
-                this[SubjectsDb.title] = dto.title
-                this[SubjectsDb.type] = dto.type
-            }
+            val rows =
+                SubjectsDb.batchInsert(notInDb) { dto ->
+                    this[SubjectsDb.title] = dto.title
+                    this[SubjectsDb.type] = dto.type
+                }
 
             SubjectEntity.wrapRows(SizedCollection(rows)).forEach { cacheDb(it) }
         }

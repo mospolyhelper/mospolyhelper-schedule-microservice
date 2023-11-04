@@ -26,7 +26,11 @@ class TeachersRepositoryImpl : TeachersRepository {
         }
     }
 
-    override suspend fun getPaging(query: String, pageSize: Int, page: Int): PagingDTO<Teacher> {
+    override suspend fun getPaging(
+        query: String,
+        pageSize: Int,
+        page: Int,
+    ): PagingDTO<Teacher> {
         return MosPolyDb.transaction {
             createPagingDto(pageSize, page) { offset ->
                 TeacherSafeEntity.find { TeachersDb.name like query }

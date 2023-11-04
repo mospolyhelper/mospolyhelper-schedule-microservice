@@ -12,11 +12,12 @@ import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
-val peoplesDataModule = module {
-    singleOf(::TeachersService)
-    singleOf(::StudentsService)
-    singleOf(::StudentsRemoteDS)
-    singleOf(::TeachersRemoteDS)
-    singleOf(::StudentsRepositoryImpl) { bind<StudentsRepository>() }
-    singleOf(::TeachersRepositoryImpl) { bind<TeachersRepository>() }
-}
+val peoplesDataModule =
+    module {
+        singleOf(::TeachersService)
+        singleOf(::StudentsService)
+        singleOf(::StudentsRemoteDS)
+        singleOf(::TeachersRemoteDS)
+        singleOf(::StudentsRepositoryImpl) { bind<StudentsRepository>() }
+        singleOf(::TeachersRepositoryImpl) { bind<TeachersRepository>() }
+    }

@@ -27,20 +27,21 @@ class GroupEntity(id: EntityID<String>) : Entity<String>(id) {
 }
 
 val GroupEntity.description
-    get() = buildString {
-        course?.let { append("$course-й курс") }
+    get() =
+        buildString {
+            course?.let { append("$course-й курс") }
 
-        direction?.let {
-            ifNotEmpty { append(", ") }
-            append(it.title)
-        }
-
-        faculty?.let {
-            ifNotEmpty { append(", ") }
-            if (it.titleShort != null) {
-                append(it.titleShort)
-            } else {
+            direction?.let {
+                ifNotEmpty { append(", ") }
                 append(it.title)
             }
+
+            faculty?.let {
+                ifNotEmpty { append(", ") }
+                if (it.titleShort != null) {
+                    append(it.titleShort)
+                } else {
+                    append(it.title)
+                }
+            }
         }
-    }

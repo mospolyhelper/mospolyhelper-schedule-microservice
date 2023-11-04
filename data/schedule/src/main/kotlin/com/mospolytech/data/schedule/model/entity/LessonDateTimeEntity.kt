@@ -20,10 +20,11 @@ class LessonDateTimeEntity(id: EntityID<UUID>) : UUIDEntity(id) {
         return LessonDateTime(
             startDate = startDate,
             endDate = endDate,
-            time = LessonTime(
-                start = startTime,
-                end = endTime,
-            ),
+            time =
+                LessonTime(
+                    start = startTime,
+                    end = endTime,
+                ),
         )
     }
 }

@@ -8,7 +8,6 @@ import com.mospolytech.domain.payments.model.PaymentType.Education
 import com.mospolytech.domain.payments.repository.PaymentsRepository
 
 class PaymentsRepositoryImpl(private val service: PaymentsService) : PaymentsRepository {
-
     override suspend fun getPaymentTypes(token: String): Result<List<PaymentType>> {
         return runCatching {
             val paymentsResponse = service.getPayments(token).contracts
@@ -19,7 +18,10 @@ class PaymentsRepositoryImpl(private val service: PaymentsService) : PaymentsRep
         }
     }
 
-    override suspend fun getPayments(token: String, paymentType: PaymentType?): Result<Contracts> {
+    override suspend fun getPayments(
+        token: String,
+        paymentType: PaymentType?,
+    ): Result<Contracts> {
         return runCatching {
             val paymentsResponse = service.getPayments(token).contracts
             paymentsResponse.toModel()

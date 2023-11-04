@@ -21,6 +21,7 @@ dependencies {
     implementation(libs.ktor.server.netty)
     implementation(libs.ktor.server.data.conversion)
 
+    implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
     implementation(libs.koin.ktor)
 }

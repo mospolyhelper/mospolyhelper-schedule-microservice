@@ -19,7 +19,6 @@ class FreePlacesRepositoryImpl(
     private val lessonsRepository: LessonsRepository,
     private val placesRepository: PlacesRepository,
 ) : FreePlacesRepository {
-
     override suspend fun getPlaces(filters: PlaceFilters): Map<PlaceInfo, Int> {
         val lessons = lessonsRepository.getLessonsByPlaces(filters.ids)
 
@@ -39,16 +38,18 @@ class FreePlacesRepositoryImpl(
             lessonAndTimes.times.forEach { lessonDateTime ->
                 lessonDateTime.toDateTimeRanges().forEach last@{ dateTimeRange ->
                     val dailyOccupancy = resMap.getOrPut(dateTimeRange.start.date) { mutableListOf() }
-                    val newTimeRange = TempPlaceOccupancyTimeRange(
-                        timeFrom = dateTimeRange.start.time.toJavaLocalTime(),
-                        timeTo = dateTimeRange.endInclusive.time.toJavaLocalTime(),
-                        value = 1.0,
-                    )
+                    val newTimeRange =
+                        TempPlaceOccupancyTimeRange(
+                            timeFrom = dateTimeRange.start.time.toJavaLocalTime(),
+                            timeTo = dateTimeRange.endInclusive.time.toJavaLocalTime(),
+                            value = 1.0,
+                        )
 
                     // search for first timeRange where startTime is greater
-                    val indexToInsert = dailyOccupancy.indexOfFirst {
-                        it.timeFrom > newTimeRange.timeFrom
-                    }
+                    val indexToInsert =
+                        dailyOccupancy.indexOfFirst {
+                            it.timeFrom > newTimeRange.timeFrom
+                        }
 
                     // just add in the end of list
                     // if timeRange with startTime is greater than our
@@ -76,14 +77,15 @@ class FreePlacesRepositoryImpl(
         return resMap.map {
             PlaceDailyOccupancy(
                 date = it.key,
-                values = it.value.sortedBy { it.timeFrom }
-                    .map {
-                        PlaceOccupancyTimeRange(
-                            timeFrom = it.timeFrom,
-                            timeTo = it.timeTo,
-                            value = it.value,
-                        )
-                    },
+                values =
+                    it.value.sortedBy { it.timeFrom }
+                        .map {
+                            PlaceOccupancyTimeRange(
+                                timeFrom = it.timeFrom,
+                                timeTo = it.timeTo,
+                                value = it.value,
+                            )
+                        },
             )
         }
     }

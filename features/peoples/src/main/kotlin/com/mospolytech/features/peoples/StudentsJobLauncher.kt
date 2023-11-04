@@ -14,16 +14,18 @@ class StudentsJobLauncher(
         val jobKey = JobKey.jobKey(StudentsUpdateJob.KEY, StudentsUpdateJob.GROUP)
         jobScheduler.deleteJob(jobKey)
 
-        val job: JobDetail = JobBuilder.newJob(StudentsUpdateJob::class.java)
-            .withIdentity(StudentsUpdateJob.KEY, StudentsUpdateJob.GROUP)
-            .build()
+        val job: JobDetail =
+            JobBuilder.newJob(StudentsUpdateJob::class.java)
+                .withIdentity(StudentsUpdateJob.KEY, StudentsUpdateJob.GROUP)
+                .build()
 
-        val trigger: Trigger = TriggerBuilder.newTrigger()
-            .withIdentity(triggerId, StudentsUpdateJob.GROUP)
-            .withSchedule(
-                CronScheduleBuilder.dailyAtHourAndMinute(1, 44),
-            )
-            .build()
+        val trigger: Trigger =
+            TriggerBuilder.newTrigger()
+                .withIdentity(triggerId, StudentsUpdateJob.GROUP)
+                .withSchedule(
+                    CronScheduleBuilder.dailyAtHourAndMinute(1, 44),
+                )
+                .build()
 
         // Tell quartz to schedule the job using our trigger
         jobSchedulerManager.scheduler.scheduleJob(job, trigger)

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PagingDTO<T>(
     val count: Int,
-    val previousPage: Int?,
-    val nextPage: Int?,
+    val previous: String?,
+    val next: String?,
     val data: List<T>,
 )

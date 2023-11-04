@@ -21,7 +21,10 @@ fun LessonDateTime.toDateTimeRanges(): List<ClosedRange<LocalDateTime>> {
     }
 }
 
-private fun generateDatesFromRange(startDate: LocalDate, endDate: LocalDate): List<LocalDate> {
+private fun generateDatesFromRange(
+    startDate: LocalDate,
+    endDate: LocalDate,
+): List<LocalDate> {
     val dates = mutableListOf<LocalDate>()
     var currentDay = startDate
     do {

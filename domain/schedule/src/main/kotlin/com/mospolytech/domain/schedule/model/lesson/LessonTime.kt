@@ -11,8 +11,7 @@ data class LessonTime(
     override fun compareTo(other: LessonTime): Int {
         val start = this.start.compareTo(other.start)
         if (start == 0) {
-            val end = this.end.compareTo(other.end)
-            return end
+            return this.end.compareTo(other.end)
         }
         return start
     }

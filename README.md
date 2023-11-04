@@ -27,5 +27,5 @@ docker stop edugma
 ```
 Чтение логов контейнера:
 ```shell
-docker logs edugma
+docker logs edugma -f
 ```

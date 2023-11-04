@@ -66,6 +66,7 @@ fun String.toDate(): LocalDate? {
         null
     }
 }
+
 fun String.toTime(): LocalTime? {
     return try {
         LocalTime.parse(this)

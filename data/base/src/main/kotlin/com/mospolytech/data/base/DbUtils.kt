@@ -6,7 +6,10 @@ import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
 
-fun <T : Entity<ID>, ID : Comparable<ID>> EntityClass<ID, T>.upsert(value: ID, init: T.() -> Unit): T {
+fun <T : Entity<ID>, ID : Comparable<ID>> EntityClass<ID, T>.upsert(
+    value: ID,
+    init: T.() -> Unit,
+): T {
     val existed = findById(value)
     return existed?.apply(init) ?: new(value, init)
 }
@@ -19,17 +22,26 @@ fun <T : Entity<ID>, ID : Comparable<ID>> EntityClass<ID, T>.insertIfNotExist(
     return existed ?: new(init)
 }
 
-inline fun <T> createPagingDto(pageSize: Int, page: Int, listBuilder: (Int) -> List<T>): PagingDTO<T> {
+inline fun <T> createPagingDto(
+    pageSize: Int,
+    page: Int,
+    listBuilder: (Int) -> List<T>,
+): PagingDTO<T> {
     val offset = (page - 1) * pageSize
-    val previousPage = if (page <= 1) null else page - 1
-    val nextPage = if (page <= 1) 2 else page + 1
-
     val list = listBuilder(offset)
+
+    val previousPage = if (page <= 1) null else page - 1
+    val nextPage =
+        if (list.isEmpty()) {
+            null
+        } else {
+            if (page <= 1) 2 else page + 1
+        }
 
     return PagingDTO<T>(
         count = list.size,
-        previousPage = previousPage,
-        nextPage = nextPage,
+        previous = previousPage?.toString(),
+        next = nextPage?.toString(),
         data = list,
     )
 }

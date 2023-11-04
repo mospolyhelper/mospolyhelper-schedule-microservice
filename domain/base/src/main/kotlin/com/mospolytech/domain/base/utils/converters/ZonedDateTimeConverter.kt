@@ -19,7 +19,10 @@ object ZonedDateTimeConverter : KSerializer<ZonedDateTime> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("ZonedDateTime", PrimitiveKind.STRING)
 
-    override fun serialize(encoder: Encoder, value: ZonedDateTime) {
+    override fun serialize(
+        encoder: Encoder,
+        value: ZonedDateTime,
+    ) {
         val string = dateFormatter.format(value)
         encoder.encodeString(string)
     }

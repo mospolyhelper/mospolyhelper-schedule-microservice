@@ -11,20 +11,25 @@ import org.jetbrains.exposed.sql.*
 import kotlin.sequences.Sequence
 
 class StudentsRemoteDS {
-    suspend fun getStudents() = MosPolyDb.transaction {
-        StudentSafeEntity.all()
-            .orderBy(
-                StudentsDb.lastName to SortOrder.ASC,
-                StudentsDb.firstName to SortOrder.ASC,
-                StudentsDb.middleName to SortOrder.ASC,
-            )
-            .map { it.toModel() }
-    }
-
-    suspend fun getStudentsPaging(query: String, pageSize: Int, page: Int) =
+    suspend fun getStudents() =
         MosPolyDb.transaction {
-            createPagingDto(pageSize, page) { offset ->
-                val query = StudentsDb.leftJoin(GroupsDb)
+            StudentSafeEntity.all()
+                .orderBy(
+                    StudentsDb.lastName to SortOrder.ASC,
+                    StudentsDb.firstName to SortOrder.ASC,
+                    StudentsDb.middleName to SortOrder.ASC,
+                )
+                .map { it.toModel() }
+        }
+
+    suspend fun getStudentsPaging(
+        query: String,
+        pageSize: Int,
+        page: Int,
+    ) = MosPolyDb.transaction {
+        createPagingDto(pageSize, page) { offset ->
+            val query =
+                StudentsDb.leftJoin(GroupsDb)
                     .slice(StudentsDb.columns)
                     .select {
                         (GroupsDb.title like query) or
@@ -35,23 +40,24 @@ class StudentsRemoteDS {
                         StudentsDb.middleName to SortOrder.ASC,
                     )
 
-                StudentSafeEntity.wrapRows(query)
-                    .limit(pageSize, offset.toLong())
-                    .mapLazy { it.toModel() }
-                    .toList()
-            }
+            StudentSafeEntity.wrapRows(query)
+                .limit(pageSize, offset.toLong())
+                .mapLazy { it.toModel() }
+                .toList()
         }
+    }
 
     suspend fun getStudents(group: String) =
         MosPolyDb.transaction {
-            val query = StudentsDb.leftJoin(GroupsDb)
-                .select {
-                    (GroupsDb.title eq group)
-                }.orderBy(
-                    StudentsDb.lastName to SortOrder.ASC,
-                    StudentsDb.firstName to SortOrder.ASC,
-                    StudentsDb.middleName to SortOrder.ASC,
-                )
+            val query =
+                StudentsDb.leftJoin(GroupsDb)
+                    .select {
+                        (GroupsDb.title eq group)
+                    }.orderBy(
+                        StudentsDb.lastName to SortOrder.ASC,
+                        StudentsDb.firstName to SortOrder.ASC,
+                        StudentsDb.middleName to SortOrder.ASC,
+                    )
 
             StudentSafeEntity.wrapRows(query)
                 .mapLazy { it.toModel() }
@@ -69,10 +75,14 @@ class StudentsRemoteDS {
                 .map { it.toModel() }
         }
 
-    suspend fun getShortStudents(query: String, pageSize: Int, page: Int) =
-        MosPolyDb.transaction {
-            createPagingDto(pageSize, page) { offset ->
-                val query = StudentsDb.leftJoin(GroupsDb)
+    suspend fun getShortStudents(
+        query: String,
+        pageSize: Int,
+        page: Int,
+    ) = MosPolyDb.transaction {
+        createPagingDto(pageSize, page) { offset ->
+            val query =
+                StudentsDb.leftJoin(GroupsDb)
                     .slice(StudentsDb.columns)
                     .select {
                         (GroupsDb.title like query) or
@@ -83,12 +93,12 @@ class StudentsRemoteDS {
                         StudentsDb.middleName to SortOrder.ASC,
                     )
 
-                StudentShortEntity.wrapRows(query)
-                    .limit(pageSize, offset.toLong())
-                    .mapLazy { it.toModel() }
-                    .toList()
-            }
+            StudentShortEntity.wrapRows(query)
+                .limit(pageSize, offset.toLong())
+                .mapLazy { it.toModel() }
+                .toList()
         }
+    }
 
     suspend fun addStudent(student: Student) {
         MosPolyDb.transaction {
@@ -97,17 +107,19 @@ class StudentsRemoteDS {
 
             val groupEntity = getGroupEntity(student, facultyEntity, directionEntity)
 
-            val specializationEntity = student.specialization?.let { specialization ->
-                StudentSpecializationEntity.upsert(specialization.id) {
-                    title = specialization.title
+            val specializationEntity =
+                student.specialization?.let { specialization ->
+                    StudentSpecializationEntity.upsert(specialization.id) {
+                        title = specialization.title
+                    }
                 }
-            }
 
-            val branchEntity = student.branch.let { branch ->
-                StudentBranchEntity.upsert(branch.id) {
-                    title = branch.title
+            val branchEntity =
+                student.branch.let { branch ->
+                    StudentBranchEntity.upsert(branch.id) {
+                        title = branch.title
+                    }
                 }
-            }
 
             StudentEntity.upsert(student.id) {
                 firstName = student.firstName
@@ -141,17 +153,19 @@ class StudentsRemoteDS {
 
                 val groupEntity = getGroupEntity(student, facultyEntity, directionEntity)
 
-                val specializationEntity = student.specialization?.let { specialization ->
-                    StudentSpecializationEntity.upsert(specialization.id) {
-                        title = specialization.title
+                val specializationEntity =
+                    student.specialization?.let { specialization ->
+                        StudentSpecializationEntity.upsert(specialization.id) {
+                            title = specialization.title
+                        }
                     }
-                }
 
-                val branchEntity = student.branch.let { branch ->
-                    StudentBranchEntity.upsert(branch.id) {
-                        title = branch.title
+                val branchEntity =
+                    student.branch.let { branch ->
+                        StudentBranchEntity.upsert(branch.id) {
+                            title = branch.title
+                        }
                     }
-                }
 
                 StudentEntity.upsert(student.id) {
                     firstName = student.firstName

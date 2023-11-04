@@ -241,11 +241,12 @@ fun StudentXml.toModel(): Student {
 //        "Целевой прием" -> EducationForm.FullTime
 //        else -> null
 //    }
-    val date = try {
-        LocalDate.parse(studentInfo.birthday, dateFormatter).toKotlinLocalDate()
-    } catch (e: Throwable) {
-        null
-    }
+    val date =
+        try {
+            LocalDate.parse(studentInfo.birthday, dateFormatter).toKotlinLocalDate()
+        } catch (e: Throwable) {
+            null
+        }
     val faculty = studentFaculty.toModel()
     val direction = studentDir.toModel()
     val specialization = studentSpec.toModel()
@@ -257,9 +258,7 @@ fun StudentXml.toModel(): Student {
         firstName = studentInfo.firstName,
         lastName = studentInfo.lastName,
         middleName = studentInfo.middleName,
-
         status = studentStatus.title,
-
         sex = studentInfo.sex.ifEmpty { null },
         avatar = "https://e.mospolytech.ru/old/img/no_avatar.jpg",
         birthday = date,
@@ -313,7 +312,11 @@ fun StudentSpecializationXml.toModel(): StudentSpecialization? {
     }
 }
 
-fun StudentEducationGroupXml.toModel(course: Int?, faculty: StudentFaculty, direction: StudentDirection): Group? {
+fun StudentEducationGroupXml.toModel(
+    course: Int?,
+    faculty: StudentFaculty,
+    direction: StudentDirection,
+): Group? {
     return if (title.isEmpty()) {
         null
     } else {

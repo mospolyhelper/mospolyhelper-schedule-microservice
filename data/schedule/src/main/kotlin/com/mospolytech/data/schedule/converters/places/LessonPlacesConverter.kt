@@ -80,14 +80,15 @@ class LessonPlacesConverter {
     @Suppress("UnnecessaryVariable")
     private fun cacheDb(entity: PlaceEntity): PlaceInfo {
         val model = entity.toModel()
-        val modelWithoutId = model.let {
-            when (model) {
-                is PlaceInfo.Building -> model.copy(id = "")
-                is PlaceInfo.Online -> model.copy(id = "")
-                is PlaceInfo.Other -> model.copy(id = "")
-                is PlaceInfo.Unclassified -> model.copy(id = "")
+        val modelWithoutId =
+            model.let {
+                when (model) {
+                    is PlaceInfo.Building -> model.copy(id = "")
+                    is PlaceInfo.Online -> model.copy(id = "")
+                    is PlaceInfo.Other -> model.copy(id = "")
+                    is PlaceInfo.Unclassified -> model.copy(id = "")
+                }
             }
-        }
         dbCache[modelWithoutId] = model.id
         return modelWithoutId
     }
@@ -99,17 +100,22 @@ class LessonPlacesConverter {
 
     private val regex = Regex("""href="(.*?)".*?>(.*?)<""")
 
-    private fun processAuditorium(auditorium: String, url: String): PlaceInfo {
+    private fun processAuditorium(
+        auditorium: String,
+        url: String,
+    ): PlaceInfo {
         val regGroups = regex.find(auditorium)?.groupValues
-        val (url2, rawTitle0) = if (regGroups != null) {
-            regGroups.getOrNull(1) to regGroups.getOrNull(2)
-        } else {
-            null to null
-        }
+        val (url2, rawTitle0) =
+            if (regGroups != null) {
+                regGroups.getOrNull(1) to regGroups.getOrNull(2)
+            } else {
+                null to null
+            }
 
         val parsedHtml = rawTitle0 ?: auditorium
-        val rawTitle = parsedHtml.trim()
-            .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+        val rawTitle =
+            parsedHtml.trim()
+                .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
         val (rawTitle2, type) = parseEmoji(rawTitle)
         val title = processTitle(rawTitle2)
 
@@ -130,12 +136,13 @@ class LessonPlacesConverter {
         }
     }
 
-    private val emojis = listOf(
-        "\uD83D\uDCF7" to "Вебинар", // 📷
-        "\uD83C\uDFE0" to "LMS", // 🏠
-        "\uD83D\uDCBB" to "Видеоконф.", // 💻
-        "\uD83C\uDF10" to "Online курс", // 🌐
-    )
+    private val emojis =
+        listOf(
+            "\uD83D\uDCF7" to "Вебинар", // 📷
+            "\uD83C\uDFE0" to "LMS", // 🏠
+            "\uD83D\uDCBB" to "Видеоконф.", // 💻
+            "\uD83C\uDF10" to "Online курс", // 🌐
+        )
 
     private fun parseEmoji(raw: String): Pair<String, String> {
         val emoji = emojis.firstOrNull { raw.contains(it.first) }
@@ -146,7 +153,10 @@ class LessonPlacesConverter {
         }
     }
 
-    private fun parsePlace(place: String, url: String = ""): PlaceInfo {
+    private fun parsePlace(
+        place: String,
+        url: String = "",
+    ): PlaceInfo {
         return parserChain.firstNotNullOfOrNull {
             val matchResult = place.parseBy(patterns = it.patterns.toTypedArray())
             if (matchResult == null) {

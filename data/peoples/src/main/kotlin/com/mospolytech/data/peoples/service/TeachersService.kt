@@ -21,30 +21,30 @@ class TeachersService(
     private val client: HttpClient,
     private val appConfig: AppConfig,
 ) {
-    companion object {
-        private const val FOLDER_NAME = "teachers"
-    }
-
     @OptIn(ExperimentalXmlUtilApi::class)
-    suspend fun parseTeachers(file: File): Sequence<EmployeeInfo> = withContext(Dispatchers.IO) {
-        val xml = XML {
-            unknownChildHandler = UnknownChildHandler { _, _, _, _, _ -> emptyList() }
+    suspend fun parseTeachers(file: File): Sequence<EmployeeInfo> =
+        withContext(Dispatchers.IO) {
+            val xml =
+                XML {
+                    unknownChildHandler = UnknownChildHandler { _, _, _, _, _ -> emptyList() }
+                }
+
+            val inputString =
+                file.readText()
+                    .replaceBefore("<m:ДанныеОРаботнике>", "")
+                    .replaceAfterLast("</m:ДанныеОРаботнике>", "")
+                    .replace("\t\t\t\t", "")
+                    // .replace("""\t<m:Паспорт>[^*]*?</m:ДанныеОРаботнике>""".toRegex(), "</m:ДанныеОРаботнике>")
+                    .replace("m:", "")
+
+            val teachers =
+                "<ДанныеОРаботнике>[^*]*?</ДанныеОРаботнике>".toRegex()
+                    .findAll(inputString)
+                    .map { xml.decodeFromString<EmployeeInfo>(it.value) }
+                    .filter { it.status == "Работа" }
+
+            return@withContext teachers
         }
-
-        val inputString = file.readText()
-            .replaceBefore("<m:ДанныеОРаботнике>", "")
-            .replaceAfterLast("</m:ДанныеОРаботнике>", "")
-            .replace("\t\t\t\t", "")
-            // .replace("""\t<m:Паспорт>[^*]*?</m:ДанныеОРаботнике>""".toRegex(), "</m:ДанныеОРаботнике>")
-            .replace("m:", "")
-
-        val teachers = "<ДанныеОРаботнике>[^*]*?</ДанныеОРаботнике>".toRegex()
-            .findAll(inputString)
-            .map { xml.decodeFromString<EmployeeInfo>(it.value) }
-            .filter { it.status == "Работа" }
-
-        return@withContext teachers
-    }
 
     suspend fun downloadTeachers(): File {
         val file = createTempFile(prefix = "staff").toFile()
@@ -77,7 +77,10 @@ class TeachersService(
         return file
     }
 
-    private val GET_TEACHERS_BODY = """<?xml version="1.0" encoding="utf-8"?>
+    companion object {
+        private const val FOLDER_NAME = "teachers"
+
+        private val GET_TEACHERS_BODY = """<?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
     <ИнформацияПоРаботникамИФизЛицамВЧастиПерсональныхДанных xmlns="BS">
@@ -86,4 +89,5 @@ class TeachersService(
     </ИнформацияПоРаботникамИФизЛицамВЧастиПерсональныхДанных>
   </soap:Body>
 </soap:Envelope>"""
+    }
 }

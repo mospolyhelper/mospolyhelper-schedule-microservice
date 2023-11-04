@@ -165,12 +165,10 @@ class ScheduleRepositoryImpl(
             MosPolyDb.transaction {
                 SchemaUtils.drop(
                     LessonsDb,
-
                     LessonToLessonDateTimesDb,
                     LessonToTeachersDb,
                     LessonToGroupsDb,
                     LessonToPlacesDb,
-
                     LessonTypesDb,
                     SubjectsDb,
                     LessonDateTimesDb,
@@ -180,12 +178,10 @@ class ScheduleRepositoryImpl(
             MosPolyDb.transaction {
                 SchemaUtils.create(
                     LessonsDb,
-
                     LessonToLessonDateTimesDb,
                     LessonToTeachersDb,
                     LessonToGroupsDb,
                     LessonToPlacesDb,
-
                     LessonTypesDb,
                     SubjectsDb,
                     LessonDateTimesDb,

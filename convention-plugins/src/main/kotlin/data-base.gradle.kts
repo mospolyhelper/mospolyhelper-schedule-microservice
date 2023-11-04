@@ -1,4 +1,5 @@
 @file:Suppress("UnstableApiUsage")
+import gradle.kotlin.dsl.accessors._75da82148b3d30221392f51f4dbc0b7f.implementation
 import org.gradle.accessors.dm.LibrariesForLibs
 
 plugins {
@@ -18,6 +19,7 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.client.logging)
 
+    implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
 
     implementation(libs.logback)

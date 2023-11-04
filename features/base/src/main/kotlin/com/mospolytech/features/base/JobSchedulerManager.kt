@@ -8,7 +8,6 @@ import org.quartz.impl.StdSchedulerFactory
 import java.util.*
 
 class JobSchedulerManager(config: AppConfig) {
-
     var scheduler: Scheduler
 
     init {
@@ -35,9 +34,10 @@ class JobSchedulerManager(config: AppConfig) {
 
         val schedulerFactory: SchedulerFactory = StdSchedulerFactory(props)
 
-        scheduler = schedulerFactory.scheduler.apply {
-            setJobFactory(DiJobFactory())
-        }
+        scheduler =
+            schedulerFactory.scheduler.apply {
+                setJobFactory(DiJobFactory())
+            }
     }
 
     fun startScheduler() {

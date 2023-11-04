@@ -13,20 +13,21 @@ data class StudentShort(
 )
 
 val StudentShort.description
-    get() = buildString {
-        group?.let {
-            append(it.title)
-        }
+    get() =
+        buildString {
+            group?.let {
+                append(it.title)
+            }
 
-        course?.let {
-            ifNotEmpty { append(", ") }
-            append("$course-й курс")
-        }
-
-        group?.let {
-            group.direction?.let {
+            course?.let {
                 ifNotEmpty { append(", ") }
-                append(group.direction.title)
+                append("$course-й курс")
+            }
+
+            group?.let {
+                group.direction?.let {
+                    ifNotEmpty { append(", ") }
+                    append(group.direction.title)
+                }
             }
         }
-    }

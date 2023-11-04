@@ -13,31 +13,33 @@ import org.apache.http.conn.ssl.TrustAllStrategy
 import org.apache.http.ssl.SSLContextBuilder
 import org.koin.dsl.module
 
-val baseDataModule = module {
-    single {
-        HttpClient(Apache) {
-            install(ContentNegotiation) {
-                val json = Json {
-                    ignoreUnknownKeys = true
+val baseDataModule =
+    module {
+        single {
+            HttpClient(Apache) {
+                install(ContentNegotiation) {
+                    val json =
+                        Json {
+                            ignoreUnknownKeys = true
+                        }
+
+                    json(json)
+                    json(json, ContentType.Text.Any)
                 }
 
-                json(json)
-                json(json, ContentType.Text.Any)
-            }
+                install(Logging) {
+                    logger = Logger.DEFAULT
+                    level = LogLevel.INFO
+                }
 
-            install(Logging) {
-                logger = Logger.DEFAULT
-                level = LogLevel.INFO
-            }
-
-            engine {
-                customizeClient {
-                    setSSLContext(SSLContextBuilder().loadTrustMaterial(null, TrustAllStrategy.INSTANCE).build())
-                    setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
-                    socketTimeout = 10_000_000
-                    connectTimeout = 0
+                engine {
+                    customizeClient {
+                        setSSLContext(SSLContextBuilder().loadTrustMaterial(null, TrustAllStrategy.INSTANCE).build())
+                        setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+                        socketTimeout = 10_000_000
+                        connectTimeout = 0
+                    }
                 }
             }
         }
     }
-}

@@ -18,7 +18,10 @@ class AuthService(
         private const val WRONG_CREDENTIALS_CODE = 400
     }
 
-    suspend fun getToken(login: String, password: String): TokenResponse {
+    suspend fun getToken(
+        login: String,
+        password: String,
+    ): TokenResponse {
         return client.submitForm(
             GetToken,
             Parameters.build {

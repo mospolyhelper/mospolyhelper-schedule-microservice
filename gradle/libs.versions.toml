@@ -1,12 +1,12 @@
 [versions]
-kotlin = "1.9.10"
-ktlint = "3.14.0"
+kotlin = "1.9.20"
+ktlint = "4.0.0"
 
-ktor = "2.3.4"
+ktor = "2.3.5"
 logback = "1.4.11"
-prometeus = "1.11.4"
-koin = "3.5.0"
-exposed = "0.44.0"
+prometeus = "1.11.5"
+koin = "3.5.1"
+exposed = "0.44.1"
 xmlutil = "0.86.2"
 kotlinxDatetime = "0.4.1"
 postgresql = "42.6.0"
@@ -49,8 +49,9 @@ ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "k
 
 prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "prometeus" }
 
-koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
-koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref = "koin" }
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
+koin-core = { module = "io.insert-koin:koin-core", name = "koin-core" }
+koin-ktor = { module = "io.insert-koin:koin-ktor", name = "koin-ktor" }
 
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 

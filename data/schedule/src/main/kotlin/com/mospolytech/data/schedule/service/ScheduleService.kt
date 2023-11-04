@@ -20,7 +20,10 @@ class ScheduleService(
         private const val GetScheduleTeacher = "$BaseUrlTeacher/lessons/teacher-html"
     }
 
-    suspend fun getScheduleByGroup(groupTitle: String, isSession: Boolean): String {
+    suspend fun getScheduleByGroup(
+        groupTitle: String,
+        isSession: Boolean,
+    ): String {
         return client.get(GetSchedule) {
             header("referer", BaseUrl)
             // For json error status if schedule is not ready instead html

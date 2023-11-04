@@ -9,14 +9,19 @@ import com.mospolytech.domain.schedule.model.source.ScheduleSources
 
 interface ScheduleRepository {
     suspend fun getCompactSchedule(): CompactSchedule
+
     suspend fun getCompactSchedule(filter: ScheduleComplexFilter): CompactSchedule
+
     suspend fun getCompactSchedule(source: ScheduleSource): CompactSchedule
+
     suspend fun findGroupByTitle(title: String): String?
+
     suspend fun getSourceList(
         sourceType: ScheduleSources,
         query: String,
         page: Int,
         pageSize: Int,
     ): PagingDTO<ScheduleSourceFull>
+
     suspend fun updateData(recreateDb: Boolean)
 }

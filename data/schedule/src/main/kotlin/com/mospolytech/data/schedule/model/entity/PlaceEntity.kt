@@ -27,40 +27,45 @@ class PlaceEntity(id: EntityID<UUID>) : UUIDEntity(id) {
 
     fun toModel(): PlaceInfo {
         return when (type) {
-            PlaceTypes.Building -> PlaceInfo.Building(
-                id = id.value.toString(),
-                title = title,
-                areaAlias = areaAlias,
-                street = street,
-                building = building,
-                floor = floor,
-                auditorium = auditorium,
-                location = lat?.let { lat ->
-                    lng?.let { lng ->
-                        Location(
-                            lat = lat,
-                            lng = lng,
-                        )
-                    }
-                },
-                description = description,
-            )
-            PlaceTypes.Online -> PlaceInfo.Online(
-                id = id.value.toString(),
-                title = title,
-                url = url,
-                description = description,
-            )
-            PlaceTypes.Other -> PlaceInfo.Other(
-                id = id.value.toString(),
-                title = title,
-                description = description,
-            )
-            PlaceTypes.Unclassified -> PlaceInfo.Unclassified(
-                id = id.value.toString(),
-                title = title,
-                description = description,
-            )
+            PlaceTypes.Building ->
+                PlaceInfo.Building(
+                    id = id.value.toString(),
+                    title = title,
+                    areaAlias = areaAlias,
+                    street = street,
+                    building = building,
+                    floor = floor,
+                    auditorium = auditorium,
+                    location =
+                        lat?.let { lat ->
+                            lng?.let { lng ->
+                                Location(
+                                    lat = lat,
+                                    lng = lng,
+                                )
+                            }
+                        },
+                    description = description,
+                )
+            PlaceTypes.Online ->
+                PlaceInfo.Online(
+                    id = id.value.toString(),
+                    title = title,
+                    url = url,
+                    description = description,
+                )
+            PlaceTypes.Other ->
+                PlaceInfo.Other(
+                    id = id.value.toString(),
+                    title = title,
+                    description = description,
+                )
+            PlaceTypes.Unclassified ->
+                PlaceInfo.Unclassified(
+                    id = id.value.toString(),
+                    title = title,
+                    description = description,
+                )
         }
     }
 }
@@ -68,35 +73,39 @@ class PlaceEntity(id: EntityID<UUID>) : UUIDEntity(id) {
 val PlaceEntity.description2: String
     get() {
         return when (type) {
-            PlaceTypes.Building -> buildString {
-                street?.let {
-                    append(street)
-                }
+            PlaceTypes.Building ->
+                buildString {
+                    street?.let {
+                        append(street)
+                    }
 
-                building?.let {
-                    ifNotEmpty { append(", ") }
-                    append("$building-й корус")
-                }
+                    building?.let {
+                        ifNotEmpty { append(", ") }
+                        append("$building-й корус")
+                    }
 
-                floor?.let {
-                    ifNotEmpty { append(", ") }
-                    append("$floor-й этаж")
+                    floor?.let {
+                        ifNotEmpty { append(", ") }
+                        append("$floor-й этаж")
+                    }
                 }
-            }
-            PlaceTypes.Online -> buildString {
-                url?.let {
-                    append(url)
+            PlaceTypes.Online ->
+                buildString {
+                    url?.let {
+                        append(url)
+                    }
                 }
-            }
-            PlaceTypes.Other -> buildString {
-                description?.let {
-                    append(description)
+            PlaceTypes.Other ->
+                buildString {
+                    description?.let {
+                        append(description)
+                    }
                 }
-            }
-            PlaceTypes.Unclassified -> buildString {
-                description?.let {
-                    append(description)
+            PlaceTypes.Unclassified ->
+                buildString {
+                    description?.let {
+                        append(description)
+                    }
                 }
-            }
         }
     }

@@ -102,15 +102,21 @@ data class PaygraphResponse(
 )
 
 fun ContractsResponse.toModel(): Contracts {
-    val payments = mutableMapOf<PaymentType, Payments>().apply {
-        if (dormitory.isNotEmpty()) put(PaymentType.Dormitory, dormitory.map { it.toModel() }.first())
-        if (education.isNotEmpty()) put(PaymentType.Education, education.map { it.toModel() }.first())
-    }
+    val payments =
+        mutableMapOf<PaymentType, Payments>().apply {
+            if (dormitory.isNotEmpty()) put(PaymentType.Dormitory, dormitory.map { it.toModel() }.first())
+            if (education.isNotEmpty()) put(PaymentType.Education, education.map { it.toModel() }.first())
+        }
     return Contracts(payments)
 }
 
 fun PaymentsResponse.toModel(): Payments {
-    val lastPayment = try { lastPaymentDate.toDate() } catch (e: Throwable) { null }
+    val lastPayment =
+        try {
+            lastPaymentDate.toDate()
+        } catch (e: Throwable) {
+            null
+        }
     return Payments(
         id = id,
         student = student,

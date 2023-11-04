@@ -17,6 +17,7 @@ import java.util.*
 
 // TODO: Удалить
 private const val LK_TOKEN = "mospolytechLkToken"
+
 fun Application.authRoutesV1(
     repository: AuthRepository,
     personalRepository: PersonalRepository,
@@ -48,11 +49,12 @@ fun Application.authRoutesV1(
     }
 }
 
-private fun String.createJwt(secretKey: String) = JWT
-    .create()
-    .withClaim(LK_TOKEN, this)
-    .withExpiresAt(Date(Long.MAX_VALUE))
-    .sign(Algorithm.HMAC256(secretKey))
+private fun String.createJwt(secretKey: String) =
+    JWT
+        .create()
+        .withClaim(LK_TOKEN, this)
+        .withExpiresAt(Date(Long.MAX_VALUE))
+        .sign(Algorithm.HMAC256(secretKey))
 
 enum class ValidationFields {
     UserType,

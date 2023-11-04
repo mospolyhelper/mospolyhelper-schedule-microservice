@@ -82,26 +82,30 @@ private fun String.getSex() =
         contains("male", ignoreCase = true) -> "Мужской"
         else -> this
     }
+
 private fun String.toModel(): Order {
     val dateRegex = "от.*г\\.".toRegex()
     val nameRegex = "^.* от".toRegex()
     val descriptionRegex = "«.*»".toRegex()
 
-    val description = descriptionRegex
-        .find(this)
-        ?.value
-        ?.replace("«", "")
-        ?.replace("»", "")
-        ?.trim()
-        .orEmpty()
-    val name = nameRegex.find(this)
-        ?.value
-        ?.replace("от", "")
-        ?.trim()
-        .orEmpty()
-    val date = dateRegex.find(this)
-        ?.value
-        ?.toDate()
+    val description =
+        descriptionRegex
+            .find(this)
+            ?.value
+            ?.replace("«", "")
+            ?.replace("»", "")
+            ?.trim()
+            .orEmpty()
+    val name =
+        nameRegex.find(this)
+            ?.value
+            ?.replace("от", "")
+            ?.trim()
+            .orEmpty()
+    val date =
+        dateRegex.find(this)
+            ?.value
+            ?.toDate()
 
     return Order(date, name, description)
 }

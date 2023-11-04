@@ -14,11 +14,17 @@ class StudentsRepositoryImpl(
     private val studentsDS: StudentsRemoteDS,
     private val personalRepository: PersonalRepository,
 ) : StudentsRepository {
+    override suspend fun getStudents(
+        query: String,
+        page: Int,
+        pageSize: Int,
+    ) = studentsDS.getStudentsPaging(query, pageSize, page)
 
-    override suspend fun getStudents(query: String, page: Int, pageSize: Int) =
-        studentsDS.getStudentsPaging(query, pageSize, page)
-
-    override suspend fun getShortStudents(query: String, page: Int, pageSize: Int): PagingDTO<StudentShort> {
+    override suspend fun getShortStudents(
+        query: String,
+        page: Int,
+        pageSize: Int,
+    ): PagingDTO<StudentShort> {
         return studentsDS.getShortStudents(query, pageSize, page)
     }
 

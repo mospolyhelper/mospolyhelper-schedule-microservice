@@ -11,7 +11,6 @@ import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.mapLazy
 
 class GroupsRepositoryImpl : GroupsRepository {
-
     override suspend fun get(id: String): Group? {
         return MosPolyDb.transaction {
             GroupEntity.findById(id)?.toModel()
@@ -26,7 +25,11 @@ class GroupsRepositoryImpl : GroupsRepository {
         }
     }
 
-    override suspend fun getPaging(query: String, pageSize: Int, page: Int): PagingDTO<Group> {
+    override suspend fun getPaging(
+        query: String,
+        pageSize: Int,
+        page: Int,
+    ): PagingDTO<Group> {
         return MosPolyDb.transaction {
             createPagingDto(pageSize, page) { offset ->
                 GroupEntity.find { GroupsDb.title like query }

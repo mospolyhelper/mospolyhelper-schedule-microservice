@@ -13,7 +13,10 @@ import java.time.format.DateTimeFormatter
 object LocalDateTimeConverter : KSerializer<LocalDateTime> {
     private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
-    override fun serialize(encoder: Encoder, value: LocalDateTime) {
+    override fun serialize(
+        encoder: Encoder,
+        value: LocalDateTime,
+    ) {
         val string = dateFormatter.format(value)
         encoder.encodeString(string)
     }

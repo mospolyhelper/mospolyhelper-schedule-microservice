@@ -27,7 +27,11 @@ class PlacesRepositoryImpl : PlacesRepository {
         }
     }
 
-    override suspend fun getPaging(query: String, pageSize: Int, page: Int): PagingDTO<PlaceInfo> {
+    override suspend fun getPaging(
+        query: String,
+        pageSize: Int,
+        page: Int,
+    ): PagingDTO<PlaceInfo> {
         return MosPolyDb.transaction {
             createPagingDto(pageSize, page) { offset ->
                 PlaceEntity.find { PlacesDb.title like query }

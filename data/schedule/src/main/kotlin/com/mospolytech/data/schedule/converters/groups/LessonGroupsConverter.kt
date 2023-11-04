@@ -43,10 +43,11 @@ class LessonGroupsConverter {
 
             val notInDb = dtoList subtract allDbItems
 
-            val rows = GroupsDb.batchInsert(notInDb) { dto ->
-                this[GroupsDb.id] = UUID.randomUUID().toString()
-                this[GroupsDb.title] = dto.title
-            }
+            val rows =
+                GroupsDb.batchInsert(notInDb) { dto ->
+                    this[GroupsDb.id] = UUID.randomUUID().toString()
+                    this[GroupsDb.title] = dto.title
+                }
 
             rows.forEach { cacheDb(it) }
         }
@@ -54,13 +55,14 @@ class LessonGroupsConverter {
 
     private fun cacheDb(row: ResultRow): Group {
         val id = row[GroupsDb.id].value
-        val model = Group(
-            id = "",
-            title = row[GroupsDb.title],
-            course = null,
-            faculty = null,
-            direction = null,
-        )
+        val model =
+            Group(
+                id = "",
+                title = row[GroupsDb.title],
+                course = null,
+                faculty = null,
+                direction = null,
+            )
         dbCache[model] = id
         return model
     }

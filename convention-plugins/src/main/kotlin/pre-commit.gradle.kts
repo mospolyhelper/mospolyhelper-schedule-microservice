@@ -9,6 +9,6 @@ task<Copy>("installGitHook") {
     val intoFile = File(rootProject.rootDir, ".git/hooks")
     from(fromFile)
     into(intoFile)
-    rename("$prefix-$suffix", "$prefix")
+    rename("$prefix-$suffix", prefix)
     fileMode = 775
 }

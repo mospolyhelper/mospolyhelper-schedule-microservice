@@ -35,7 +35,7 @@ data class EmployeeInfo(
     val post: String,
     @SerialName("Пол")
     @XmlElement(true)
-    val Sex: String,
+    val sex: String,
     @SerialName("ЭлПочтаСлужебная")
     @XmlElement(true)
     val email: String?,
@@ -56,42 +56,46 @@ data class EmployeeInfo(
 private val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
 fun EmployeeInfo.toModel(): Teacher {
-    val stuffType = when (stuffType) {
-        "ППС" -> "Профессорско-преподавательский состав"
-        "АУП" -> "Административно-управленческий персонал"
-        "УВП" -> "Учебно-вспомогательный персонал"
-        "ПОП" -> "Прочий обслуживающий персонал"
-        "МОП" -> "Младший обслуживающий персонал"
-        "ИПР" -> "Инной педагогический работник"
-        "НТР" -> "Научно-технический работник"
-        "НР" -> "Научный работник"
-        else -> stuffType
-    }
+    val stuffType =
+        when (stuffType) {
+            "ППС" -> "Профессорско-преподавательский состав"
+            "АУП" -> "Административно-управленческий персонал"
+            "УВП" -> "Учебно-вспомогательный персонал"
+            "ПОП" -> "Прочий обслуживающий персонал"
+            "МОП" -> "Младший обслуживающий персонал"
+            "ИПР" -> "Инной педагогический работник"
+            "НТР" -> "Научно-технический работник"
+            "НР" -> "Научный работник"
+            else -> stuffType
+        }
 
     return Teacher(
         id = guid,
         name = name,
         avatar = "https://e.mospolytech.ru/old/img/no_avatar.jpg",
         stuffType = stuffType,
-        birthday = try {
-            LocalDate.parse(birthDate, dateFormatter).toKotlinLocalDate()
-        } catch (e: Throwable) {
-            null
-        },
+        birthday =
+            try {
+                LocalDate.parse(birthDate, dateFormatter).toKotlinLocalDate()
+            } catch (e: Throwable) {
+                null
+            },
         grade = post,
-        departmentParent = Department(
-            id = departmentParentGuid,
-            title = departmentParent,
-        ),
-        department = if (department != null && departmentGuid != null) {
+        departmentParent =
             Department(
-                id = departmentGuid,
-                title = department,
-            )
-        } else {
-            null
-        },
-        sex = Sex,
+                id = departmentParentGuid,
+                title = departmentParent,
+            ),
+        department =
+            if (department != null && departmentGuid != null) {
+                Department(
+                    id = departmentGuid,
+                    title = department,
+                )
+            } else {
+                null
+            },
+        sex = sex,
         email = email,
     )
 }

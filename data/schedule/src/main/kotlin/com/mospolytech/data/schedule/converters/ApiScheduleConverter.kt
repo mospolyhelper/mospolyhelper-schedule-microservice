@@ -41,13 +41,14 @@ class ApiScheduleConverter(
                         val groupIsEvening = apiSchedule.group.evening != 0
                         val isByDate = apiSchedule.isSession
 
-                        lessonData.dateTimes += ApiDateTimeData(
-                            order = order,
-                            groupIsEvening = groupIsEvening,
-                            apiLesson = lesson,
-                            day = day,
-                            isByDate = isByDate,
-                        )
+                        lessonData.dateTimes +=
+                            ApiDateTimeData(
+                                order = order,
+                                groupIsEvening = groupIsEvening,
+                                apiLesson = lesson,
+                                day = day,
+                                isByDate = isByDate,
+                            )
                     }
                 }
             }
@@ -88,13 +89,14 @@ class ApiScheduleConverter(
                         val groupIsEvening = apiSchedule.group.evening != 0
                         val isByDate = apiSchedule.isSession
 
-                        lessonData.dateTimes += ApiDateTimeData(
-                            order = order,
-                            groupIsEvening = groupIsEvening,
-                            apiLesson = lesson,
-                            day = day,
-                            isByDate = isByDate,
-                        )
+                        lessonData.dateTimes +=
+                            ApiDateTimeData(
+                                order = order,
+                                groupIsEvening = groupIsEvening,
+                                apiLesson = lesson,
+                                day = day,
+                                isByDate = isByDate,
+                            )
                     }
                 }
             }
@@ -120,7 +122,7 @@ class ApiScheduleConverter(
         lessonConverter.clearCache()
     }
 
-    private suspend fun convertAndCacheLessons(
+    private fun convertAndCacheLessons(
         days: List<Pair<String, Map<String, List<ApiLesson>>>>,
         groups: List<ApiGroup>,
         isByDate: Boolean,
@@ -169,9 +171,10 @@ fun mergeLessons(vararg lessonsList: List<CompactLessonAndTimes>): List<CompactL
 
 fun CompactLessonAndTimes.mergeByGroup(other: CompactLessonAndTimes): CompactLessonAndTimes {
     return this.copy(
-        lesson = lesson.copy(
-            groupsId = (lesson.groupsId + other.lesson.groupsId).sorted(),
-        ),
+        lesson =
+            lesson.copy(
+                groupsId = (lesson.groupsId + other.lesson.groupsId).sorted(),
+            ),
     )
 }
 

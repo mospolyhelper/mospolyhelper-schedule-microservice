@@ -11,9 +11,11 @@ class TeachersRepositoryImpl(
     private val teachersService: TeachersService,
     private val teachersDS: TeachersRemoteDS,
 ) : TeachersRepository {
-
-    override suspend fun getTeachers(name: String, page: Int, pageSize: Int) =
-        teachersDS.getTeachersPaging(name, pageSize, page)
+    override suspend fun getTeachers(
+        name: String,
+        page: Int,
+        pageSize: Int,
+    ) = teachersDS.getTeachersPaging(name, pageSize, page)
 
     override suspend fun getTeachers() = teachersDS.getTeachers()
 

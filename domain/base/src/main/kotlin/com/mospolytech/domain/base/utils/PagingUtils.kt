@@ -5,8 +5,8 @@ import com.mospolytech.domain.base.model.PagingDTO
 inline fun <T, R> PagingDTO<T>.map(transform: (T) -> R): PagingDTO<R> {
     return PagingDTO<R>(
         count = this.count,
-        previousPage = this.previousPage,
-        nextPage = this.nextPage,
+        previous = this.previous,
+        next = this.next,
         data = this.data.map(transform),
     )
 }

@@ -9,9 +9,7 @@ data class Student(
     val firstName: String,
     val lastName: String,
     val middleName: String?,
-
     val status: String,
-
     val sex: String?,
     val avatar: String?,
     val birthday: LocalDate?,
@@ -31,8 +29,9 @@ data class Student(
 )
 
 val Student.description
-    get() = buildString {
-        group?.let {
-            append(it.description)
+    get() =
+        buildString {
+            group?.let {
+                append(it.description)
+            }
         }
-    }

@@ -8,7 +8,6 @@ import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 class PerformanceRepositoryImpl(private val service: PerformanceService) : PerformanceRepository {
-
     override suspend fun getCourses(token: String): Result<List<Int>> {
         return runCatching {
             val performanceResponse = service.getPerformanceInfo(token)
@@ -36,17 +35,21 @@ class PerformanceRepositoryImpl(private val service: PerformanceService) : Perfo
             val maxCourse = performanceResponse.academicPerformance.maxOfOrNull { it.course } ?: 0
             var maxSemester = maxCourse * 2 - 1
             if (lastExamMonth.value > Month.FEBRUARY.value && lastExamMonth.value < Month.SEPTEMBER.value) maxSemester++
-            val coursesWithSemesters = mutableMapOf<Int, Int>().apply {
-                val semestersInCourse = ceil(maxSemester.toDouble() / maxCourse.toDouble()).roundToInt()
-                for (semester in 1..maxSemester) {
-                    put(semester, ceil(semester.toDouble() / semestersInCourse).roundToInt())
+            val coursesWithSemesters =
+                mutableMapOf<Int, Int>().apply {
+                    val semestersInCourse = ceil(maxSemester.toDouble() / maxCourse.toDouble()).roundToInt()
+                    for (semester in 1..maxSemester) {
+                        put(semester, ceil(semester.toDouble() / semestersInCourse).roundToInt())
+                    }
                 }
-            }
             SemestersWithCourse(coursesWithSemesters)
         }
     }
 
-    override suspend fun getPerformance(semester: String?, token: String): Result<List<Performance>> {
+    override suspend fun getPerformance(
+        semester: String?,
+        token: String,
+    ): Result<List<Performance>> {
         return runCatching {
             val performanceResponse = service.getPerformanceInfo(token, semester)
             performanceResponse.academicPerformance.map { it.toModel() }

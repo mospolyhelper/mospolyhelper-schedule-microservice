@@ -8,9 +8,10 @@ import org.quartz.JobExecutionContext
 class StudentsUpdateJob(
     private val studentsRepository: StudentsRepository,
 ) : Job {
-    override fun execute(context: JobExecutionContext?) = runBlocking {
-        studentsRepository.updateData(false)
-    }
+    override fun execute(context: JobExecutionContext?) =
+        runBlocking {
+            studentsRepository.updateData(false)
+        }
 
     companion object {
         const val KEY = "UpdateStudentsJob"

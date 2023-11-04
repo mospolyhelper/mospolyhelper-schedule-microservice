@@ -9,7 +9,6 @@ import org.jetbrains.exposed.sql.SortOrder
 import java.util.*
 
 class LessonTypesRepositoryImpl : LessonTypesRepository {
-
     override suspend fun get(id: String): LessonTypeInfo? {
         return MosPolyDb.transaction {
             LessonTypeEntity.findById(UUID.fromString(id))?.toModel()

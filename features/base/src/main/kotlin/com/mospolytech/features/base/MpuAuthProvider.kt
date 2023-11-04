@@ -40,7 +40,7 @@ class MpuAuthenticationProvider(private val secret: String, config: Configuratio
     /**
      * JWT auth provider configuration
      */
-    class Configuration(private val secret: String, name: String?) : AuthenticationProvider.Config(name) {
+    class Configuration(private val secret: String, name: String?) : Config(name) {
         internal var authenticationFunction: AuthenticationFunction<MpuCredential> = {
             throw NotImplementedError(
                 "JWT auth validate function is not specified. Use jwt { validate { ... } } to fix.",
@@ -78,9 +78,10 @@ class MpuAuthenticationProvider(private val secret: String, config: Configuratio
         }
 
         try {
-            val principal = verifyAndValidate(secret, call, token) {
-                authenticationFunction(this, MpuCredential(token.getBlob(secret)!!))
-            }
+            val principal =
+                verifyAndValidate(secret, call, token) {
+                    authenticationFunction(this, MpuCredential(token.getBlob(secret)!!))
+                }
             if (principal != null) {
                 context.principal(principal)
                 return
@@ -111,7 +112,7 @@ fun AuthenticationConfig.mpuAuth(
  * Specifies what to send back if session authentication fails.
  */
 typealias MpuAuthChallengeFunction =
-suspend MpuAuthChallengeContext.(defaultScheme: String) -> Unit
+    suspend MpuAuthChallengeContext.(defaultScheme: String) -> Unit
 
 class MpuAuthChallengeContext(
     val call: ApplicationCall,
@@ -135,35 +136,39 @@ private suspend fun verifyAndValidate(
     token: HttpAuthHeader,
     validate: suspend ApplicationCall.(Payload) -> Principal?,
 ): Principal? {
-    val jwt = try {
-        token.getBlob(secret)
-    } catch (ex: JWTVerificationException) {
-        CustomLogger.trace("Token verification failed: {}", ex.message)
-        null
-    } ?: return null
+    val jwt =
+        try {
+            token.getBlob(secret)
+        } catch (ex: JWTVerificationException) {
+            CustomLogger.trace("Token verification failed: {}", ex.message)
+            null
+        } ?: return null
     return validate(call, jwt)
 }
 
-private fun HttpAuthHeader.getBlob(secret: String) = when {
-    this is HttpAuthHeader.Single && authScheme == "Bearer" -> {
-        blob.decodeJwtToken(secret).parse()
+private fun HttpAuthHeader.getBlob(secret: String) =
+    when {
+        this is HttpAuthHeader.Single && authScheme == "Bearer" -> {
+            blob.decodeJwtToken(secret).parse()
+        }
+        else -> null
     }
-    else -> null
-}
 
-private fun String.decodeJwtToken(secret: String) = JWT
-    .require(Algorithm.HMAC256(secret))
-    .build()
-    .verify(this)
+private fun String.decodeJwtToken(secret: String) =
+    JWT
+        .require(Algorithm.HMAC256(secret))
+        .build()
+        .verify(this)
 
 private fun DecodedJWT.parse() =
     payload
         .decodeBase64String()
         .let { JWTParser().parsePayload(it) }
 
-private fun ApplicationRequest.parseAuthorizationHeaderOrNull() = try {
-    parseAuthorizationHeader()
-} catch (ex: IllegalArgumentException) {
-    CustomLogger.trace("Illegal HTTP auth header", ex)
-    null
-}
+private fun ApplicationRequest.parseAuthorizationHeaderOrNull() =
+    try {
+        parseAuthorizationHeader()
+    } catch (ex: IllegalArgumentException) {
+        CustomLogger.trace("Illegal HTTP auth header", ex)
+        null
+    }

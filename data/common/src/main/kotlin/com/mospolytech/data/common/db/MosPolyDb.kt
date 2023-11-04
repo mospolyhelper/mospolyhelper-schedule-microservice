@@ -6,7 +6,6 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 object MosPolyDb {
-
     // private val log = LoggerFactory.getLogger(this::class.java)
 
     fun connectAndMigrate(config: AppConfig) {
@@ -49,14 +48,9 @@ object MosPolyDb {
 //        log.info("Flyway migration has finished")
 //    }
 
-    suspend fun <T> transaction(
-        block: suspend () -> T,
-    ): T =
-        newSuspendedTransaction(Dispatchers.IO) { block() }
+    suspend fun <T> transaction(block: suspend () -> T): T = newSuspendedTransaction(Dispatchers.IO) { block() }
 
-    suspend fun <T> transactionCatching(
-        block: suspend () -> T,
-    ): Result<T> =
+    suspend fun <T> transactionCatching(block: suspend () -> T): Result<T> =
         kotlin.runCatching {
             newSuspendedTransaction(Dispatchers.IO) { block() }
         }

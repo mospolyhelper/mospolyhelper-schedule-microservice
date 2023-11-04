@@ -7,8 +7,10 @@ import org.quartz.spi.JobFactory
 import org.quartz.spi.TriggerFiredBundle
 
 class DiJobFactory : JobFactory, KoinComponent {
-
-    override fun newJob(bundle: TriggerFiredBundle?, scheduler: Scheduler?): Job {
+    override fun newJob(
+        bundle: TriggerFiredBundle?,
+        scheduler: Scheduler?,
+    ): Job {
         if (bundle != null) {
             val jobClass = bundle.jobDetail.jobClass
 

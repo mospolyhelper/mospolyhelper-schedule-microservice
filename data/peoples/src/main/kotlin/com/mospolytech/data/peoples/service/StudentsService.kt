@@ -22,25 +22,28 @@ class StudentsService(
     private val client: HttpClient,
     private val appConfig: AppConfig,
 ) {
+    suspend fun parseStudents(file: File): Sequence<StudentXml> =
+        withContext(Dispatchers.IO) {
+            val xml =
+                XML {
+                    unknownChildHandler = UnknownChildHandler { _, _, _, _, _ -> emptyList() }
+                }
 
-    suspend fun parseStudents(file: File): Sequence<StudentXml> = withContext(Dispatchers.IO) {
-        val xml = XML {
-            unknownChildHandler = UnknownChildHandler { _, _, _, _, _ -> emptyList() }
+            val inputString =
+                file.readText()
+                    .replaceBefore("<m:Состав>", "")
+                    .replaceAfterLast("</m:Состав>", "")
+                    .replace("\t\t\t\t", "")
+                    .replace("m:", "")
+
+            val students =
+                "<Состав>[^*]*?</Состав>".toRegex()
+                    .findAll(inputString)
+                    .map { xml.decodeFromString<StudentXml>(it.value) }
+            // .filter { it.studentStatus.title == "Является студентом" }
+
+            return@withContext students
         }
-
-        val inputString = file.readText()
-            .replaceBefore("<m:Состав>", "")
-            .replaceAfterLast("</m:Состав>", "")
-            .replace("\t\t\t\t", "")
-            .replace("m:", "")
-
-        val students = "<Состав>[^*]*?</Состав>".toRegex()
-            .findAll(inputString)
-            .map { xml.decodeFromString<StudentXml>(it.value) }
-        // .filter { it.studentStatus.title == "Является студентом" }
-
-        return@withContext students
-    }
 
     suspend fun downloadStudents(): File {
         val file = kotlin.io.path.createTempFile(prefix = "students").toFile()
@@ -66,7 +69,8 @@ class StudentsService(
         return file
     }
 
-    private val GET_STUDENTS_BODY = """<?xml version="1.0" encoding="utf-8"?>
+    companion object {
+        private val GET_STUDENTS_BODY = """<?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
     <GetUsers xmlns="http://sgu-infocom.ru/WebExchangeLK">
@@ -77,4 +81,5 @@ class StudentsService(
     </GetUsers>
   </soap:Body>
 </soap:Envelope>"""
+    }
 }

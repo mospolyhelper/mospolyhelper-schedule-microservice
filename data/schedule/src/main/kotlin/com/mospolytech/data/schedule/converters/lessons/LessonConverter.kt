@@ -28,7 +28,6 @@ class LessonConverter(
     private val placesConverter: LessonPlacesConverter,
     private val lessonDateTimeConverter: LessonDateTimeConverter,
 ) {
-
     private val logger = LoggerFactory.getLogger("com.mospolytech.data.schedule.converters.lessons.LessonConverter")
 
     private val lessonCache = HashMap<ApiLessonCache, UUID>()
@@ -49,13 +48,14 @@ class LessonConverter(
         val groupsId = groupsConverter.getCachedIds(apiGroups)
         val placesId = placesConverter.getCachedIds(apiLesson.auditories)
 
-        val cacheKey = ApiLessonCache(
-            typeId = typeId,
-            subjectId = subjectId,
-            teachersId = teachersId,
-            placesId = placesId,
-            timesId = timesId,
-        )
+        val cacheKey =
+            ApiLessonCache(
+                typeId = typeId,
+                subjectId = subjectId,
+                teachersId = teachersId,
+                placesId = placesId,
+                timesId = timesId,
+            )
         var lessonId = lessonCache[cacheKey]
 
         // Если не нашли в мапе (для мёрджа групп), то создаём новый UUID

@@ -3,7 +3,6 @@ package com.mospolytech.domain.base.utils.generators
 import kotlin.random.Random
 
 object Generator {
-
     private val charPoolName: List<Char> = ('а'..'я') + ('А'..'я') + listOf(' ')
     private val charPoolId: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 

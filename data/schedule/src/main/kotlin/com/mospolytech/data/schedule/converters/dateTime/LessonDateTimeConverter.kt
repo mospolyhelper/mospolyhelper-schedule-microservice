@@ -49,12 +49,13 @@ class LessonDateTimeConverter {
 
             val notInDb = dtoList subtract allDbItems
 
-            val rows = LessonDateTimesDb.batchInsert(notInDb) { dto ->
-                this[LessonDateTimesDb.startDate] = dto.startDate
-                this[LessonDateTimesDb.endDate] = dto.endDate
-                this[LessonDateTimesDb.startTime] = dto.time.start
-                this[LessonDateTimesDb.endTime] = dto.time.end
-            }
+            val rows =
+                LessonDateTimesDb.batchInsert(notInDb) { dto ->
+                    this[LessonDateTimesDb.startDate] = dto.startDate
+                    this[LessonDateTimesDb.endDate] = dto.endDate
+                    this[LessonDateTimesDb.startTime] = dto.time.start
+                    this[LessonDateTimesDb.endTime] = dto.time.end
+                }
 
             LessonDateTimeEntity.wrapRows(SizedCollection(rows)).forEach { cacheDb(it) }
         }
@@ -75,7 +76,12 @@ class LessonDateTimeConverter {
 
     private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 
-    private fun getDates(day: String, isByDate: Boolean, dateFrom: LocalDate, dateTo: LocalDate): Pair<LocalDate, LocalDate?> {
+    private fun getDates(
+        day: String,
+        isByDate: Boolean,
+        dateFrom: LocalDate,
+        dateTo: LocalDate,
+    ): Pair<LocalDate, LocalDate?> {
         return if (isByDate) {
             val date = JavaLocalDate.parse(day, dateFormatter).toKotlinLocalDate()
             date to null
@@ -87,7 +93,10 @@ class LessonDateTimeConverter {
         }
     }
 
-    private fun getClosestDayNotEarly(day: LocalDate, dayOfWeek: DayOfWeek): LocalDate {
+    private fun getClosestDayNotEarly(
+        day: LocalDate,
+        dayOfWeek: DayOfWeek,
+    ): LocalDate {
         val fromDayOfWeek = day.dayOfWeek.value
         val daysToAdd = (dayOfWeek.value - fromDayOfWeek).toLong()
         return if (daysToAdd >= 0) {
@@ -97,7 +106,10 @@ class LessonDateTimeConverter {
         }
     }
 
-    private fun getClosestDayNotLater(day: LocalDate, dayOfWeek: DayOfWeek): LocalDate {
+    private fun getClosestDayNotLater(
+        day: LocalDate,
+        dayOfWeek: DayOfWeek,
+    ): LocalDate {
         val toDayOfWeek = day.dayOfWeek.value
         val daysToAdd = (dayOfWeek.value - toDayOfWeek).toLong()
         return if (daysToAdd <= 0) {
@@ -110,6 +122,7 @@ class LessonDateTimeConverter {
     private fun Long.toDayPeriod(): DatePeriod {
         return DatePeriod(days = toInt())
     }
+
     private fun Duration.toDatePeriod(): DatePeriod {
         return DatePeriod(
             days = this.inWholeDays.toInt(),
@@ -125,14 +138,18 @@ class LessonDateTimeConverter {
         return LessonDateTime(
             startDate = dates.first,
             endDate = dates.second,
-            time = LessonTime(
-                start = timeStart,
-                end = timeEnd,
-            ),
+            time =
+                LessonTime(
+                    start = timeStart,
+                    end = timeEnd,
+                ),
         )
     }
 
-    private fun parseDate(date: String?, default: LocalDate): LocalDate {
+    private fun parseDate(
+        date: String?,
+        default: LocalDate,
+    ): LocalDate {
         return if (date == null) {
             default
         } else {

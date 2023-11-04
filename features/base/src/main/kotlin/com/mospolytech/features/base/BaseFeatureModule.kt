@@ -6,8 +6,9 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 object BaseFeatureModule {
-    val di = module {
-        singleOf(::AppConfigImpl) { bind<AppConfig>() }
-        singleOf(::JobSchedulerManager)
-    }
+    val di =
+        module {
+            singleOf(::AppConfigImpl) { bind<AppConfig>() }
+            singleOf(::JobSchedulerManager)
+        }
 }

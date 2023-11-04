@@ -7,5 +7,10 @@ interface LessonSubjectsRepository {
     suspend fun get(id: String): LessonSubjectInfo?
 
     suspend fun getAll(): List<LessonSubjectInfo>
-    suspend fun getPaging(query: String, pageSize: Int, page: Int): PagingDTO<LessonSubjectInfo>
+
+    suspend fun getPaging(
+        query: String,
+        pageSize: Int,
+        page: Int,
+    ): PagingDTO<LessonSubjectInfo>
 }
