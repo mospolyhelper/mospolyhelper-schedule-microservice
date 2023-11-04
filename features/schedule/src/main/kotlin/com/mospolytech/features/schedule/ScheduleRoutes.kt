@@ -16,11 +16,12 @@ fun Application.scheduleRoutes(
     scheduleInfoRepository: ScheduleInfoRepository,
     freePlacesRepository: FreePlacesRepository,
     personalRepository: PersonalRepository,
+    scheduleJobLauncher: ScheduleJobLauncher,
     appConfig: AppConfig,
 ) {
     routing {
         sourcesRoutesV1(scheduleRepository)
-        scheduleRoutesV1(scheduleRepository, personalRepository, appConfig)
+        scheduleRoutesV1(scheduleRepository, personalRepository, scheduleJobLauncher, appConfig)
         scheduleInfoRoutesV1(scheduleInfoRepository)
         lessonsRoutesV1(lessonsRepository, scheduleRepository)
         freePlaceRoutesV1(freePlacesRepository)

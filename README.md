@@ -13,19 +13,24 @@ docker build -t edugma .
 ```shell
 docker save -o .\edugma.tar edugma
 ```
+Удалить все контейнеры и образы:
+```shell
+sudo docker rm -vf $(sudo docker ps -aq)
+sudo docker rmi -f $(sudo docker images -aq)
+```
 Загрузка образа:
 ```shell
-docker load < edugma.tar
+sudo docker load < edugma.tar
 ```
 Запуск образа:
 ```shell
-docker run -p 8003:8003 -d --name edugma --env-file env.list edugma
+sudo docker run -p 8003:8003 -d --name edugma --env-file env.list edugma
 ```
 Остановка контейнера:
 ```shell
-docker stop edugma
+sudo docker stop edugma
 ```
 Чтение логов контейнера:
 ```shell
-docker logs edugma -f
+sudo docker logs edugma -f
 ```

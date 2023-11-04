@@ -42,7 +42,7 @@ fun Application.setRoutes() {
     personalRoutesV1(get())
     performanceRoutesV1(get())
     peoplesRoutesV1(get(), get(), get(), get(), get())
-    scheduleRoutes(get(), get(), get(), get(), get(), get())
+    scheduleRoutes(get(), get(), get(), get(), get(), get(), get())
 }
 
 fun Application.setDataConversions() {
