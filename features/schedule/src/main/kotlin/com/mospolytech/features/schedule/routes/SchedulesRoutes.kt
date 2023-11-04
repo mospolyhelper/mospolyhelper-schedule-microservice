@@ -9,6 +9,7 @@ import com.mospolytech.domain.schedule.repository.ScheduleRepository
 import com.mospolytech.features.base.AuthConfigs
 import com.mospolytech.features.base.utils.getTokenOrRespondError
 import com.mospolytech.features.base.utils.respondResult
+import com.mospolytech.features.schedule.ScheduleJobLauncher
 import com.mospolytech.features.schedule.routes.model.ScheduleRequest
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -21,6 +22,7 @@ import io.ktor.server.routing.*
 fun Routing.scheduleRoutesV1(
     repository: ScheduleRepository,
     userRepository: PersonalRepository,
+    scheduleJobLauncher: ScheduleJobLauncher,
     appConfig: AppConfig,
 ) {
     route("/schedules") {
@@ -57,7 +59,11 @@ fun Routing.scheduleRoutesV1(
                     return@get
                 }
                 val recreateDb = call.request.queryParameters["recreate"] == "1"
-                repository.updateData(recreateDb)
+                if (recreateDb) {
+                    repository.updateData(recreateDb = true)
+                } else {
+                    scheduleJobLauncher.launchNow()
+                }
                 call.respond("updated")
             }
         }

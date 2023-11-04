@@ -16,6 +16,8 @@ import io.ktor.server.routing.*
 fun Application.peoplesRoutesV1(
     studentsRepository: StudentsRepository,
     teachersRepository: TeachersRepository,
+    studentsJobLauncher: StudentsJobLauncher,
+    teachersJobLauncher: TeachersJobLauncher,
     appConfig: AppConfig,
 ) {
     routing {
@@ -74,7 +76,11 @@ fun Application.peoplesRoutesV1(
                             return@get
                         }
                         val recreateDb = call.request.queryParameters["recreate"] == "1"
-                        studentsRepository.updateData(recreateDb)
+                        if (recreateDb) {
+                            studentsRepository.updateData(recreateDb = true)
+                        } else {
+                            studentsJobLauncher.launchNow()
+                        }
                         call.respond("updated")
                     }
                 }
@@ -85,7 +91,11 @@ fun Application.peoplesRoutesV1(
                             return@get
                         }
                         val recreateDb = call.request.queryParameters["recreate"] == "1"
-                        teachersRepository.updateData(recreateDb)
+                        if (recreateDb) {
+                            teachersRepository.updateData(recreateDb = true)
+                        } else {
+                            teachersJobLauncher.launchNow()
+                        }
                         call.respond("updated")
                     }
                 }

@@ -8,6 +8,7 @@ import com.mospolytech.features.base.plugins.*
 import com.mospolytech.features.payments.paymentsDataConversion
 import com.mospolytech.features.payments.paymentsRoutesV1
 import com.mospolytech.features.peoples.StudentsJobLauncher
+import com.mospolytech.features.peoples.TeachersJobLauncher
 import com.mospolytech.features.peoples.peoplesRoutesV1
 import com.mospolytech.features.performance.performanceRoutesV1
 import com.mospolytech.features.personal.personalRoutesV1
@@ -40,7 +41,7 @@ fun Application.setRoutes() {
     paymentsRoutesV1(get())
     personalRoutesV1(get())
     performanceRoutesV1(get())
-    peoplesRoutesV1(get(), get(), get())
+    peoplesRoutesV1(get(), get(), get(), get(), get())
     scheduleRoutes(get(), get(), get(), get(), get(), get())
 }
 
@@ -63,4 +64,7 @@ fun Application.initJobScheduler(scheduler: JobSchedulerManager) {
 
     val studentsScheduler = get<StudentsJobLauncher>()
     studentsScheduler.launch()
+
+    val teachersScheduler = get<TeachersJobLauncher>()
+    teachersScheduler.launch()
 }

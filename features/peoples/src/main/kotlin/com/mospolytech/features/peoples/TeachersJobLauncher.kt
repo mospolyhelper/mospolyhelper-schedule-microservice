@@ -3,25 +3,25 @@ package com.mospolytech.features.peoples
 import com.mospolytech.features.base.JobSchedulerManager
 import org.quartz.*
 
-class StudentsJobLauncher(
+class TeachersJobLauncher(
     private val jobSchedulerManager: JobSchedulerManager,
 ) {
     fun launch() {
-        val triggerId = "UpdateStudentsJob"
+        val triggerId = "UpdateTeachersJob"
 
         // If a job exists, delete it!
         val jobScheduler = jobSchedulerManager.scheduler
-        val jobKey = JobKey.jobKey(StudentsUpdateJob.KEY, StudentsUpdateJob.GROUP)
+        val jobKey = JobKey.jobKey(TeachersUpdateJob.KEY, TeachersUpdateJob.GROUP)
         jobScheduler.deleteJob(jobKey)
 
         val job: JobDetail =
-            JobBuilder.newJob(StudentsUpdateJob::class.java)
-                .withIdentity(StudentsUpdateJob.KEY, StudentsUpdateJob.GROUP)
+            JobBuilder.newJob(TeachersUpdateJob::class.java)
+                .withIdentity(TeachersUpdateJob.KEY, TeachersUpdateJob.GROUP)
                 .build()
 
         val trigger: Trigger =
             TriggerBuilder.newTrigger()
-                .withIdentity(triggerId, StudentsUpdateJob.GROUP)
+                .withIdentity(triggerId, TeachersUpdateJob.GROUP)
                 .withSchedule(
                     CronScheduleBuilder.dailyAtHourAndMinute(1, 44),
                 )
@@ -33,7 +33,7 @@ class StudentsJobLauncher(
 
     fun launchNow() {
         val jobScheduler = jobSchedulerManager.scheduler
-        val jobKey = JobKey.jobKey(StudentsUpdateJob.KEY, StudentsUpdateJob.GROUP)
+        val jobKey = JobKey.jobKey(TeachersUpdateJob.KEY, TeachersUpdateJob.GROUP)
         jobScheduler.triggerJob(jobKey)
     }
 }

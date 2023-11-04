@@ -7,4 +7,6 @@ val peoplesFeaturesModule =
     module {
         singleOf(::StudentsJobLauncher)
         singleOf(::StudentsUpdateJob)
+        singleOf(::TeachersJobLauncher)
+        singleOf(::TeachersUpdateJob)
     }
