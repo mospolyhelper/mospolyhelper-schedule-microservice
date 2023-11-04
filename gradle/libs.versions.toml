@@ -49,9 +49,9 @@ ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "k
 
 prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "prometeus" }
 
-koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
-koin-core = { module = "io.insert-koin:koin-core", name = "koin-core" }
-koin-ktor = { module = "io.insert-koin:koin-ktor", name = "koin-ktor" }
+koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koin" }
+koin-core = { group = "io.insert-koin", name = "koin-core" }
+koin-ktor = { group = "io.insert-koin", name = "koin-ktor" }
 
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 
