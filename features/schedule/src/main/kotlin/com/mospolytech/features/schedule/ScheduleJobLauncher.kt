@@ -28,7 +28,7 @@ class ScheduleJobLauncher(
             TriggerBuilder.newTrigger()
                 .withIdentity(triggerId, ScheduleUpdateJob.GROUP)
                 .withSchedule(
-                    CronScheduleBuilder.monthlyOnDayAndHourAndMinute(4, 1, 10),
+                    CronScheduleBuilder.dailyAtHourAndMinute(0, 32),
                 )
                 .build()
 

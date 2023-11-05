@@ -23,7 +23,7 @@ class ApiScheduleConverter(
 
         val lessonData = ApiLessonData()
 
-        lessons.forEach { apiSchedule ->
+        lessons.forEach { (_, apiSchedule) ->
             lessonData.groups += apiSchedule.group.title
 
             apiSchedule.grid.forEach { (day, dailyLessons) ->
@@ -56,7 +56,7 @@ class ApiScheduleConverter(
         logger.debug("Schedule: caching all lesson data")
         lessonConverter.cacheAll(lessonData)
 
-        lessons.forEachIndexed { index, apiSchedule ->
+        lessons.entries.forEachIndexed { index, (_, apiSchedule) ->
             logger.debug("Schedule: ${index + 1} / ${lessons.size}")
             convertAndCacheLessons(
                 apiSchedule.grid.toList(),

@@ -14,5 +14,5 @@ data class ScheduleResponse(
     val time: LocalTime,
     val v: String,
     val copyright: String,
-    val contents: List<ApiSchedule>,
+    val contents: Map<String, ApiSchedule>,
 )

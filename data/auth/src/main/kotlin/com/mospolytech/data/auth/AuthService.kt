@@ -10,10 +10,10 @@ class AuthService(
     private val client: HttpClient,
 ) {
     companion object {
-        private const val BaseUrl = "https://e.mospolytech.ru"
-        private const val ApiUrl = "$BaseUrl/old/lk_api.php"
+        private const val BASE_URL = "https://e.mospolytech.ru"
+        private const val API_URL = "$BASE_URL/old/lk_api.php"
 
-        private const val GetToken = ApiUrl
+        private const val GET_TOKEN = API_URL
 
         private const val WRONG_CREDENTIALS_CODE = 400
     }
@@ -23,7 +23,7 @@ class AuthService(
         password: String,
     ): TokenResponse {
         return client.submitForm(
-            GetToken,
+            GET_TOKEN,
             Parameters.build {
                 append("ulogin", login)
                 append("upassword", password)

@@ -23,7 +23,7 @@ class StudentsJobLauncher(
             TriggerBuilder.newTrigger()
                 .withIdentity(triggerId, StudentsUpdateJob.GROUP)
                 .withSchedule(
-                    CronScheduleBuilder.dailyAtHourAndMinute(1, 44),
+                    CronScheduleBuilder.monthlyOnDayAndHourAndMinute(4, 1, 44),
                 )
                 .build()
 
