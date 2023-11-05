@@ -255,6 +255,19 @@ class StudentsRemoteDS {
         }
     }
 
+    suspend fun ensureCreated() {
+        MosPolyDb.transaction {
+            SchemaUtils.createMissingTablesAndColumns(
+                StudentsDb,
+                StudentBranchesDb,
+                StudentDirectionsDb,
+                StudentFacultiesDb,
+                StudentSpecializationsDb,
+                GroupsDb,
+            )
+        }
+    }
+
     suspend fun clearData() {
         MosPolyDb.transaction {
             // TODO Делать умную очискту на основе последней даты

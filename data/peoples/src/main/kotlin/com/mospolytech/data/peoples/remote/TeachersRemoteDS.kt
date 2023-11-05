@@ -83,6 +83,15 @@ class TeachersRemoteDS {
         }
     }
 
+    suspend fun ensureCreated() {
+        MosPolyDb.transaction {
+            SchemaUtils.createMissingTablesAndColumns(
+                TeachersDb,
+                DepartmentsDb,
+            )
+        }
+    }
+
     suspend fun clearData() {
         MosPolyDb.transaction {
             // TeachersDb.deleteAll()

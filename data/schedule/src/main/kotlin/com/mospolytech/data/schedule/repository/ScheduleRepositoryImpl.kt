@@ -190,6 +190,20 @@ class ScheduleRepositoryImpl(
             }
         } else {
             MosPolyDb.transaction {
+                SchemaUtils.createMissingTablesAndColumns(
+                    LessonsDb,
+                    LessonToLessonDateTimesDb,
+                    LessonToTeachersDb,
+                    LessonToGroupsDb,
+                    LessonToPlacesDb,
+                    LessonTypesDb,
+                    SubjectsDb,
+                    LessonDateTimesDb,
+                    PlacesDb,
+                )
+            }
+
+            MosPolyDb.transaction {
                 // Сперва очищаем таблицы с перекрёстными ссылками
                 LessonToLessonDateTimesDb.deleteAll()
                 LessonToGroupsDb.deleteAll()

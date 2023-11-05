@@ -43,6 +43,7 @@ class StudentsRepositoryImpl(
             studentsDS.deleteTables()
             studentsDS.createTables()
         } else {
+            studentsDS.ensureCreated()
             studentsDS.clearData()
         }
 

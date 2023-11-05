@@ -30,6 +30,7 @@ class TeachersRepositoryImpl(
             teachersDS.deleteTables()
             teachersDS.createTables()
         } else {
+            teachersDS.ensureCreated()
             teachersDS.clearData()
         }
 
