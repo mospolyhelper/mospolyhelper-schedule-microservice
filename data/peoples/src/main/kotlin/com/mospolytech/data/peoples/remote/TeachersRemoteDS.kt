@@ -1,6 +1,7 @@
 package com.mospolytech.data.peoples.remote
 
 import com.mospolytech.data.base.createPagingDto
+import com.mospolytech.data.base.findOrAllIfEmpty
 import com.mospolytech.data.base.upsert
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.peoples.model.db.DepartmentsDb
@@ -34,7 +35,7 @@ class TeachersRemoteDS {
         page: Int,
     ) = MosPolyDb.transaction {
         createPagingDto(pageSize, page) { offset ->
-            TeacherSafeEntity.find { TeachersDb.name.lowerCase() like "%${query.lowercase()}%" }
+            TeacherSafeEntity.findOrAllIfEmpty(query) { TeachersDb.name.lowerCase() like "%${query.lowercase()}%" }
                 .orderBy(TeachersDb.name to SortOrder.ASC)
                 .limit(pageSize, offset.toLong())
                 .map { it.toModel() }

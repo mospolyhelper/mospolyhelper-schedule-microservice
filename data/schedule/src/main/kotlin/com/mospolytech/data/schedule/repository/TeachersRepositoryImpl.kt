@@ -1,6 +1,7 @@
 package com.mospolytech.data.schedule.repository
 
 import com.mospolytech.data.base.createPagingDto
+import com.mospolytech.data.base.findOrAllIfEmpty
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.peoples.model.db.TeachersDb
 import com.mospolytech.data.peoples.model.entity.TeacherSafeEntity
@@ -33,7 +34,7 @@ class TeachersRepositoryImpl : TeachersRepository {
     ): PagingDTO<Teacher> {
         return MosPolyDb.transaction {
             createPagingDto(pageSize, page) { offset ->
-                TeacherSafeEntity.find { TeachersDb.name like query }
+                TeacherSafeEntity.findOrAllIfEmpty(query) { TeachersDb.name like query }
                     .orderBy(TeachersDb.name to SortOrder.ASC)
                     .limit(pageSize, offset.toLong())
                     .mapLazy { it.toModel() }

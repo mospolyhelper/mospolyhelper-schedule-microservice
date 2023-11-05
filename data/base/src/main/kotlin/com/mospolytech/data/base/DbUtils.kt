@@ -3,8 +3,13 @@ package com.mospolytech.data.base
 import com.mospolytech.domain.base.model.PagingDTO
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
+import org.jetbrains.exposed.sql.FieldSet
 import org.jetbrains.exposed.sql.Op
+import org.jetbrains.exposed.sql.Query
+import org.jetbrains.exposed.sql.SizedIterable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 
 fun <T : Entity<ID>, ID : Comparable<ID>> EntityClass<ID, T>.upsert(
     value: ID,
@@ -44,4 +49,26 @@ inline fun <T> createPagingDto(
         next = nextPage?.toString(),
         data = list,
     )
+}
+
+fun <ID : Comparable<ID>, T : Entity<ID>> EntityClass<ID, T>.findOrAllIfEmpty(
+    query: String,
+    op: SqlExpressionBuilder.() -> Op<Boolean>,
+): SizedIterable<T> {
+    return if (query.isEmpty()) {
+        all()
+    } else {
+        find(op)
+    }
+}
+
+inline fun FieldSet.selectOrSelectAllIfEmpty(
+    query: String,
+    where: SqlExpressionBuilder.() -> Op<Boolean>,
+): Query {
+    return if (query.isEmpty()) {
+        selectAll()
+    } else {
+        select(where)
+    }
 }

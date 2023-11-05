@@ -1,6 +1,7 @@
 package com.mospolytech.data.peoples.remote
 
 import com.mospolytech.data.base.createPagingDto
+import com.mospolytech.data.base.selectOrSelectAllIfEmpty
 import com.mospolytech.data.base.upsert
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.peoples.model.db.*
@@ -31,7 +32,7 @@ class StudentsRemoteDS {
             val query =
                 StudentsDb.leftJoin(GroupsDb)
                     .slice(StudentsDb.columns)
-                    .select {
+                    .selectOrSelectAllIfEmpty(query) {
                         (GroupsDb.title like query) or
                             (StudentsDb.lastName.lowerCase() like "%${query.lowercase()}%")
                     }.orderBy(
@@ -84,7 +85,7 @@ class StudentsRemoteDS {
             val query =
                 StudentsDb.leftJoin(GroupsDb)
                     .slice(StudentsDb.columns)
-                    .select {
+                    .selectOrSelectAllIfEmpty(query) {
                         (GroupsDb.title like query) or
                             (StudentsDb.lastName.lowerCase() like "%${query.lowercase()}%")
                     }.orderBy(

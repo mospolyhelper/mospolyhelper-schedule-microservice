@@ -5,18 +5,16 @@
 ```
 
 ## Docker
-Создания образа:
+Удаление старого образа. Создание и сохранение образа:
 ```shell
+docker rmi $(docker images 'edugma' -a -q)
 docker build -t edugma .
-```
-Сохранение образа:
-```shell
 docker save -o .\edugma.tar edugma
 ```
-Удалить все контейнеры и образы:
+Удалить все старные контейнеры и образы:
 ```shell
-sudo docker rm -vf $(sudo docker ps -aq)
-sudo docker rmi -f $(sudo docker images -aq)
+docker rm -vf $(docker ps -aq)
+docker rmi $(docker images 'edugma' -a -q)
 ```
 Загрузка образа:
 ```shell
