@@ -19,6 +19,15 @@ fun <T : Entity<ID>, ID : Comparable<ID>> EntityClass<ID, T>.upsert(
     return existed?.apply(init) ?: new(value, init)
 }
 
+inline fun <T : Entity<ID>, ID : Comparable<ID>> EntityClass<ID, T>.upsert(
+    noinline op: SqlExpressionBuilder.() -> Op<Boolean>,
+    newId: () -> ID,
+    noinline init: T.() -> Unit,
+): T {
+    val existed = find(op).firstOrNull()
+    return existed?.apply(init) ?: new(newId(), init)
+}
+
 fun <T : Entity<ID>, ID : Comparable<ID>> EntityClass<ID, T>.insertIfNotExist(
     op: SqlExpressionBuilder.() -> Op<Boolean>,
     init: T.() -> Unit,
@@ -37,10 +46,10 @@ inline fun <T> createPagingDto(
 
     val previousPage = if (page <= 1) null else page - 1
     val nextPage =
-        if (list.isEmpty()) {
-            null
-        } else {
+        if (list.size == pageSize) {
             if (page <= 1) 2 else page + 1
+        } else {
+            null
         }
 
     return PagingDTO<T>(

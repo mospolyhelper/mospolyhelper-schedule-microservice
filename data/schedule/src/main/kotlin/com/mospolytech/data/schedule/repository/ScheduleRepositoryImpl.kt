@@ -9,7 +9,6 @@ import com.mospolytech.domain.peoples.model.description
 import com.mospolytech.domain.peoples.repository.StudentsRepository
 import com.mospolytech.domain.schedule.model.ScheduleComplexFilter
 import com.mospolytech.domain.schedule.model.pack.CompactSchedule
-import com.mospolytech.domain.schedule.model.place.description
 import com.mospolytech.domain.schedule.model.source.ScheduleSource
 import com.mospolytech.domain.schedule.model.source.ScheduleSourceFull
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
@@ -53,7 +52,7 @@ class ScheduleRepositoryImpl(
     ): PagingDTO<ScheduleSourceFull> {
         return when (sourceType) {
             ScheduleSources.Group -> {
-                groupsRepository.getPaging(
+                groupsRepository.getPagingShort(
                     query = query,
                     page = page,
                     pageSize = pageSize,

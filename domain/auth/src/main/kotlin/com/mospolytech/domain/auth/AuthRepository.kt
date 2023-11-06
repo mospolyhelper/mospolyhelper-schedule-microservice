@@ -5,4 +5,6 @@ interface AuthRepository {
         login: String,
         password: String,
     ): Result<String>
+
+    suspend fun getTokenForMainUser(): String
 }

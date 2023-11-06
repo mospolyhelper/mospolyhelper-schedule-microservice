@@ -6,10 +6,9 @@ import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.schedule.model.db.SubjectsDb
 import com.mospolytech.data.schedule.model.entity.SubjectEntity
 import com.mospolytech.domain.base.model.PagingDTO
-import com.mospolytech.domain.schedule.model.lesson_subject.LessonSubjectInfo
+import com.mospolytech.domain.schedule.model.lessonSubject.LessonSubjectInfo
 import com.mospolytech.domain.schedule.repository.LessonSubjectsRepository
 import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 import org.jetbrains.exposed.sql.mapLazy
 import java.util.*
 

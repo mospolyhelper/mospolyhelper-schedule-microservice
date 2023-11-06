@@ -1,6 +1,6 @@
 package com.mospolytech.data.schedule.converters.types
 
-import com.mospolytech.domain.schedule.model.lesson_type.LessonTypeInfo
+import com.mospolytech.domain.schedule.model.lessonType.LessonTypeInfo
 
 internal enum class LessonTypes {
     CourseProject,

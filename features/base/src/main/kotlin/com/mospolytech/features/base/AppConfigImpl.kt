@@ -26,4 +26,12 @@ class AppConfigImpl(private val config: ApplicationConfig) : AppConfig {
     override val getStaffAuth: String by lazy {
         config.propertyOrNull("auth.getStaff")?.getString().orEmpty()
     }
+
+    override val mainLkLogin: String by lazy {
+        config.propertyOrNull("mainlk.login")?.getString().orEmpty()
+    }
+
+    override val mainLkPassword: String by lazy {
+        config.propertyOrNull("mainlk.password")?.getString().orEmpty()
+    }
 }

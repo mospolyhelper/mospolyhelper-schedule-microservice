@@ -25,8 +25,6 @@ class LessonTeachersConverter {
                 departmentParent = null,
                 department = null,
                 email = null,
-                sex = null,
-                birthday = null,
             )
         }
     }
@@ -102,8 +100,6 @@ class LessonTeachersConverter {
                 departmentParent = null,
                 department = null,
                 email = null,
-                sex = null,
-                birthday = null,
             )
         dbCache.putIfAbsent(model, id)
         return model

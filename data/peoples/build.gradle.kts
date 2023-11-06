@@ -8,4 +8,5 @@ dependencies {
     implementation(projects.data.personal)
 
     implementation(projects.domain.peoples)
+    implementation(projects.domain.auth)
 }

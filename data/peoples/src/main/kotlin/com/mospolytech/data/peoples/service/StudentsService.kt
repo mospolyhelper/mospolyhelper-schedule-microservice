@@ -1,5 +1,7 @@
 package com.mospolytech.data.peoples.service
 
+import com.mospolytech.data.peoples.model.response.PaginationResponse
+import com.mospolytech.data.peoples.model.response.StudentsResponse
 import com.mospolytech.data.peoples.model.xml.StudentXml
 import com.mospolytech.domain.base.AppConfig
 import io.ktor.client.*
@@ -69,7 +71,28 @@ class StudentsService(
         return file
     }
 
+    suspend fun getStudentsLk(
+        token: String,
+        search: String? = null,
+        group: String? = null,
+        page: Int = 1,
+        perpage: Int = 100,
+    ): PaginationResponse<StudentsResponse> {
+        return client.get(GET_STUDENTS) {
+            parameter("token", token)
+            parameter("search", search)
+            parameter("group", group)
+            parameter("page", page)
+            parameter("perpage", perpage)
+        }.body()
+    }
+
     companion object {
+        private const val BASE_URL = "https://e.mospolytech.ru"
+        private const val API_URL = "$BASE_URL/old/lk_api.php"
+
+        private const val GET_STUDENTS = "$API_URL?getStudents="
+
         private val GET_STUDENTS_BODY = """<?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>

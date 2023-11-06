@@ -12,12 +12,10 @@ import com.mospolytech.data.schedule.model.entity.*
 import com.mospolytech.domain.peoples.model.Group
 import com.mospolytech.domain.peoples.model.Student
 import com.mospolytech.domain.peoples.model.Teacher
-import com.mospolytech.domain.peoples.model.description
-import com.mospolytech.domain.schedule.model.lesson_subject.LessonSubjectInfo
-import com.mospolytech.domain.schedule.model.lesson_type.LessonTypeInfo
+import com.mospolytech.domain.schedule.model.lessonSubject.LessonSubjectInfo
+import com.mospolytech.domain.schedule.model.lessonType.LessonTypeInfo
 import com.mospolytech.domain.schedule.model.place.PlaceInfo
-import com.mospolytech.domain.schedule.model.place.description
-import com.mospolytech.domain.schedule.model.schedule_info.ScheduleObject
+import com.mospolytech.domain.schedule.model.scheduleInfo.ScheduleObject
 import com.mospolytech.domain.schedule.repository.*
 import org.jetbrains.exposed.sql.mapLazy
 import java.util.*
@@ -43,7 +41,7 @@ class ScheduleInfoRepositoryImpl : ScheduleInfoRepository {
 
     override suspend fun getTeacher(id: String): Result<Teacher?> {
         return MosPolyDb.transactionCatching {
-            TeacherSafeEntity.find { TeachersDb.id eq id }
+            TeacherEntity.find { TeachersDb.id eq id }
                 .map { it.toModel() }
                 .firstOrNull()
         }
@@ -68,7 +66,7 @@ class ScheduleInfoRepositoryImpl : ScheduleInfoRepository {
 
     override suspend fun getStudentInfo(id: String): Result<Student?> {
         return MosPolyDb.transactionCatching {
-            StudentSafeEntity.find { StudentsDb.id eq id }
+            StudentEntity.find { StudentsDb.id eq id }
                 .map { it.toModel() }
                 .firstOrNull()
         }
@@ -102,7 +100,7 @@ class ScheduleInfoRepositoryImpl : ScheduleInfoRepository {
 
     override suspend fun getAllTeachers(): Result<List<ScheduleObject>> {
         return MosPolyDb.transactionCatching {
-            TeacherSafeEntity.all().mapLazy {
+            TeacherEntity.all().mapLazy {
                 ScheduleObject(
                     id = it.id.value,
                     title = it.name,
@@ -132,7 +130,7 @@ class ScheduleInfoRepositoryImpl : ScheduleInfoRepository {
                 ScheduleObject(
                     id = it.id.value.toString(),
                     title = it.title,
-                    description = it.description2,
+                    description = it.description.orEmpty(),
                     avatar = null,
                 )
             }.toList()
@@ -141,10 +139,10 @@ class ScheduleInfoRepositoryImpl : ScheduleInfoRepository {
 
     override suspend fun getAllStudents(): Result<List<ScheduleObject>> {
         return MosPolyDb.transactionCatching {
-            StudentSafeEntity.all().mapLazy {
+            StudentEntity.all().mapLazy {
                 ScheduleObject(
                     id = it.id.value,
-                    title = it.fullName(),
+                    title = it.name,
                     description = it.description,
                     avatar = null,
                 )

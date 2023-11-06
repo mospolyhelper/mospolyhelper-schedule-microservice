@@ -27,7 +27,7 @@ val StudentShort.description
             group?.let {
                 group.direction?.let {
                     ifNotEmpty { append(", ") }
-                    append(group.direction.title)
+                    append(group.direction)
                 }
             }
         }

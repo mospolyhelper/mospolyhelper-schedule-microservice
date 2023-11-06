@@ -5,7 +5,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class PlaceInfo : Comparable<PlaceInfo> {
+sealed class CompactPlaceInfo : Comparable<CompactPlaceInfo> {
     abstract val id: String
     abstract val title: String
     abstract val description: String
@@ -15,11 +15,10 @@ sealed class PlaceInfo : Comparable<PlaceInfo> {
             is Building -> 0
             is Online -> 1
             is Other -> 2
-            is Unclassified -> 3
         }
     }
 
-    override fun compareTo(other: PlaceInfo): Int {
+    override fun compareTo(other: CompactPlaceInfo): Int {
         val compareTypes = getTypeNumber().compareTo(other.getTypeNumber())
         if (compareTypes != 0) {
             return compareTypes
@@ -34,13 +33,8 @@ sealed class PlaceInfo : Comparable<PlaceInfo> {
         override val id: String,
         override val title: String,
         override val description: String,
-        val areaAlias: String? = null,
-        val street: String? = null,
-        val building: String? = null,
-        val floor: String? = null,
-        val auditorium: String? = null,
         val location: Location? = null,
-    ) : PlaceInfo()
+    ) : CompactPlaceInfo()
 
     @Serializable
     @SerialName("online")
@@ -49,7 +43,7 @@ sealed class PlaceInfo : Comparable<PlaceInfo> {
         override val title: String,
         override val description: String,
         val url: String? = null,
-    ) : PlaceInfo()
+    ) : CompactPlaceInfo()
 
     @Serializable
     @SerialName("other")
@@ -57,13 +51,5 @@ sealed class PlaceInfo : Comparable<PlaceInfo> {
         override val id: String,
         override val title: String,
         override val description: String,
-    ) : PlaceInfo()
-
-    @Serializable
-    @SerialName("unclassified")
-    data class Unclassified(
-        override val id: String,
-        override val title: String,
-        override val description: String,
-    ) : PlaceInfo()
+    ) : CompactPlaceInfo()
 }

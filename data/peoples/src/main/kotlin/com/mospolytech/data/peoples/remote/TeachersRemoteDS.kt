@@ -4,27 +4,26 @@ import com.mospolytech.data.base.createPagingDto
 import com.mospolytech.data.base.findOrAllIfEmpty
 import com.mospolytech.data.base.upsert
 import com.mospolytech.data.common.db.MosPolyDb
-import com.mospolytech.data.peoples.model.db.DepartmentsDb
 import com.mospolytech.data.peoples.model.db.TeachersDb
-import com.mospolytech.data.peoples.model.entity.DepartmentEntity
 import com.mospolytech.data.peoples.model.entity.TeacherEntity
-import com.mospolytech.data.peoples.model.entity.TeacherSafeEntity
-import com.mospolytech.domain.peoples.model.Teacher
+import com.mospolytech.data.peoples.model.response.StaffResponse
+import com.mospolytech.data.peoples.model.xml.EmployeeInfo
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.*
+import java.util.UUID
 import kotlin.sequences.Sequence
 
 class TeachersRemoteDS {
     suspend fun getTeacher(name: String) =
         MosPolyDb.transaction {
-            TeacherSafeEntity.find { TeachersDb.name eq name }
+            TeacherEntity.find { TeachersDb.name eq name }
                 .firstOrNull()
                 ?.toModel()
         }
 
     suspend fun getTeachers() =
         MosPolyDb.transaction {
-            TeacherSafeEntity.all()
+            TeacherEntity.all()
                 .orderBy(TeachersDb.name to SortOrder.ASC)
                 .map { it.toModel() }
         }
@@ -35,41 +34,62 @@ class TeachersRemoteDS {
         page: Int,
     ) = MosPolyDb.transaction {
         createPagingDto(pageSize, page) { offset ->
-            TeacherSafeEntity.findOrAllIfEmpty(query) { TeachersDb.name.lowerCase() like "%${query.lowercase()}%" }
+            TeacherEntity.findOrAllIfEmpty(query) { TeachersDb.name.lowerCase() like "%${query.lowercase()}%" }
                 .orderBy(TeachersDb.name to SortOrder.ASC)
                 .limit(pageSize, offset.toLong())
                 .map { it.toModel() }
         }
     }
 
-    suspend fun addTeachers(teachers: Sequence<Teacher>) {
+    suspend fun addTeachers(teachers: Sequence<EmployeeInfo>) {
+        // TODO поиск по фио и отделу
+        teachers.forEach { teacher ->
+            val stuffType =
+                when (teacher.stuffType) {
+                    "ППС" -> "Профессорско-преподавательский состав"
+                    "АУП" -> "Административно-управленческий персонал"
+                    "УВП" -> "Учебно-вспомогательный персонал"
+                    "ПОП" -> "Прочий обслуживающий персонал"
+                    "МОП" -> "Младший обслуживающий персонал"
+                    "ИПР" -> "Инной педагогический работник"
+                    "НТР" -> "Научно-технический работник"
+                    "НР" -> "Научный работник"
+                    else -> teacher.stuffType
+                }
+
+            MosPolyDb.transaction {
+                // TODO Сделать поиск по другим полям, если сперва из лк загрузили
+                TeacherEntity.upsert(teacher.guid) {
+                    name = teacher.name
+                    avatar = "https://e.mospolytech.ru/old/img/no_avatar.jpg"
+                    this.stuffType = stuffType
+                    grade = teacher.post
+                    departmentParent = teacher.departmentParent
+                    department = teacher.department
+                    email = teacher.email
+                    lastUpdate = Clock.System.now()
+                }
+            }
+        }
+    }
+
+    suspend fun addTeachers(teachers: List<StaffResponse>) {
+        // TODO поиск по фио и отделу
         teachers.forEach { teacher ->
             MosPolyDb.transaction {
-                val newDepartmentParent =
-                    teacher.departmentParent?.let {
-                        DepartmentEntity.upsert(it.id) {
-                            title = it.title
-                        }
-                    }
-
-                val newDepartment =
-                    teacher.department?.let {
-                        DepartmentEntity.upsert(it.id) {
-                            title = it.title
-                        }
-                    }
-
-                TeacherEntity.upsert(teacher.id) {
-                    name = teacher.name
-                    avatar = teacher.avatar
-                    stuffType = teacher.stuffType
-                    grade = teacher.grade
-                    departmentParent = newDepartmentParent
-                    department = newDepartment
-                    email = teacher.email
-                    sex = teacher.sex
-                    birthday = teacher.birthday
-                    lastUpdate = Clock.System.now()
+                TeacherEntity.upsert(
+                    op = {
+                        TeachersDb.lkId eq teacher.id
+                    },
+                    newId = { UUID.randomUUID().toString() },
+                ) {
+                    this.name = teacher.fio
+                    this.lkId = teacher.id
+                    this.avatar = teacher.avatar
+                    this.grade = teacher.post
+                    this.department = teacher.division
+                    this.email = teacher.email
+                    this.lastUpdate = Clock.System.now()
                 }
             }
         }
@@ -79,7 +99,6 @@ class TeachersRemoteDS {
         MosPolyDb.transaction {
             SchemaUtils.create(
                 TeachersDb,
-                DepartmentsDb,
             )
         }
     }
@@ -88,7 +107,6 @@ class TeachersRemoteDS {
         MosPolyDb.transaction {
             SchemaUtils.createMissingTablesAndColumns(
                 TeachersDb,
-                DepartmentsDb,
             )
         }
     }
@@ -96,7 +114,6 @@ class TeachersRemoteDS {
     suspend fun clearData() {
         MosPolyDb.transaction {
             // TeachersDb.deleteAll()
-            // DepartmentsDb.deleteAll()
         }
     }
 
@@ -104,7 +121,6 @@ class TeachersRemoteDS {
         MosPolyDb.transaction {
             SchemaUtils.drop(
                 TeachersDb,
-                DepartmentsDb,
             )
         }
     }

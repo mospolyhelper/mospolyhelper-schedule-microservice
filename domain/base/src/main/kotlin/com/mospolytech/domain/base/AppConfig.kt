@@ -13,4 +13,7 @@ interface AppConfig {
 
     val getStaffUrl: String
     val getStaffAuth: String
+
+    val mainLkLogin: String
+    val mainLkPassword: String
 }

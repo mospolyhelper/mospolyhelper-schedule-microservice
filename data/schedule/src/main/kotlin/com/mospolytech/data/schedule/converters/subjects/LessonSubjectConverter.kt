@@ -3,7 +3,7 @@ package com.mospolytech.data.schedule.converters.subjects
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.schedule.model.db.SubjectsDb
 import com.mospolytech.data.schedule.model.entity.SubjectEntity
-import com.mospolytech.domain.schedule.model.lesson_subject.LessonSubjectInfo
+import com.mospolytech.domain.schedule.model.lessonSubject.LessonSubjectInfo
 import org.jetbrains.exposed.sql.SizedCollection
 import org.jetbrains.exposed.sql.batchInsert
 

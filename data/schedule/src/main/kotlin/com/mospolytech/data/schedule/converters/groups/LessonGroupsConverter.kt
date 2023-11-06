@@ -3,7 +3,6 @@ package com.mospolytech.data.schedule.converters.groups
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.peoples.model.db.GroupsDb
 import com.mospolytech.data.schedule.model.response.ApiGroup
-import com.mospolytech.domain.peoples.model.Group
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.selectAll
@@ -11,17 +10,14 @@ import java.util.*
 import kotlin.collections.HashMap
 
 class LessonGroupsConverter {
-    private val converterCache = HashMap<String, Group>()
-    private val dbCache = HashMap<Group, String>()
+    private val converterCache = HashMap<String, GroupCache>()
+    private val dbCache = HashMap<GroupCache, String>()
 
-    private fun convertGroup(rawTitle: String): Group {
+    private fun convertGroup(rawTitle: String): GroupCache {
         return converterCache.getOrPut(rawTitle) {
-            Group(
+            GroupCache(
                 id = "",
                 title = rawTitle,
-                course = null,
-                faculty = null,
-                direction = null,
             )
         }
     }
@@ -53,15 +49,12 @@ class LessonGroupsConverter {
         }
     }
 
-    private fun cacheDb(row: ResultRow): Group {
+    private fun cacheDb(row: ResultRow): GroupCache {
         val id = row[GroupsDb.id].value
         val model =
-            Group(
+            GroupCache(
                 id = "",
                 title = row[GroupsDb.title],
-                course = null,
-                faculty = null,
-                direction = null,
             )
         dbCache[model] = id
         return model
@@ -71,4 +64,9 @@ class LessonGroupsConverter {
         converterCache.clear()
         dbCache.clear()
     }
+
+    private data class GroupCache(
+        val id: String,
+        val title: String,
+    )
 }

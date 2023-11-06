@@ -1,12 +1,9 @@
 package com.mospolytech.data.peoples.model.xml
 
 import com.mospolytech.domain.peoples.model.*
-import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import nl.adaptivity.xmlutil.serialization.XmlElement
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Serializable
 @SerialName("Состав")
@@ -216,116 +213,3 @@ data class StudentBranchXml(
     @SerialName("GUIDФилиала")
     val guid: String,
 )
-
-private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-
-fun StudentXml.toModel(): Student {
-//    val educationType = when (studentEducationForm.title) {
-//        "Бакалавриат" -> EducationType.Bachelor
-//        "Специалитет" -> EducationType.Specialist
-//        "Аспирантура" -> EducationType.Aspirant
-//        "Магистратура" -> EducationType.Magistrate
-//        "СПО" -> EducationType.College
-//        else -> null
-//    }
-//    val educationForm = when (studentForm.title) {
-//        "Заочная" -> EducationForm.Correspondence
-//        "Очно-заочная" -> EducationForm.Evening
-//        "Очная" -> EducationForm.FullTime
-//        else -> null
-//    }
-    // val payment = studentPayment.title
-//    val payment = when (studentPayment.title) {
-//        "Бюджетная основа" -> EducationForm.Correspondence
-//        "Полное возмещение затрат" -> EducationForm.Evening
-//        "Целевой прием" -> EducationForm.FullTime
-//        else -> null
-//    }
-    val date =
-        try {
-            LocalDate.parse(studentInfo.birthday, dateFormatter).toKotlinLocalDate()
-        } catch (e: Throwable) {
-            null
-        }
-    val faculty = studentFaculty.toModel()
-    val direction = studentDir.toModel()
-    val specialization = studentSpec.toModel()
-    val group = studentEducationGroup.toModel(studentEducationCourse.title.toIntOrNull(), faculty, direction)
-    val branch = studentBranch.toModel()
-
-    return Student(
-        id = studentInfo.recordBookId,
-        firstName = studentInfo.firstName,
-        lastName = studentInfo.lastName,
-        middleName = studentInfo.middleName,
-        status = studentStatus.title,
-        sex = studentInfo.sex.ifEmpty { null },
-        avatar = "https://e.mospolytech.ru/old/img/no_avatar.jpg",
-        birthday = date,
-        faculty = faculty,
-        direction = direction,
-        specialization = specialization,
-        educationType = studentEducationForm.title,
-        educationForm = studentForm.title,
-        payment = studentPayment.title,
-        course = studentEducationCourse.title.toIntOrNull(),
-        group = group,
-        years = studentEducationYear.title,
-        code = studentCode.title,
-        branch = branch,
-        dormitory = dormitory.title.ifEmpty { null },
-        dormitoryRoom = dormitoryRoom.title.ifEmpty { null },
-    )
-}
-
-fun StudentFacultyXml.toModel(): StudentFaculty {
-    return StudentFaculty(
-        id = guid,
-        title = title,
-        titleShort = titleShort.ifEmpty { null },
-    )
-}
-
-fun StudentDirectionXml.toModel(): StudentDirection {
-    return StudentDirection(
-        id = guid,
-        title = title,
-        code = code,
-    )
-}
-
-fun StudentBranchXml.toModel(): StudentBranch {
-    return StudentBranch(
-        id = guid,
-        title = title,
-    )
-}
-
-fun StudentSpecializationXml.toModel(): StudentSpecialization? {
-    return if (title.isEmpty()) {
-        null
-    } else {
-        StudentSpecialization(
-            id = guid,
-            title = title,
-        )
-    }
-}
-
-fun StudentEducationGroupXml.toModel(
-    course: Int?,
-    faculty: StudentFaculty,
-    direction: StudentDirection,
-): Group? {
-    return if (title.isEmpty()) {
-        null
-    } else {
-        Group(
-            id = guid,
-            title = title,
-            course = course,
-            faculty = faculty,
-            direction = direction,
-        )
-    }
-}

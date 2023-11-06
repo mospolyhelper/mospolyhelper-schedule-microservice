@@ -4,6 +4,7 @@ import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.schedule.model.db.PlacesDb
 import com.mospolytech.data.schedule.model.entity.PlaceEntity
 import com.mospolytech.data.schedule.model.response.ApiLesson
+import com.mospolytech.data.schedule.repository.toModel
 import com.mospolytech.domain.schedule.model.place.PlaceInfo
 import com.mospolytech.domain.schedule.model.place.PlaceTypes
 import org.jetbrains.exposed.sql.SizedCollection

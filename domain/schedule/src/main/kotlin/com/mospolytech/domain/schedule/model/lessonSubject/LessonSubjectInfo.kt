@@ -1,4 +1,4 @@
-package com.mospolytech.domain.schedule.model.lesson_subject
+package com.mospolytech.domain.schedule.model.lessonSubject
 
 import kotlinx.serialization.Serializable
 

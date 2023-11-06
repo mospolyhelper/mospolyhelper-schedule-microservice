@@ -1,7 +1,7 @@
 package com.mospolytech.data.schedule.model.entity
 
 import com.mospolytech.data.schedule.model.db.LessonTypesDb
-import com.mospolytech.domain.schedule.model.lesson_type.LessonTypeInfo
+import com.mospolytech.domain.schedule.model.lessonType.LessonTypeInfo
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

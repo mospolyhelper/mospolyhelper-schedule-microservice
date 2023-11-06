@@ -1,5 +1,7 @@
 package com.mospolytech.data.peoples.service
 
+import com.mospolytech.data.peoples.model.response.PaginationResponse
+import com.mospolytech.data.peoples.model.response.StaffResponse
 import com.mospolytech.data.peoples.model.xml.EmployeeInfo
 import com.mospolytech.domain.base.AppConfig
 import io.ktor.client.*
@@ -77,7 +79,28 @@ class TeachersService(
         return file
     }
 
+    suspend fun getStaffLk(
+        token: String,
+        search: String? = null,
+        division: String? = null,
+        page: Int = 1,
+        perpage: Int = 100,
+    ): PaginationResponse<StaffResponse> {
+        return client.get(GET_STAFF) {
+            parameter("token", token)
+            parameter("search", search)
+            parameter("division", division)
+            parameter("page", page)
+            parameter("perpage", perpage)
+        }.body()
+    }
+
     companion object {
+        private const val BASE_URL = "https://e.mospolytech.ru"
+        private const val API_URL = "$BASE_URL/old/lk_api.php"
+
+        private const val GET_STAFF = "$API_URL?getStaff="
+
         private const val FOLDER_NAME = "teachers"
 
         private val GET_TEACHERS_BODY = """<?xml version="1.0" encoding="utf-8"?>

@@ -24,3 +24,7 @@ auth:
 
 admin:
   key: $ADMIN_KEY
+
+mainlk:
+  login: $MAIN_LK_LOGIN
+  password: $MAIN_LK_PASSWORD

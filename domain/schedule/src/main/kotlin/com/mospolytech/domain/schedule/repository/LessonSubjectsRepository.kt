@@ -1,7 +1,7 @@
 package com.mospolytech.domain.schedule.repository
 
 import com.mospolytech.domain.base.model.PagingDTO
-import com.mospolytech.domain.schedule.model.lesson_subject.LessonSubjectInfo
+import com.mospolytech.domain.schedule.model.lessonSubject.LessonSubjectInfo
 
 interface LessonSubjectsRepository {
     suspend fun get(id: String): LessonSubjectInfo?

@@ -1,6 +1,6 @@
 package com.mospolytech.features.schedule.routes
 
-import com.mospolytech.domain.schedule.model.schedule_info.ScheduleInfoObject
+import com.mospolytech.domain.schedule.model.scheduleInfo.ScheduleInfoObject
 import com.mospolytech.domain.schedule.repository.ScheduleInfoRepository
 import com.mospolytech.features.base.utils.respondResult
 import com.mospolytech.features.schedule.routes.model.ScheduleInfoRequest

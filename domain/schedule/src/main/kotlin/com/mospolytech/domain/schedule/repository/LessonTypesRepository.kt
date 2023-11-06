@@ -1,6 +1,6 @@
 package com.mospolytech.domain.schedule.repository
 
-import com.mospolytech.domain.schedule.model.lesson_type.LessonTypeInfo
+import com.mospolytech.domain.schedule.model.lessonType.LessonTypeInfo
 
 interface LessonTypesRepository {
     suspend fun get(id: String): LessonTypeInfo?

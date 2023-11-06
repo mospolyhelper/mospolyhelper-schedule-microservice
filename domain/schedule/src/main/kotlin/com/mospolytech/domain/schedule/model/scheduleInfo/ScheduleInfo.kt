@@ -1,4 +1,4 @@
-package com.mospolytech.domain.schedule.model.schedule_info
+package com.mospolytech.domain.schedule.model.scheduleInfo
 
 import kotlinx.serialization.Serializable
 
