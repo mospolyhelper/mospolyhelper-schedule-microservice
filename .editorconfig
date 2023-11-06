@@ -24,6 +24,8 @@ ktlint_standard_annotation = disabled
 ktlint_standard_no-empty-first-line-in-method-block = disabled
 ktlint_standard_no-wildcard-imports = disabled
 ktlint_standard_package-name = disabled
+ktlint_standard_discouraged-comment-location = disabled
+ktlint_standard_if-else-wrapping = disabled
 
 [*.md]
 trim_trailing_whitespace = false

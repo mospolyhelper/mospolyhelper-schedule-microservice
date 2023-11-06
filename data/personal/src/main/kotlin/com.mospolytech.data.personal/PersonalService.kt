@@ -8,14 +8,14 @@ class PersonalService(
     private val client: HttpClient,
 ) {
     companion object {
-        private const val BaseUrl = "https://e.mospolytech.ru"
-        private const val ApiUrl = "$BaseUrl/old/lk_api.php"
+        private const val BASE_URL = "https://e.mospolytech.ru"
+        private const val API_URL = "$BASE_URL/old/lk_api.php"
 
-        private const val GetPersonal = "$ApiUrl?getUser="
+        private const val GET_PERSONAL = "$API_URL?getUser="
     }
 
     suspend fun getPersonalInfo(token: String): PersonalResponse {
-        return client.get(GetPersonal) {
+        return client.get(GET_PERSONAL) {
             parameter("token", token)
         }.body()
     }

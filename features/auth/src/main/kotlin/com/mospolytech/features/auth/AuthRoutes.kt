@@ -30,7 +30,7 @@ fun Application.authRoutesV1(
             call.respondResult(token.map { TokenResponse(it) })
         }
 
-        authenticate(AuthConfigs.Mpu, optional = true) {
+        authenticate(AuthConfigs.MPU, optional = true) {
             get("validate") {
                 val principal: MpuPrincipal? = call.authentication.principal()
                 val userTypeField = call.parameters[ValidationFields.UserType.toString().lowercase()]
@@ -40,7 +40,7 @@ fun Application.authRoutesV1(
             }
         }
 
-        authenticate(AuthConfigs.Mpu, optional = true) {
+        authenticate(AuthConfigs.MPU, optional = true) {
             get("getLkToken") {
                 val principal: MpuPrincipal? = call.authentication.principal()
                 call.respond(TokenResponse(principal?.token.orEmpty()))

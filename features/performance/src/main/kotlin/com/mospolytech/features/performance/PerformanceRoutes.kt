@@ -11,7 +11,7 @@ import io.ktor.server.routing.*
 
 fun Application.performanceRoutesV1(repository: PerformanceRepository) {
     routing {
-        authenticate(AuthConfigs.Mpu, optional = true) {
+        authenticate(AuthConfigs.MPU, optional = true) {
             route("/performance") {
                 route("/semesters") {
                     get<SemesterRequest> {

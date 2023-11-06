@@ -12,7 +12,7 @@ import io.ktor.server.routing.*
 
 fun Application.paymentsRoutesV1(repository: PaymentsRepository) {
     routing {
-        authenticate(AuthConfigs.Mpu, optional = true) {
+        authenticate(AuthConfigs.MPU, optional = true) {
             route("/payments") {
                 get<PaymentsTypeRequest> {
                     val token = call.getTokenOrRespondError() ?: return@get

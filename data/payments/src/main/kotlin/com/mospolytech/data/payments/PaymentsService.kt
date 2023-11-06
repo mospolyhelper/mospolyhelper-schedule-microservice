@@ -9,14 +9,14 @@ class PaymentsService(
     private val client: HttpClient,
 ) {
     companion object {
-        private const val BaseUrl = "https://e.mospolytech.ru"
-        private const val ApiUrl = "$BaseUrl/old/lk_api.php"
+        private const val BASE_URL = "https://e.mospolytech.ru"
+        private const val API_URL = "$BASE_URL/old/lk_api.php"
 
-        private const val GetPayments = "$ApiUrl?getPayments="
+        private const val GET_PAYMENTS = "$API_URL?getPayments="
     }
 
     suspend fun getPayments(token: String): Response {
-        return client.get(GetPayments) {
+        return client.get(GET_PAYMENTS) {
             parameter("token", token)
         }.body()
     }

@@ -38,7 +38,7 @@ fun Routing.scheduleRoutesV1(
                 call.respond(repository.getCompactSchedule(filter))
             }
         }
-        authenticate(AuthConfigs.Mpu, optional = true) {
+        authenticate(AuthConfigs.MPU, optional = true) {
             get("my") {
                 val token = call.getTokenOrRespondError() ?: return@get
 

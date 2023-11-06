@@ -10,7 +10,7 @@ import io.ktor.server.routing.*
 
 fun Application.personalRoutesV1(repository: PersonalRepository) {
     routing {
-        authenticate(AuthConfigs.Mpu, optional = true) {
+        authenticate(AuthConfigs.MPU, optional = true) {
             get("/personal") {
                 val token = call.getTokenOrRespondError() ?: return@get
                 call.respondResult(repository.getPersonalInfo(token))

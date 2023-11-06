@@ -21,7 +21,7 @@ fun Application.peoplesRoutesV1(
     appConfig: AppConfig,
 ) {
     routing {
-        authenticate(AuthConfigs.Mpu, optional = true) {
+        authenticate(AuthConfigs.MPU, optional = true) {
             route("/peoples") {
                 route("/students") {
                     get<NameRequest> {
