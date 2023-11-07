@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 
 object StudentsDb : IdTable<String>() {
     override val id: Column<EntityID<String>> = text("id").entityId()
-    val lkId = TeachersDb.text("lk_id").nullable().index()
+    val lkId = text("lk_id").nullable().index()
     val name = text("name")
     val birthday = date("birthday").nullable()
     val avatar = text("avatar").nullable()
