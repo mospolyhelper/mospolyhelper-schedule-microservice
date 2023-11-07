@@ -12,11 +12,11 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 
 fun <T : Entity<ID>, ID : Comparable<ID>> EntityClass<ID, T>.upsert(
-    value: ID,
+    id: ID,
     init: T.() -> Unit,
 ): T {
-    val existed = findById(value)
-    return existed?.apply(init) ?: new(value, init)
+    val existed = findById(id)
+    return existed?.apply(init) ?: new(id, init)
 }
 
 inline fun <T : Entity<ID>, ID : Comparable<ID>> EntityClass<ID, T>.upsert(
@@ -25,6 +25,16 @@ inline fun <T : Entity<ID>, ID : Comparable<ID>> EntityClass<ID, T>.upsert(
     noinline init: T.() -> Unit,
 ): T {
     val existed = find(op).firstOrNull()
+    return existed?.apply(init) ?: new(newId(), init)
+}
+
+inline fun <T : Entity<ID>, ID : Comparable<ID>> EntityClass<ID, T>.upsert(
+    id: ID,
+    noinline findOp: SqlExpressionBuilder.() -> Op<Boolean>,
+    newId: () -> ID,
+    noinline init: T.() -> Unit,
+): T {
+    val existed = findById(id) ?: find(findOp).firstOrNull()
     return existed?.apply(init) ?: new(newId(), init)
 }
 

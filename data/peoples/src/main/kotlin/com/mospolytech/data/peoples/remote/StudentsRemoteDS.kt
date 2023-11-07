@@ -17,6 +17,8 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.toKotlinLocalDate
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.mapLazy
@@ -100,7 +102,6 @@ class StudentsRemoteDS {
     }
 
     suspend fun addStudents(students: Sequence<StudentXml>) {
-        // TODO поиск студентов по фио и группе
         students.forEach { student ->
             MosPolyDb.transaction {
                 val birthday =
@@ -120,9 +121,18 @@ class StudentsRemoteDS {
                         course = student.studentEducationCourse.title.toIntOrNull(),
                     )
 
-                StudentEntity.upsert(student.studentInfo.recordBookId) {
-                    this.name = student.studentInfo.fullName()
+                val fullName = student.studentInfo.fullName()
 
+                StudentEntity.upsert(
+                    id = student.studentInfo.recordBookId,
+                    findOp = {
+                        (StudentsDb.name eq fullName) and
+                            (StudentsDb.group eq groupEntity?.id) and
+                            (StudentsDb.faculty eq faculty)
+                    },
+                    newId = { student.studentInfo.recordBookId },
+                ) {
+                    this.name = fullName
                     this.avatar = "https://e.mospolytech.ru/old/img/no_avatar.jpg"
                     this.birthday = birthday
                     this.faculty = faculty
@@ -145,14 +155,18 @@ class StudentsRemoteDS {
     }
 
     suspend fun addStudents(students: List<StudentsResponse>) {
-        // TODO поиск студентов по фио и группе
         students.forEach { student ->
             MosPolyDb.transaction {
                 val groupEntity = getGroupEntity(student.group, student.faculty)
 
                 StudentEntity.upsert(
                     op = {
-                        StudentsDb.lkId eq student.id
+                        (StudentsDb.lkId eq student.id) or (
+                            (StudentsDb.lkId eq null) and
+                                (StudentsDb.name eq student.fio) and
+                                (StudentsDb.group eq groupEntity?.id) and
+                                (StudentsDb.faculty eq student.faculty)
+                        )
                     },
                     newId = { UUID.randomUUID().toString() },
                 ) {
@@ -160,7 +174,6 @@ class StudentsRemoteDS {
                     this.name = student.fio
                     this.avatar = student.avatar
                     this.faculty = student.faculty
-                    this.direction = direction
                     this.group = groupEntity
                     this.lastUpdate = Clock.System.now()
                 }

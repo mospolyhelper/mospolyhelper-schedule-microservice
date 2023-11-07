@@ -1,7 +1,12 @@
 package com.mospolytech.features.peoples
 
 import com.mospolytech.features.base.JobSchedulerManager
-import org.quartz.*
+import org.quartz.CronScheduleBuilder
+import org.quartz.JobBuilder
+import org.quartz.JobDetail
+import org.quartz.JobKey
+import org.quartz.Trigger
+import org.quartz.TriggerBuilder
 
 class TeachersJobLauncher(
     private val jobSchedulerManager: JobSchedulerManager,

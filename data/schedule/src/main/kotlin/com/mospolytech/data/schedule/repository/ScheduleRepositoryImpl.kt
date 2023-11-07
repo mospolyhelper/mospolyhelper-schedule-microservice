@@ -1,8 +1,16 @@
 package com.mospolytech.data.schedule.repository
 
 import com.mospolytech.data.common.db.MosPolyDb
-import com.mospolytech.data.peoples.model.db.*
-import com.mospolytech.data.schedule.model.db.*
+import com.mospolytech.data.peoples.model.db.GroupsDb
+import com.mospolytech.data.schedule.model.db.LessonDateTimesDb
+import com.mospolytech.data.schedule.model.db.LessonToGroupsDb
+import com.mospolytech.data.schedule.model.db.LessonToLessonDateTimesDb
+import com.mospolytech.data.schedule.model.db.LessonToPlacesDb
+import com.mospolytech.data.schedule.model.db.LessonToTeachersDb
+import com.mospolytech.data.schedule.model.db.LessonTypesDb
+import com.mospolytech.data.schedule.model.db.LessonsDb
+import com.mospolytech.data.schedule.model.db.PlacesDb
+import com.mospolytech.data.schedule.model.db.SubjectsDb
 import com.mospolytech.domain.base.model.PagingDTO
 import com.mospolytech.domain.base.utils.map
 import com.mospolytech.domain.peoples.model.description
@@ -12,7 +20,13 @@ import com.mospolytech.domain.schedule.model.pack.CompactSchedule
 import com.mospolytech.domain.schedule.model.source.ScheduleSource
 import com.mospolytech.domain.schedule.model.source.ScheduleSourceFull
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
-import com.mospolytech.domain.schedule.repository.*
+import com.mospolytech.domain.schedule.repository.GroupsRepository
+import com.mospolytech.domain.schedule.repository.LessonSubjectsRepository
+import com.mospolytech.domain.schedule.repository.LessonTypesRepository
+import com.mospolytech.domain.schedule.repository.LessonsRepository
+import com.mospolytech.domain.schedule.repository.PlacesRepository
+import com.mospolytech.domain.schedule.repository.ScheduleRepository
+import com.mospolytech.domain.schedule.repository.TeachersRepository
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.select

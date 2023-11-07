@@ -51,6 +51,16 @@ class StudentsRepositoryImpl(
             studentsDS.clearData()
         }
 
+        val isSource1 = false
+
+        if (isSource1) {
+            downloadStudents1()
+        } else {
+            downloadStudents2()
+        }
+    }
+
+    private suspend fun downloadStudents1() {
         val studentsFile = studentsService.downloadStudents()
         try {
             val students = studentsService.parseStudents(studentsFile)
@@ -60,15 +70,7 @@ class StudentsRepositoryImpl(
         }
     }
 
-    suspend fun updateData2(recreateDb: Boolean) {
-        if (recreateDb) {
-            studentsDS.deleteTables()
-            studentsDS.createTables()
-        } else {
-            studentsDS.ensureCreated()
-            studentsDS.clearData()
-        }
-
+    private suspend fun downloadStudents2() {
         val students = getAllStudentsLk()
         studentsDS.addStudents(students)
     }

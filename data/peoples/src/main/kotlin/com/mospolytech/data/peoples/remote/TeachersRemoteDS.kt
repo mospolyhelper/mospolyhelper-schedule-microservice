@@ -42,7 +42,6 @@ class TeachersRemoteDS {
     }
 
     suspend fun addTeachers(teachers: Sequence<EmployeeInfo>) {
-        // TODO поиск по фио и отделу
         teachers.forEach { teacher ->
             val stuffType =
                 when (teacher.stuffType) {
@@ -58,28 +57,41 @@ class TeachersRemoteDS {
                 }
 
             MosPolyDb.transaction {
-                // TODO Сделать поиск по другим полям, если сперва из лк загрузили
-                TeacherEntity.upsert(teacher.guid) {
-                    name = teacher.name
-                    avatar = "https://e.mospolytech.ru/old/img/no_avatar.jpg"
+                TeacherEntity.upsert(
+                    id = teacher.guid,
+                    findOp = {
+                        (TeachersDb.name eq teacher.name) and
+                            (TeachersDb.grade eq teacher.post) and
+                            (TeachersDb.department eq teacher.department)
+                    },
+                    newId = {
+                        teacher.guid
+                    },
+                ) {
+                    this.name = teacher.name
+                    this.avatar = "https://e.mospolytech.ru/old/img/no_avatar.jpg"
                     this.stuffType = stuffType
-                    grade = teacher.post
-                    departmentParent = teacher.departmentParent
-                    department = teacher.department
-                    email = teacher.email
-                    lastUpdate = Clock.System.now()
+                    this.grade = teacher.post
+                    this.departmentParent = teacher.departmentParent
+                    this.department = teacher.department
+                    this.email = teacher.email
+                    this.lastUpdate = Clock.System.now()
                 }
             }
         }
     }
 
     suspend fun addTeachers(teachers: List<StaffResponse>) {
-        // TODO поиск по фио и отделу
         teachers.forEach { teacher ->
             MosPolyDb.transaction {
                 TeacherEntity.upsert(
                     op = {
-                        TeachersDb.lkId eq teacher.id
+                        (TeachersDb.lkId eq teacher.id) or (
+                            (TeachersDb.lkId eq null) and
+                                (TeachersDb.name eq teacher.fio) and
+                                (TeachersDb.grade eq teacher.post) and
+                                (TeachersDb.department eq teacher.division)
+                        )
                     },
                     newId = { UUID.randomUUID().toString() },
                 ) {

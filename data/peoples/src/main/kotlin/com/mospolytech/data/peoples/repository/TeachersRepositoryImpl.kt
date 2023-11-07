@@ -8,7 +8,6 @@ import com.mospolytech.domain.auth.AuthRepository
 import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.peoples.repository.TeachersRepository
 import kotlinx.coroutines.delay
-import java.io.File
 
 class TeachersRepositoryImpl(
     private val teachersService: TeachersService,
@@ -38,8 +37,18 @@ class TeachersRepositoryImpl(
             teachersDS.clearData()
         }
 
-        // val teachersFile = teachersService.downloadTeachers()
-        val teachersFile = File("""C:\Users\tipapro\Downloads\Telegram Desktop\response.xml""")
+        val isSource1 = false
+
+        if (isSource1) {
+            downloadStudents1()
+        } else {
+            downloadStudents2()
+        }
+    }
+
+    private suspend fun downloadStudents1() {
+        val teachersFile = teachersService.downloadTeachers()
+        // val teachersFile = File("""C:\Users\tipapro\Downloads\Telegram Desktop\response.xml""")
         try {
             val teachers = teachersService.parseTeachers(teachersFile)
             teachersDS.addTeachers(teachers)
@@ -48,15 +57,7 @@ class TeachersRepositoryImpl(
         }
     }
 
-    suspend fun updateData2(recreateDb: Boolean) {
-        if (recreateDb) {
-            teachersDS.deleteTables()
-            teachersDS.createTables()
-        } else {
-            teachersDS.ensureCreated()
-            teachersDS.clearData()
-        }
-
+    private suspend fun downloadStudents2() {
         val teachers = getAllTeachersLk()
         teachersDS.addTeachers(teachers)
     }
