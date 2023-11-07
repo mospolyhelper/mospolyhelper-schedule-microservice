@@ -10,7 +10,7 @@ class TeachersUpdateJob(
 ) : Job {
     override fun execute(context: JobExecutionContext?) =
         runBlocking {
-            // teachersRepository.updateData(false)
+            teachersRepository.updateData(false)
         }
 
     companion object {
