@@ -1,6 +1,6 @@
 package com.mospolytech.domain.schedule.model.place
 
-import com.mospolytech.domain.base.model.Location
+import com.mospolytech.domain.base.model.Coordinates
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 sealed class CompactPlaceInfo : Comparable<CompactPlaceInfo> {
     abstract val id: String
     abstract val title: String
-    abstract val description: String
+    abstract val description: String?
 
     private fun getTypeNumber(): Int {
         return when (this) {
@@ -32,8 +32,8 @@ sealed class CompactPlaceInfo : Comparable<CompactPlaceInfo> {
     data class Building(
         override val id: String,
         override val title: String,
-        override val description: String,
-        val location: Location? = null,
+        override val description: String?,
+        val coordinates: Coordinates? = null,
     ) : CompactPlaceInfo()
 
     @Serializable
@@ -41,7 +41,7 @@ sealed class CompactPlaceInfo : Comparable<CompactPlaceInfo> {
     data class Online(
         override val id: String,
         override val title: String,
-        override val description: String,
+        override val description: String?,
         val url: String? = null,
     ) : CompactPlaceInfo()
 
@@ -50,6 +50,6 @@ sealed class CompactPlaceInfo : Comparable<CompactPlaceInfo> {
     data class Other(
         override val id: String,
         override val title: String,
-        override val description: String,
+        override val description: String?,
     ) : CompactPlaceInfo()
 }

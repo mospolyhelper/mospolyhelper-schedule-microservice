@@ -5,7 +5,7 @@ import com.mospolytech.data.base.findOrAllIfEmpty
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.peoples.model.db.GroupsDb
 import com.mospolytech.data.peoples.model.entity.GroupEntity
-import com.mospolytech.data.peoples.model.entity.toModelShort
+import com.mospolytech.data.peoples.model.entity.toShortModel
 import com.mospolytech.domain.base.model.PagingDTO
 import com.mospolytech.domain.peoples.model.Group
 import com.mospolytech.domain.peoples.model.GroupShort
@@ -20,14 +20,6 @@ class GroupsRepositoryImpl : GroupsRepository {
         }
     }
 
-    override suspend fun getAll(): List<Group> {
-        return MosPolyDb.transaction {
-            GroupEntity.all()
-                .orderBy(GroupsDb.title to SortOrder.ASC)
-                .map { it.toModel() }
-        }
-    }
-
     override suspend fun getPagingShort(
         query: String,
         pageSize: Int,
@@ -35,10 +27,10 @@ class GroupsRepositoryImpl : GroupsRepository {
     ): PagingDTO<GroupShort> {
         return MosPolyDb.transaction {
             createPagingDto(pageSize, page) { offset ->
-                GroupEntity.findOrAllIfEmpty(query) { GroupsDb.title like query }
+                GroupEntity.findOrAllIfEmpty(query) { GroupsDb.title like "%$query%" }
                     .orderBy(GroupsDb.title to SortOrder.ASC)
                     .limit(pageSize, offset.toLong())
-                    .mapLazy { it.toModelShort() }
+                    .mapLazy { it.toShortModel() }
                     .toList()
             }
         }

@@ -8,7 +8,7 @@ interface StudentsRepository {
     suspend fun getStudents(
         query: String = "",
         page: Int = 1,
-        pageSize: Int = 100,
+        limit: Int = 100,
     ): PagingDTO<Student>
 
     suspend fun getShortStudents(

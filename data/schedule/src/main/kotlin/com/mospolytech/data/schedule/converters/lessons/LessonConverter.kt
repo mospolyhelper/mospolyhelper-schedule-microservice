@@ -1,19 +1,20 @@
 package com.mospolytech.data.schedule.converters.lessons
 
 import com.mospolytech.data.common.db.MosPolyDb
-import com.mospolytech.data.schedule.converters.dateTime.LessonDateTimeConverter
 import com.mospolytech.data.schedule.converters.groups.LessonGroupsConverter
 import com.mospolytech.data.schedule.converters.places.LessonPlacesConverter
 import com.mospolytech.data.schedule.converters.subjects.LessonSubjectConverter
 import com.mospolytech.data.schedule.converters.teachers.LessonTeachersConverter
 import com.mospolytech.data.schedule.converters.types.LessonTypeConverter
 import com.mospolytech.data.schedule.model.db.LessonToGroupsDb
-import com.mospolytech.data.schedule.model.db.LessonToLessonDateTimesDb
 import com.mospolytech.data.schedule.model.db.LessonToPlacesDb
 import com.mospolytech.data.schedule.model.db.LessonToTeachersDb
 import com.mospolytech.data.schedule.model.db.LessonsDb
+import com.mospolytech.data.schedule.model.db.RecurrenceDb
+import com.mospolytech.data.schedule.model.db.toByte
 import com.mospolytech.data.schedule.model.response.ApiGroup
 import com.mospolytech.data.schedule.model.response.ApiLesson
+import com.mospolytech.domain.schedule.model.pack.LessonDateTime
 import org.jetbrains.exposed.sql.batchInsert
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -26,7 +27,6 @@ class LessonConverter(
     private val teachersConverter: LessonTeachersConverter,
     private val groupsConverter: LessonGroupsConverter,
     private val placesConverter: LessonPlacesConverter,
-    private val lessonDateTimeConverter: LessonDateTimeConverter,
 ) {
     private val logger = LoggerFactory.getLogger("com.mospolytech.data.schedule.converters.lessons.LessonConverter")
 
@@ -35,26 +35,31 @@ class LessonConverter(
     private val lessonToTeacher = HashSet<Pair<UUID, String>>()
     private val lessonToGroup = HashSet<Pair<UUID, String>>()
     private val lessonToPlace = HashSet<Pair<UUID, UUID>>()
-    private val lessonToDateTime = HashSet<Pair<UUID, UUID>>()
+    private val lessonToDateTime = HashSet<Pair<UUID, String>>()
 
     fun cacheLesson(
         apiLesson: ApiLesson,
         apiGroups: List<ApiGroup>,
-        timesId: List<String>,
+        startDateTime: LessonDateTime,
+        endDateTime: LessonDateTime,
+        recurrence: String?,
     ) {
-        val subjectId = lessonSubjectConverter.getCachedId(apiLesson.sbj)
-        val typeId = lessonTypeConverter.getCachedId(apiLesson.type, apiLesson.sbj)
+        val (subjectId, subgroup) = lessonSubjectConverter.getCachedId(apiLesson.sbj)
+        val (type, importance) = lessonTypeConverter.getCachedId(apiLesson.type, apiLesson.sbj)
         val teachersId = teachersConverter.getCachedIds(apiLesson.teacher)
         val groupsId = groupsConverter.getCachedIds(apiGroups)
         val placesId = placesConverter.getCachedIds(apiLesson.auditories)
 
         val cacheKey =
             ApiLessonCache(
-                typeId = typeId,
+                type = type,
+                subgroup = subgroup,
                 subjectId = subjectId,
                 teachersId = teachersId,
                 placesId = placesId,
-                timesId = timesId,
+                start = startDateTime,
+                end = endDateTime,
+                importance = importance,
             )
         var lessonId = lessonCache[cacheKey]
 
@@ -71,8 +76,8 @@ class LessonConverter(
             placesId.forEach {
                 lessonToPlace.add(lessonId to UUID.fromString(it))
             }
-            timesId.forEach {
-                lessonToDateTime.add(lessonId to UUID.fromString(it))
+            recurrence?.let {
+                lessonToDateTime.add(lessonId to it)
             }
 
             lessonCache[cacheKey] = lessonId
@@ -93,8 +98,12 @@ class LessonConverter(
         MosPolyDb.transaction {
             LessonsDb.batchInsert(lessonCache.entries) { (lessonCache, lessonId) ->
                 this[LessonsDb.id] = lessonId
-                this[LessonsDb.type] = UUID.fromString(lessonCache.typeId)
-                this[LessonsDb.subject] = UUID.fromString(lessonCache.subjectId)
+                this[LessonsDb.type] = lessonCache.type
+                this[LessonsDb.subgroup] = lessonCache.subgroup
+                this[LessonsDb.subject] = lessonCache.subjectId
+                this[LessonsDb.startDateTime] = lessonCache.start.dateTime
+                this[LessonsDb.endDateTime] = lessonCache.end.dateTime
+                this[LessonsDb.importance] = lessonCache.importance.toByte()
             }
 
             LessonToTeachersDb.batchInsert(lessonToTeacher) {
@@ -109,9 +118,9 @@ class LessonConverter(
                 this[LessonToPlacesDb.lesson] = it.first
                 this[LessonToPlacesDb.place] = it.second
             }
-            LessonToLessonDateTimesDb.batchInsert(lessonToDateTime) {
-                this[LessonToLessonDateTimesDb.lesson] = it.first
-                this[LessonToLessonDateTimesDb.time] = it.second
+            RecurrenceDb.batchInsert(lessonToDateTime) {
+                this[RecurrenceDb.lesson] = it.first
+                this[RecurrenceDb.recurrence] = it.second
             }
         }
         logger.debug("All lesson pushed")
@@ -128,8 +137,6 @@ class LessonConverter(
         groupsConverter.cacheAll(lessonData.groups)
         logger.debug("Cache places")
         placesConverter.cacheAll(lessonData.places)
-        logger.debug("Cache dateTimes")
-        lessonDateTimeConverter.cacheAll(lessonData.dateTimes)
     }
 
     fun clearCache() {
@@ -138,7 +145,6 @@ class LessonConverter(
         teachersConverter.clearCache()
         groupsConverter.clearCache()
         placesConverter.clearCache()
-        lessonDateTimeConverter.clearCache()
         clearLessonCache()
     }
 

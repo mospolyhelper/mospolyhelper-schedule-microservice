@@ -6,8 +6,6 @@ import com.mospolytech.domain.peoples.model.Teacher
 interface TeachersRepository {
     suspend fun get(id: String): Teacher?
 
-    suspend fun getAll(): List<Teacher>
-
     suspend fun getPaging(
         query: String,
         pageSize: Int,

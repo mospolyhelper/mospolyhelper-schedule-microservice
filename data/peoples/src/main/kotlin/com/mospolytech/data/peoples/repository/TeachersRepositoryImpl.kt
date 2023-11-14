@@ -8,6 +8,9 @@ import com.mospolytech.domain.auth.AuthRepository
 import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.peoples.repository.TeachersRepository
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.flow
 
 class TeachersRepositoryImpl(
     private val teachersService: TeachersService,
@@ -17,8 +20,8 @@ class TeachersRepositoryImpl(
     override suspend fun getTeachers(
         name: String,
         page: Int,
-        pageSize: Int,
-    ) = teachersDS.getTeachersPaging(name, pageSize, page)
+        limit: Int,
+    ) = teachersDS.getTeachersPaging(name, limit, page)
 
     override suspend fun getTeachers() = teachersDS.getTeachers()
 
@@ -58,39 +61,40 @@ class TeachersRepositoryImpl(
     }
 
     private suspend fun downloadStudents2() {
-        val teachers = getAllTeachersLk()
-        teachersDS.addTeachers(teachers)
+        getAllTeachersLk()
+            .buffer()
+            .collect {
+                teachersDS.addTeachers(it)
+            }
     }
 
-    private suspend fun getAllTeachersLk(): List<StaffResponse> {
-        val token = authRepository.getTokenForMainUser()
+    private suspend fun getAllTeachersLk(): Flow<List<StaffResponse>> =
+        flow {
+            val token = authRepository.getTokenForMainUser()
 
-        val resList = mutableListOf<StaffResponse>()
-        val pageSize = 1000
-        var currentPage = 1
+            val pageSize = 1000
+            var currentPage = 1
 
-        while (true) {
-            val response =
-                retryIO {
-                    teachersService.getStaffLk(
-                        token = token,
-                        page = currentPage,
-                        perpage = pageSize,
-                    )
+            while (true) {
+                val response =
+                    retryIO {
+                        teachersService.getStaffLk(
+                            token = token,
+                            page = currentPage,
+                            perpage = pageSize,
+                        )
+                    }
+
+                emit(response.items)
+
+                val responseCurrentPage = response.currentPage.toIntOrNull() ?: 0
+                val responsePageCount = response.pages.toIntOrNull() ?: 0
+                if (responseCurrentPage >= responsePageCount) {
+                    break
+                } else {
+                    delay(500)
+                    currentPage++
                 }
-
-            resList.addAll(response.items)
-
-            val responseCurrentPage = response.currentPage.toIntOrNull() ?: 0
-            val responsePageCount = response.pages.toIntOrNull() ?: 0
-            if (responseCurrentPage >= responsePageCount) {
-                break
-            } else {
-                delay(500)
-                currentPage++
             }
         }
-
-        return resList
-    }
 }

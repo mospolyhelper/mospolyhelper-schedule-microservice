@@ -34,7 +34,7 @@ class TeacherEntity(id: EntityID<String>) : Entity<String>(id) {
     }
 }
 
-val TeacherEntity.description: String
+val TeacherEntity.description: String?
     get() {
         return buildString {
             grade?.let { append(it) }
@@ -48,5 +48,5 @@ val TeacherEntity.description: String
                 ifNotEmpty { append(", ") }
                 append(it)
             }
-        }
+        }.ifEmpty { null }
     }

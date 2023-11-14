@@ -7,8 +7,6 @@ import com.mospolytech.domain.peoples.model.GroupShort
 interface GroupsRepository {
     suspend fun get(id: String): Group?
 
-    suspend fun getAll(): List<Group>
-
     suspend fun getPagingShort(
         query: String,
         pageSize: Int,

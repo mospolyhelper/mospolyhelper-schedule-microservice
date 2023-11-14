@@ -1,8 +1,6 @@
 package com.mospolytech.data.schedule.repository
 
-import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
-import com.mospolytech.domain.schedule.model.lesson.toDateTimeRanges
-import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
+import com.mospolytech.domain.schedule.model.pack.CompactLessonEvent
 import com.mospolytech.domain.schedule.model.place.PlaceDailyOccupancy
 import com.mospolytech.domain.schedule.model.place.PlaceFilters
 import com.mospolytech.domain.schedule.model.place.PlaceInfo
@@ -12,7 +10,6 @@ import com.mospolytech.domain.schedule.repository.LessonsRepository
 import com.mospolytech.domain.schedule.repository.PlacesRepository
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.toJavaLocalTime
 import java.time.LocalTime
 
 class FreePlacesRepositoryImpl(
@@ -34,45 +31,46 @@ class FreePlacesRepositoryImpl(
 
         val resMap = mutableMapOf<LocalDate, MutableList<TempPlaceOccupancyTimeRange>>()
 
-        lessons.forEach { lessonAndTimes ->
-            lessonAndTimes.times.forEach { lessonDateTime ->
-                lessonDateTime.toDateTimeRanges().forEach last@{ dateTimeRange ->
-                    val dailyOccupancy = resMap.getOrPut(dateTimeRange.start.date) { mutableListOf() }
-                    val newTimeRange =
-                        TempPlaceOccupancyTimeRange(
-                            timeFrom = dateTimeRange.start.time.toJavaLocalTime(),
-                            timeTo = dateTimeRange.endInclusive.time.toJavaLocalTime(),
-                            value = 1.0,
-                        )
-
-                    // search for first timeRange where startTime is greater
-                    val indexToInsert =
-                        dailyOccupancy.indexOfFirst {
-                            it.timeFrom > newTimeRange.timeFrom
-                        }
-
-                    // just add in the end of list
-                    // if timeRange with startTime is greater than our
-                    // not found
-                    if (indexToInsert == -1) {
-                        dailyOccupancy.add(newTimeRange)
-                        return@last
-                    }
-
-                    val itemToMove = dailyOccupancy[indexToInsert]
-
-                    // if newTimeRange intersect next item (itemToMove)
-                    if (newTimeRange.timeTo >= itemToMove.timeFrom) {
-                        itemToMove += newTimeRange
-                        fixRemainingIntersectionsAfter(indexToInsert, dailyOccupancy)
-                    } else {
-                        dailyOccupancy.add(indexToInsert, newTimeRange)
-                    }
-
-                    fixRemainingIntersectionsBefore(indexToInsert, dailyOccupancy)
-                }
-            }
-        }
+        // TODO
+//        lessons.forEach { lessonEvent ->
+//            lessonEvent.times.forEach { lessonDateTime ->
+//                lessonDateTime.toDateTimeRanges().forEach last@{ dateTimeRange ->
+//                    val dailyOccupancy = resMap.getOrPut(dateTimeRange.start.date) { mutableListOf() }
+//                    val newTimeRange =
+//                        TempPlaceOccupancyTimeRange(
+//                            timeFrom = dateTimeRange.start.time.toJavaLocalTime(),
+//                            timeTo = dateTimeRange.endInclusive.time.toJavaLocalTime(),
+//                            value = 1.0,
+//                        )
+//
+//                    // search for first timeRange where startTime is greater
+//                    val indexToInsert =
+//                        dailyOccupancy.indexOfFirst {
+//                            it.timeFrom > newTimeRange.timeFrom
+//                        }
+//
+//                    // just add in the end of list
+//                    // if timeRange with startTime is greater than our
+//                    // not found
+//                    if (indexToInsert == -1) {
+//                        dailyOccupancy.add(newTimeRange)
+//                        return@last
+//                    }
+//
+//                    val itemToMove = dailyOccupancy[indexToInsert]
+//
+//                    // if newTimeRange intersect next item (itemToMove)
+//                    if (newTimeRange.timeTo >= itemToMove.timeFrom) {
+//                        itemToMove += newTimeRange
+//                        fixRemainingIntersectionsAfter(indexToInsert, dailyOccupancy)
+//                    } else {
+//                        dailyOccupancy.add(indexToInsert, newTimeRange)
+//                    }
+//
+//                    fixRemainingIntersectionsBefore(indexToInsert, dailyOccupancy)
+//                }
+//            }
+//        }
 
         return resMap.map {
             PlaceDailyOccupancy(
@@ -142,29 +140,33 @@ class FreePlacesRepositoryImpl(
     )
 
     private fun arrangePlacesByLessons(
-        lessons: List<CompactLessonAndTimes>,
+        lessons: List<CompactLessonEvent>,
         dateTimeFrom: LocalDateTime,
         dateTimeTo: LocalDateTime,
-    ): Map<String, List<CompactLessonAndTimes>> {
-        return lessons.flatMap { it.lesson.placesId }
+    ): Map<String, List<CompactLessonEvent>> {
+        return lessons.flatMap { it.placesId }
             .toSortedSet()
             .associateWith { getLessonsForPlace(it, lessons, dateTimeFrom, dateTimeTo) }
     }
 
     private fun getLessonsForPlace(
         placeId: String,
-        lessons: List<CompactLessonAndTimes>,
+        lessons: List<CompactLessonEvent>,
         dateTimeFrom: LocalDateTime,
         dateTimeTo: LocalDateTime,
-    ): List<CompactLessonAndTimes> {
-        return lessons.filter { it.lesson.placesId.any { it == placeId } && it.times.any { it in dateTimeFrom..dateTimeTo } }
+    ): List<CompactLessonEvent> {
+        return lessons
+        // TODO lesson filter by date
+        // return lessons.filter { it.placesId.any { it == placeId } && it.times.any { it in dateTimeFrom..dateTimeTo } }
     }
 
-    operator fun ClosedRange<LocalDateTime>.contains(lessonDateTime: LessonDateTime): Boolean {
-        val lessonDateTimeRanges = lessonDateTime.toDateTimeRanges()
-
-        return lessonDateTimeRanges.any {
-            it.start in this || it.endInclusive in this
-        }
+    operator fun ClosedRange<LocalDateTime>.contains(lessonDateTime: CompactLessonEvent): Boolean {
+        // TODO
+        return true
+//        val lessonDateTimeRanges = lessonDateTime.toDateTimeRanges()
+//
+//        return lessonDateTimeRanges.any {
+//            it.start in this || it.endInclusive in this
+//        }
     }
 }

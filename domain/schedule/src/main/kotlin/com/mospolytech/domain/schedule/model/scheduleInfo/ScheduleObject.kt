@@ -1,6 +1,8 @@
 package com.mospolytech.domain.schedule.model.scheduleInfo
 
-@kotlinx.serialization.Serializable
+import kotlinx.serialization.Serializable
+
+@Serializable
 class ScheduleObject(
     val id: String,
     val title: String,

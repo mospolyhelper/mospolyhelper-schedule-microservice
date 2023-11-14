@@ -1,6 +1,6 @@
 package com.mospolytech.data.schedule.converters.places
 
-import com.mospolytech.domain.base.model.Location
+import com.mospolytech.domain.base.model.Coordinates
 import com.mospolytech.domain.base.utils.capitalized
 import com.mospolytech.domain.base.utils.ifNotEmpty
 import com.mospolytech.domain.schedule.model.place.PlaceInfo
@@ -28,38 +28,36 @@ internal val parserChain =
     listOf(
         PlaceParserPack("""^ав\s*((\d)(\d)(.+))$""") {
             createBuildingPlace(
-                id = "",
                 title = groupValues[0],
                 areaAlias = "Автозаводская",
-                street = "Автозаводская улица, 16",
+                street = "Автозаводская ул., 16",
                 building = groupValues[2],
                 floor = groupValues[3],
                 auditorium = groupValues[1],
-                location =
+                coordinates =
                     when (groupValues[2]) {
-                        "1" -> Location(55.704191, 37.645163)
-                        "2" -> Location(55.704561, 37.645704)
-                        "3" -> Location(55.704839, 37.646956)
-                        "4" -> Location(55.704452, 37.646639)
-                        "5" -> Location(55.705504, 37.646804)
-                        "6" -> Location(55.704282, 37.646083)
+                        "1" -> Coordinates(55.704191, 37.645163)
+                        "2" -> Coordinates(55.704561, 37.645704)
+                        "3" -> Coordinates(55.704839, 37.646956)
+                        "4" -> Coordinates(55.704452, 37.646639)
+                        "5" -> Coordinates(55.705504, 37.646804)
+                        "6" -> Coordinates(55.704282, 37.646083)
                         else -> null
                     },
             )
         },
         PlaceParserPack("""^пр\s*((\d)(\d).+)$""") {
             createBuildingPlace(
-                id = "",
                 title = groupValues[0],
                 areaAlias = "Прянишникова",
-                street = "улица Прянишникова, 2А",
+                street = "ул. Прянишникова, 2А",
                 building = groupValues[2],
                 floor = groupValues[3],
                 auditorium = groupValues[1],
-                location =
+                coordinates =
                     when (groupValues[2]) {
-                        "1" -> Location(55.833268, 37.544180)
-                        "2" -> Location(55.833708, 37.543758)
+                        "1" -> Coordinates(55.833268, 37.544180)
+                        "2" -> Coordinates(55.833708, 37.543758)
                         else -> null
                     },
             )
@@ -68,110 +66,103 @@ internal val parserChain =
             val building = groupValues[2]
 
             createBuildingPlace(
-                id = "",
                 title = groupValues[0],
                 areaAlias = "Прянишникова",
-                street = "улица Прянишникова, 2А",
+                street = "ул. Прянишникова, 2А",
                 building = building,
                 floor = groupValues[3],
                 auditorium = groupValues[1],
-                location =
+                coordinates =
                     when (building) {
-                        "1" -> Location(55.833268, 37.544180)
-                        "2" -> Location(55.833708, 37.543758)
+                        "1" -> Coordinates(55.833268, 37.544180)
+                        "2" -> Coordinates(55.833708, 37.543758)
                         else -> null
                     },
             )
         },
         PlaceParserPack("""^пр\s(ФО[\s-]*\d+)$""") {
             createBuildingPlace(
-                id = "",
                 title = groupValues[0],
                 areaAlias = "Прянишникова",
-                street = "улица Прянишникова, 2А",
+                street = "ул. Прянишникова, 2А",
                 building = "2",
                 floor = "4",
                 auditorium = groupValues[1],
-                location = Location(55.833708, 37.543758),
+                coordinates = Coordinates(55.833708, 37.543758),
             )
         },
         PlaceParserPack("""^м\s*((\d)(\d).+)$""") {
             val building = groupValues[2]
 
             createBuildingPlace(
-                id = "",
                 title = groupValues[0],
                 areaAlias = "Михалковская",
-                street = "Михалковская улица, 7",
+                street = "Михалковская ул., 7",
                 building = building,
                 floor = groupValues[3],
                 auditorium = groupValues[1],
-                location =
+                coordinates =
                     when (building) {
-                        "3" -> Location(55.837459, 37.533427)
+                        "3" -> Coordinates(55.837459, 37.533427)
                         else -> null
                     },
             )
         },
         PlaceParserPack("""^м\s*(эстамп)$""") {
             createBuildingPlace(
-                id = "",
                 title = groupValues[0],
                 areaAlias = "Михалковская",
-                street = "Михалковская улица, 7",
-                location = Location(55.837131, 37.533649),
+                street = "Михалковская ул., 7",
+                coordinates = Coordinates(55.837131, 37.533649),
             )
         },
         PlaceParserPack("""^(\d)пк\s*((\d).+)$""") {
             val building = groupValues[1]
 
             createBuildingPlace(
-                id = "",
                 title = groupValues[0],
                 areaAlias = "Павла Корчагина",
-                street = "улица Павла Корчагина, 22",
+                street = "ул. Павла Корчагина, 22",
                 building = building,
                 floor = groupValues[3],
                 auditorium = groupValues[2],
-                location =
+                coordinates =
                     when (building) {
-                        "1" -> Location(55.819439, 37.663351)
-                        "2" -> Location(55.819287, 37.664276)
+                        "1" -> Coordinates(55.819439, 37.663351)
+                        "2" -> Coordinates(55.819287, 37.664276)
                         else -> null
                     },
             )
         },
         PlaceParserPack("""^пк\s*((\d).+)$""") {
             createBuildingPlace(
-                id = "",
                 title = groupValues[0],
                 areaAlias = "Павла Корчагина",
-                street = "улица Павла Корчагина, 22",
+                street = "ул. Павла Корчагина, 22",
                 building = "1",
                 floor = groupValues[2],
                 auditorium = groupValues[1],
-                location = Location(55.819439, 37.663351),
+                coordinates = Coordinates(55.819439, 37.663351),
             )
         },
         PlaceParserPack("""^([АБВНH]|Нд)\s*(\d).+$""") {
             val building = groupValues[1].replace('H', 'Н').lowercase().capitalized()
 
             createBuildingPlace(
-                id = "",
                 title = groupValues[0],
                 areaAlias = "Б. Семёновская",
-                street = "Большая Семёновская улица, 38",
+                street = "Большая Семёновская ул., 38",
                 building = building,
                 floor = groupValues[2],
                 auditorium = groupValues[0],
-                location =
+                coordinates =
                     when (building) {
-                        "А" -> Location(55.781310, 37.711513)
-                        "Б" -> Location(55.781074, 37.712677)
-                        "В" -> Location(55.781428, 37.710494)
-                        "Н" -> Location(55.780930, 37.709807)
-                        "Нд" -> Location(55.780300, 37.709753)
-                        "Л" -> Location(55.781164, 37.710555)
+                        "А" -> Coordinates(55.781310, 37.711513)
+                        "Б" -> Coordinates(55.781074, 37.712677)
+                        "В" -> Coordinates(55.781428, 37.710494)
+                        "Н" -> Coordinates(55.780930, 37.709807)
+                        "Нд" -> Coordinates(55.780300, 37.709753)
+                        "Л" -> Coordinates(55.781164, 37.710555)
                         else -> null
                     },
             )
@@ -180,21 +171,20 @@ internal val parserChain =
             val building = groupValues[1].lowercase().capitalized()
 
             createBuildingPlace(
-                id = "",
                 title = groupValues[0],
                 areaAlias = "Б. Семёновская",
-                street = "Большая Семёновская улица, 38",
+                street = "Большая Семёновская ул., 38",
                 building = building,
                 floor = groupValues[1],
                 auditorium = "А ОМД",
-                location =
+                coordinates =
                     when (building) {
-                        "А" -> Location(55.781310, 37.711513)
-                        "Б" -> Location(55.781074, 37.712677)
-                        "В" -> Location(55.781428, 37.710494)
-                        "Н" -> Location(55.780930, 37.709807)
-                        "Нд" -> Location(55.780300, 37.709753)
-                        "Л" -> Location(55.781164, 37.710555)
+                        "А" -> Coordinates(55.781310, 37.711513)
+                        "Б" -> Coordinates(55.781074, 37.712677)
+                        "В" -> Coordinates(55.781428, 37.710494)
+                        "Н" -> Coordinates(55.780930, 37.709807)
+                        "Нд" -> Coordinates(55.780300, 37.709753)
+                        "Л" -> Coordinates(55.781164, 37.710555)
                         else -> null
                     },
                 additionalDescription = "Лаборатория обработки материалов давлением",
@@ -212,29 +202,29 @@ internal val parserChain =
             // Спортивный зал №7 ул. Павла Корчагина, 22, пом. No519
             // Спортивный зал №9 ул. Автозаводская, 16, стр. 3, этаж 5, ауд. 3501
 
-            val location =
+            val coordinates =
                 when (gymNumber) {
-                    "1" -> Location(55.837495, 37.532223)
-                    "2" -> Location(55.781074, 37.712677)
-                    "3" -> Location(55.819287, 37.664276)
-                    "4" -> Location(55.819287, 37.664276)
-                    "5" -> Location(55.819287, 37.664276)
-                    "6" -> Location(55.819287, 37.664276)
-                    "7" -> Location(55.819287, 37.664276)
-                    "9" -> Location(55.819287, 37.664276)
+                    "1" -> Coordinates(55.837495, 37.532223)
+                    "2" -> Coordinates(55.781074, 37.712677)
+                    "3" -> Coordinates(55.819287, 37.664276)
+                    "4" -> Coordinates(55.819287, 37.664276)
+                    "5" -> Coordinates(55.819287, 37.664276)
+                    "6" -> Coordinates(55.819287, 37.664276)
+                    "7" -> Coordinates(55.819287, 37.664276)
+                    "9" -> Coordinates(55.819287, 37.664276)
                     else -> null
                 }
 
             val street =
                 when (gymNumber) {
-                    "1" -> "Большая Семёновская улица, 38"
-                    "2" -> "Большая Семёновская улица, 38"
-                    "3" -> "Малая Семёновская улица, 12"
-                    "4" -> "улица Павла Корчагина, 22"
-                    "5" -> "улица Павла Корчагина, 22"
-                    "6" -> "улица Бориса Галушкина, 9"
-                    "7" -> "улица Павла Корчагина, 22"
-                    "9" -> "Автозаводская улица, 16"
+                    "1" -> "Большая Семёновская ул., 38"
+                    "2" -> "Большая Семёновская ул., 38"
+                    "3" -> "Малая Семёновская ул., 12"
+                    "4" -> "ул. Павла Корчагина, 22"
+                    "5" -> "ул. Павла Корчагина, 22"
+                    "6" -> "ул. Бориса Галушкина, 9"
+                    "7" -> "ул. Павла Корчагина, 22"
+                    "9" -> "Автозаводская ул., 16"
                     else -> null
                 }
 
@@ -253,21 +243,19 @@ internal val parserChain =
             val description = description1?.let { "Учебные и тренировочные занятия: $description1" }
 
             createBuildingPlace(
-                id = "",
                 title = "Спортзал №$gymNumber",
                 areaAlias = "Спортивный зал №$gymNumber",
                 street = street,
-                location = location,
+                coordinates = coordinates,
                 additionalDescription = description,
             )
         },
         PlaceParserPack("""^м[\s\p{P}]*спорт[\s\p{P}]*зал[\p{P}]*$""") {
             createBuildingPlace(
-                id = "",
                 title = "М Спортзал",
                 areaAlias = "Михалковская",
-                street = "Михалковская улица, 7с2",
-                location = Location(55.837495, 37.532223),
+                street = "Михалковская ул., 7с2",
+                coordinates = Coordinates(55.837495, 37.532223),
                 additionalDescription =
                     "Учебные и тренировочные занятия: " +
                         "Зал спортивных игр, тренажерный зал, залы настольного тенниса, " +
@@ -278,12 +266,11 @@ internal val parserChain =
             val gymNumber = groupValues[1]
 
             createBuildingPlace(
-                id = "",
                 title = "Ав Спортзал №$gymNumber",
                 areaAlias = "Спорткомплекс №$gymNumber «На Автозаводской»",
-                street = "Автозаводская улица, 16с2",
+                street = "Автозаводская ул., 16с2",
                 floor = "8",
-                location = Location(55.837495, 37.532223),
+                coordinates = Coordinates(55.837495, 37.532223),
                 additionalDescription =
                     "Учебные и тренировочные занятия: " +
                         "Тренажерный зал, армрестлинг, аскетбол, дартс, настольный теннис, эстетическая гимнастика",
@@ -291,12 +278,11 @@ internal val parserChain =
         },
         PlaceParserPack("""^АВ[\s\p{P}]*Спортзал$""") {
             createBuildingPlace(
-                id = "",
                 title = "Ав Спортзал",
                 areaAlias = "Спорткомплекс «На Автозаводской»",
-                street = "Автозаводская улица, 16с2",
+                street = "Автозаводская ул., 16с2",
                 floor = "8",
-                location = Location(55.837495, 37.532223),
+                coordinates = Coordinates(55.837495, 37.532223),
                 additionalDescription =
                     "Учебные и тренировочные занятия: " +
                         "Тренажерный зал, армрестлинг, аскетбол, дартс, настольный теннис, эстетическая гимнастика",
@@ -304,11 +290,10 @@ internal val parserChain =
         },
         PlaceParserPack("""^(.*Измайлово.*)$""") {
             createBuildingPlace(
-                id = "",
                 title = groupValues[1],
                 areaAlias = "Спорткомплекс «Измайлово»",
-                street = "11-я Парковая улица, 36с2",
-                location = Location(55.800985, 37.806210),
+                street = "11-я Парковая ул., 36с2",
+                coordinates = Coordinates(55.800985, 37.806210),
                 additionalDescription =
                     "Учебные и тренировочные занятия: " +
                         "Тренажерный зал, волейбол, дартс, настольный теннис, степ-аэробика, " +
@@ -317,7 +302,6 @@ internal val parserChain =
         },
         PlaceParserPack("""^[_\s\.]*Ц?ПД[_\s\.\d]*$""", """^Проектная\sдеятельность$""") {
             createOtherPlace(
-                id = "",
                 title = "Проектная деятельность",
             )
         },
@@ -327,35 +311,30 @@ internal val parserChain =
             """^Обучение\s+(LMS|ЛМС)$""",
         ) {
             createOnlinePlace(
-                id = "",
                 title = "Обучение в ЛМС",
                 url = it.firstOrNull(),
             )
         },
         PlaceParserPack("""^Webex$""") {
             createOnlinePlace(
-                id = "",
                 title = "Видеоконференция в Webex",
                 url = it.firstOrNull(),
             )
         },
         PlaceParserPack("""^Webinar$""") {
             createOnlinePlace(
-                id = "",
                 title = "Онлайн лекция в Webinar",
                 url = it.firstOrNull(),
             )
         },
         PlaceParserPack("""^Online\sкурс$""") {
             createOnlinePlace(
-                id = "",
                 title = "Онлайн курс",
                 url = it.firstOrNull(),
             )
         },
         PlaceParserPack("""^Онлайн$""") {
             createOnlinePlace(
-                id = "",
                 title = "Онлайн курс",
                 url = it.firstOrNull(),
             )
@@ -374,7 +353,6 @@ internal val parserChain =
                 }
 
             createOtherPlace(
-                id = "",
                 title = title,
                 additionalDescription = description1,
             )
@@ -382,14 +360,13 @@ internal val parserChain =
     )
 
 private fun createBuildingPlace(
-    id: String,
     title: String,
     areaAlias: String? = null,
     street: String? = null,
     building: String? = null,
     floor: String? = null,
     auditorium: String? = null,
-    location: Location? = null,
+    coordinates: Coordinates? = null,
     // TODO Использовать это
     additionalDescription: String? = null,
 ): PlaceInfo.Building {
@@ -401,7 +378,7 @@ private fun createBuildingPlace(
 
             building?.let {
                 ifNotEmpty { append(", ") }
-                append("$building-й корус")
+                append("корп. $building")
             }
 
             floor?.let {
@@ -411,7 +388,7 @@ private fun createBuildingPlace(
         }
 
     return PlaceInfo.Building(
-        id = id,
+        id = "",
         title = title,
         description = description,
         areaAlias = areaAlias,
@@ -419,12 +396,11 @@ private fun createBuildingPlace(
         building = building,
         floor = floor,
         auditorium = auditorium,
-        location = location,
+        coordinates = coordinates,
     )
 }
 
 private fun createOnlinePlace(
-    id: String,
     title: String,
     url: String? = null,
 ): PlaceInfo.Online {
@@ -433,10 +409,10 @@ private fun createOnlinePlace(
             url?.let {
                 append(url)
             }
-        }
+        }.ifEmpty { null }
 
     return PlaceInfo.Online(
-        id = id,
+        id = "",
         title = title,
         description = description,
         url = url,
@@ -444,7 +420,6 @@ private fun createOnlinePlace(
 }
 
 private fun createOtherPlace(
-    id: String,
     title: String,
     // TODO Использовать это
     additionalDescription: String? = null,
@@ -457,27 +432,7 @@ private fun createOtherPlace(
         }
 
     return PlaceInfo.Other(
-        id = id,
-        title = title,
-        description = description,
-    )
-}
-
-private fun createUnclassified(
-    id: String,
-    title: String,
-    // TODO Использовать это
-    additionalDescription: String? = null,
-): PlaceInfo.Unclassified {
-    val description =
-        buildString {
-            additionalDescription?.let {
-                append(additionalDescription)
-            }
-        }
-
-    return PlaceInfo.Unclassified(
-        id = id,
+        id = "",
         title = title,
         description = description,
     )

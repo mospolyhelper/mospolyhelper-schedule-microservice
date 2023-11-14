@@ -1,7 +1,6 @@
 package com.mospolytech.domain.schedule.utils
 
-import com.mospolytech.domain.schedule.model.ScheduleComplexFilter
-import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
+import com.mospolytech.domain.schedule.model.pack.CompactLessonEvent
 
 // fun List<LessonDateTimes>.filterByGroup(groupId: String): List<LessonDateTimes> {
 //    return this.filter { it.lesson.groups.any { it.title == groupId } }
@@ -39,38 +38,28 @@ import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
 //    }
 // }
 
-fun List<CompactLessonAndTimes>.filterByGroup(groupId: String): List<CompactLessonAndTimes> {
-    return this.filter { it.lesson.groupsId.any { it == groupId } }
+fun List<CompactLessonEvent>.filterByPlace(placeId: String): List<CompactLessonEvent> {
+    return this.filter { it.placesId.any { it == placeId } }
 }
 
-fun List<CompactLessonAndTimes>.filterByPlace(placeId: String): List<CompactLessonAndTimes> {
-    return this.filter { it.lesson.placesId.any { it == placeId } }
+fun List<CompactLessonEvent>.filterByPlaces(placeIds: List<String>): List<CompactLessonEvent> {
+    return this.filter { it.placesId.any { it in placeIds } }
 }
 
-fun List<CompactLessonAndTimes>.filterByTeacher(teacherId: String): List<CompactLessonAndTimes> {
-    return this.filter { it.lesson.teachersId.any { it == teacherId } }
+fun List<CompactLessonEvent>.filterBySubject(subjectId: String): List<CompactLessonEvent> {
+    return this.filter { it.subjectId == subjectId }
 }
 
-fun List<CompactLessonAndTimes>.filterByPlaces(placeIds: List<String>): List<CompactLessonAndTimes> {
-    return this.filter { it.lesson.placesId.any { it in placeIds } }
-}
-
-fun List<CompactLessonAndTimes>.filterBySubject(subjectId: String): List<CompactLessonAndTimes> {
-    return this.filter { it.lesson.subjectId == subjectId }
-}
-
-fun List<CompactLessonAndTimes>.filter(filter: ScheduleComplexFilter): List<CompactLessonAndTimes> {
-    val notNeedFilterBySubject = filter.subjectsId.isEmpty()
-    val notNeedFilterByType = filter.typesId.isEmpty()
-    val notNeedFilterByTeachers = filter.teachersId.isEmpty()
-    val notNeedFilterByGroups = filter.groupsId.isEmpty()
-    val notNeedFilterByPlaces = filter.placesId.isEmpty()
-
-    return this.filter {
-        (notNeedFilterBySubject || it.lesson.subjectId in filter.subjectsId) &&
-            (notNeedFilterByType || it.lesson.typeId in filter.typesId) &&
-            (notNeedFilterByTeachers || it.lesson.teachersId.any { it in filter.teachersId }) &&
-            (notNeedFilterByGroups || it.lesson.groupsId.any { it in filter.groupsId }) &&
-            (notNeedFilterByPlaces || it.lesson.placesId.any { it in filter.placesId })
-    }
-}
+// fun List<CompactLessonEvent>.filter(filter: ScheduleComplexFilter): List<CompactLessonEvent> {
+//    val notNeedFilterBySubject = filter.subjectsId.isEmpty()
+//    val notNeedFilterByType = filter.typesId.isEmpty()
+//    val notNeedFilterByTeachers = filter.teachersId.isEmpty()
+//    val notNeedFilterByGroups = filter.groupsId.isEmpty()
+//    val notNeedFilterByPlaces = filter.placesId.isEmpty()
+//
+//    return this.filter {
+//        (notNeedFilterBySubject || it.subjectId in filter.subjectsId) &&
+//            (notNeedFilterByType || it.type in filter.typesId) &&
+//            (notNeedFilterByPlaces || it.placesId.any { it in filter.placesId })
+//    }
+// }

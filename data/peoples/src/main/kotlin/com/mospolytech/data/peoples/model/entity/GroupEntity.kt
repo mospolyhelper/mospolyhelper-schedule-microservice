@@ -27,7 +27,7 @@ class GroupEntity(id: EntityID<String>) : Entity<String>(id) {
     }
 }
 
-fun GroupEntity.toModelShort(): GroupShort {
+fun GroupEntity.toShortModel(): GroupShort {
     return GroupShort(
         id = id.value,
         title = title,
@@ -35,7 +35,7 @@ fun GroupEntity.toModelShort(): GroupShort {
     )
 }
 
-val GroupEntity.description
+val GroupEntity.description: String?
     get() =
         buildString {
             course?.let { append("$course-й курс") }
@@ -49,7 +49,7 @@ val GroupEntity.description
                 ifNotEmpty { append(", ") }
                 append(getShortFaculty(faculty) ?: faculty)
             }
-        }
+        }.ifEmpty { null }
 
 private fun getShortFaculty(faculty: String): String? {
     return when (faculty) {

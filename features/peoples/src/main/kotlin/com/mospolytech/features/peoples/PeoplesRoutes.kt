@@ -24,47 +24,39 @@ fun Application.peoplesRoutesV1(
         authenticate(AuthConfigs.MPU, optional = true) {
             route("/peoples") {
                 route("/students") {
-                    get<NameRequest> {
-                        call.getTokenOrRespondError() ?: return@get
-                        call.respond(studentsRepository.getStudents(it.name, it.page, it.pageSize))
-                    }
-                    get<NoNameRequest> {
-                        call.getTokenOrRespondError() ?: return@get
-                        call.respond(studentsRepository.getStudents(it.name, it.page, it.pageSize))
-                    }
-                    get<Empty> {
-                        call.getTokenOrRespondError() ?: return@get
-                        call.respond(studentsRepository.getStudents())
-                    }
                     get {
+                        val query = call.request.queryParameters["query"] ?: ""
+                        val page = call.request.queryParameters["page"]?.toIntOrNull() ?: 1
+                        val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 100
+
                         call.getTokenOrRespondError() ?: return@get
-                        call.respond(studentsRepository.getStudents())
+                        call.respond(
+                            studentsRepository.getStudents(
+                                query = query,
+                                page = page,
+                                limit = limit,
+                            ),
+                        )
                     }
                 }
                 route("/teachers") {
-                    get<NameRequest> {
-                        call.getTokenOrRespondError() ?: return@get
-                        call.respond(teachersRepository.getTeachers(it.name, it.page, it.pageSize))
-                    }
-                    get<NoNameRequest> {
-                        call.getTokenOrRespondError() ?: return@get
-                        call.respond(teachersRepository.getTeachers(it.name, it.page, it.pageSize))
-                    }
-                    get<Empty> {
-                        call.getTokenOrRespondError() ?: return@get
-                        call.respond(teachersRepository.getTeachers())
-                    }
                     get {
+                        val query = call.request.queryParameters["query"] ?: ""
+                        val page = call.request.queryParameters["page"]?.toIntOrNull() ?: 1
+                        val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 100
+
                         call.getTokenOrRespondError() ?: return@get
-                        call.respond(teachersRepository.getTeachers())
+                        call.respond(
+                            teachersRepository.getTeachers(
+                                name = query,
+                                page = page,
+                                limit = limit,
+                            ),
+                        )
                     }
                 }
                 route("/classmates") {
                     get {
-                        val token = call.getTokenOrRespondError() ?: return@get
-                        call.respondResult(studentsRepository.getClassmates(token))
-                    }
-                    get<Empty> {
                         val token = call.getTokenOrRespondError() ?: return@get
                         call.respondResult(studentsRepository.getClassmates(token))
                     }
@@ -103,20 +95,3 @@ fun Application.peoplesRoutesV1(
         }
     }
 }
-
-@Location("/{pageSize}/{page}/{name}")
-data class NameRequest(
-    val name: String = "",
-    val page: Int = 1,
-    val pageSize: Int = 100,
-)
-
-@Location("/{pageSize}/{page}/")
-data class NoNameRequest(
-    val name: String = "",
-    val page: Int = 1,
-    val pageSize: Int = 100,
-)
-
-@Location("/")
-object Empty

@@ -12,7 +12,7 @@ data class StudentShort(
     val course: Int?,
 )
 
-val StudentShort.description
+val StudentShort.description: String?
     get() =
         buildString {
             group?.let {
@@ -30,4 +30,4 @@ val StudentShort.description
                     append(group.direction)
                 }
             }
-        }
+        }.ifEmpty { null }

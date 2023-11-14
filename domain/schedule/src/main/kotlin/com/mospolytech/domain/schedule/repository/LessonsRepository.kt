@@ -1,7 +1,7 @@
 package com.mospolytech.domain.schedule.repository
 
 import com.mospolytech.domain.schedule.model.ScheduleComplexFilter
-import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
+import com.mospolytech.domain.schedule.model.pack.CompactLessonEvent
 import com.mospolytech.domain.schedule.model.pack.CompactSchedule
 
 interface LessonsRepository {
@@ -21,5 +21,5 @@ interface LessonsRepository {
 
     suspend fun getLessonsByFilter(filter: ScheduleComplexFilter): CompactSchedule
 
-    suspend fun getLessonsByPlaces(placeIds: List<String> = emptyList()): List<CompactLessonAndTimes>
+    suspend fun getLessonsByPlaces(placeIds: List<String> = emptyList()): List<CompactLessonEvent>
 }

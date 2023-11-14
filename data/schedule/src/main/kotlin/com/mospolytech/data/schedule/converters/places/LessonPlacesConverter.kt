@@ -55,8 +55,8 @@ class LessonPlacesConverter {
                 this[PlacesDb.building] = dto.building
                 this[PlacesDb.floor] = dto.floor
                 this[PlacesDb.auditorium] = dto.auditorium
-                this[PlacesDb.lat] = dto.location?.lat
-                this[PlacesDb.lng] = dto.location?.lng
+                this[PlacesDb.lat] = dto.coordinates?.lat
+                this[PlacesDb.lng] = dto.coordinates?.lng
                 this[PlacesDb.description] = dto.description
             }
             is PlaceInfo.Online -> {
@@ -68,11 +68,6 @@ class LessonPlacesConverter {
             is PlaceInfo.Other -> {
                 this[PlacesDb.title] = dto.title
                 this[PlacesDb.type] = PlaceTypes.Other
-                this[PlacesDb.description] = dto.description
-            }
-            is PlaceInfo.Unclassified -> {
-                this[PlacesDb.title] = dto.title
-                this[PlacesDb.type] = PlaceTypes.Unclassified
                 this[PlacesDb.description] = dto.description
             }
         }
@@ -87,7 +82,6 @@ class LessonPlacesConverter {
                     is PlaceInfo.Building -> model.copy(id = "")
                     is PlaceInfo.Online -> model.copy(id = "")
                     is PlaceInfo.Other -> model.copy(id = "")
-                    is PlaceInfo.Unclassified -> model.copy(id = "")
                 }
             }
         dbCache[modelWithoutId] = model.id
@@ -165,10 +159,10 @@ class LessonPlacesConverter {
             } else {
                 it.placeFactory(matchResult, listOf(url))
             }
-        } ?: PlaceInfo.Unclassified(
+        } ?: PlaceInfo.Other(
             id = "",
             title = place,
-            description = "",
+            description = null,
         )
     }
 

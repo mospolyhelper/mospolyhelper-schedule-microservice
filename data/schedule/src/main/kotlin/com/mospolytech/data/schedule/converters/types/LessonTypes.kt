@@ -1,6 +1,6 @@
 package com.mospolytech.data.schedule.converters.types
 
-import com.mospolytech.domain.schedule.model.lessonType.LessonTypeInfo
+import com.mospolytech.domain.schedule.model.lessonType.Importance
 
 internal enum class LessonTypes {
     CourseProject,
@@ -21,144 +21,141 @@ internal enum class LessonTypes {
     Other,
 }
 
-internal fun LessonTypes.toInfo(): LessonTypeInfo {
-    return predefinedTypes[this] ?: LessonTypeInfo(
-        id = "",
+internal fun LessonTypes.toInfo(): LessonTypeConverter.LessonTypeCache {
+    return predefinedTypes[this] ?: LessonTypeConverter.LessonTypeCache(
         title = "Другое",
         shortTitle = "Другое",
-        description = "",
-        isImportant = false,
+        description = null,
+        isImportant = Importance.Normal,
     )
 }
 
 private val predefinedTypes =
     mapOf(
         LessonTypes.CourseProject to
-            LessonTypeInfo(
-                id = "",
+            createLessonType(
                 title = "Курсовой проект",
                 shortTitle = "Курсовой проект",
-                description = "",
-                isImportant = true,
+                description = null,
+                isImportant = Importance.High,
             ),
         LessonTypes.Exam to
-            LessonTypeInfo(
-                id = "",
+            createLessonType(
                 title = "Экзамен",
                 shortTitle = "Экзамен",
-                description = "",
-                isImportant = true,
+                description = null,
+                isImportant = Importance.High,
             ),
         LessonTypes.Credit to
-            LessonTypeInfo(
-                id = "",
+            createLessonType(
                 title = "Зачёт",
                 shortTitle = "Зачёт",
-                description = "",
-                isImportant = true,
+                description = null,
+                isImportant = Importance.High,
             ),
         LessonTypes.CreditWithMark to
-            LessonTypeInfo(
-                id = "",
+            createLessonType(
                 title = "Зачёт с оценкой",
                 shortTitle = "Зачёт с оценкой",
-                description = "",
-                isImportant = true,
+                description = null,
+                isImportant = Importance.High,
             ),
         LessonTypes.ExaminationReview to
-            LessonTypeInfo(
-                id = "",
+            createLessonType(
                 title = "Экзаменационный просмотр",
                 shortTitle = "Экз. просмотр",
-                description = "",
-                isImportant = true,
+                description = null,
+                isImportant = Importance.High,
             ),
         LessonTypes.ExaminationDepartmentalReview to
-            LessonTypeInfo(
-                id = "",
+            createLessonType(
                 title = "Экзаменационный кафедральный просмотр",
                 shortTitle = "Экз. каф. просмотр",
-                description = "",
-                isImportant = true,
+                description = null,
+                isImportant = Importance.High,
             ),
         LessonTypes.Consultation to
-            LessonTypeInfo(
-                id = "",
+            createLessonType(
                 title = "Консультация",
                 shortTitle = "Консультация",
-                description = "",
-                isImportant = false,
+                description = null,
+                isImportant = Importance.Normal,
             ),
         LessonTypes.LaboratoryWork to
-            LessonTypeInfo(
-                id = "",
+            createLessonType(
                 title = "Лабораторная работа",
                 shortTitle = "Лаб. работа",
-                description = "",
-                isImportant = false,
+                description = null,
+                isImportant = Importance.Normal,
             ),
         LessonTypes.Practice to
-            LessonTypeInfo(
-                id = "",
+            createLessonType(
                 title = "Практика",
                 shortTitle = "Практика",
-                description = "",
-                isImportant = false,
+                description = null,
+                isImportant = Importance.Normal,
             ),
         LessonTypes.Lecture to
-            LessonTypeInfo(
-                id = "",
+            createLessonType(
                 title = "Лекция",
                 shortTitle = "Лекция",
-                description = "",
-                isImportant = false,
+                description = null,
+                isImportant = Importance.Normal,
             ),
         LessonTypes.KeyLecture to
-            LessonTypeInfo(
-                id = "",
+            createLessonType(
                 title = "Установочная лекция",
                 shortTitle = "Установочная лекция",
-                description = "",
-                isImportant = false,
+                description = null,
+                isImportant = Importance.Normal,
             ),
         LessonTypes.LectureAndPracticeAndLaboratory to
-            LessonTypeInfo(
-                id = "",
+            createLessonType(
                 title = "Лекция, практика, лабораторная работа",
                 shortTitle = "Лекц., практ., лаб.",
-                description = "",
-                isImportant = false,
+                description = null,
+                isImportant = Importance.Normal,
             ),
         LessonTypes.LectureAndPractice to
-            LessonTypeInfo(
-                id = "",
+            createLessonType(
                 title = "Лекция и практика",
                 shortTitle = "Лекц. и практ.",
-                description = "",
-                isImportant = false,
+                description = null,
+                isImportant = Importance.Normal,
             ),
         LessonTypes.LectureAndLaboratory to
-            LessonTypeInfo(
-                id = "",
+            createLessonType(
                 title = "Лекция и лабораторная работа",
                 shortTitle = "Лекц. и лаб.",
-                description = "",
-                isImportant = false,
+                description = null,
+                isImportant = Importance.Normal,
             ),
         LessonTypes.PracticeAndLaboratory to
-            LessonTypeInfo(
-                id = "",
+            createLessonType(
                 title = "Практика и лабораторная работа",
                 shortTitle = "Практ. и лаб.",
-                description = "",
-                isImportant = false,
+                description = null,
+                isImportant = Importance.Normal,
             ),
         LessonTypes.Other to
-            LessonTypeInfo(
-                id = "",
+            createLessonType(
                 title = "Другое",
                 shortTitle = "Другое",
-                description = "",
-                isImportant = false,
+                description = null,
+                isImportant = Importance.Normal,
             ),
     )
+
+private fun createLessonType(
+    title: String,
+    shortTitle: String,
+    description: String?,
+    isImportant: Importance,
+): LessonTypeConverter.LessonTypeCache {
+    return LessonTypeConverter.LessonTypeCache(
+        title = title,
+        shortTitle = shortTitle,
+        description = description,
+        isImportant = isImportant,
+    )
+}

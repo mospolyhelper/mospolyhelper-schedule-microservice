@@ -15,15 +15,7 @@ import java.util.*
 class LessonSubjectsRepositoryImpl : LessonSubjectsRepository {
     override suspend fun get(id: String): LessonSubjectInfo? {
         return MosPolyDb.transaction {
-            SubjectEntity.findById(UUID.fromString(id))?.toModel()
-        }
-    }
-
-    override suspend fun getAll(): List<LessonSubjectInfo> {
-        return MosPolyDb.transaction {
-            SubjectEntity.all()
-                .orderBy(SubjectsDb.title to SortOrder.ASC)
-                .map { it.toModel() }
+            SubjectEntity.findById(id)?.toModel()
         }
     }
 
@@ -34,7 +26,7 @@ class LessonSubjectsRepositoryImpl : LessonSubjectsRepository {
     ): PagingDTO<LessonSubjectInfo> {
         return MosPolyDb.transaction {
             createPagingDto(pageSize, page) { offset ->
-                SubjectEntity.findOrAllIfEmpty(query) { SubjectsDb.title like query }
+                SubjectEntity.findOrAllIfEmpty(query) { SubjectsDb.title like "%$query%" }
                     .orderBy(SubjectsDb.title to SortOrder.ASC)
                     .limit(pageSize, offset.toLong())
                     .mapLazy { it.toModel() }

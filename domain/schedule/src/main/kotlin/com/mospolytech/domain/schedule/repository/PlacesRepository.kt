@@ -6,8 +6,6 @@ import com.mospolytech.domain.schedule.model.place.PlaceInfo
 interface PlacesRepository {
     suspend fun get(id: String): PlaceInfo?
 
-    suspend fun getAll(): List<PlaceInfo>
-
     suspend fun getPaging(
         query: String,
         pageSize: Int,

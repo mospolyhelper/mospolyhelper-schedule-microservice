@@ -1,20 +1,15 @@
 package com.mospolytech.data.schedule.converters.types
 
-import com.mospolytech.data.common.db.MosPolyDb
-import com.mospolytech.data.schedule.model.db.LessonTypesDb
-import com.mospolytech.data.schedule.model.entity.LessonTypeEntity
-import com.mospolytech.domain.schedule.model.lessonType.LessonTypeInfo
-import org.jetbrains.exposed.sql.SizedCollection
-import org.jetbrains.exposed.sql.batchInsert
+import com.mospolytech.domain.schedule.model.lessonType.Importance
+import com.mospolytech.domain.schedule.utils.toLessonTypeId
 
 class LessonTypeConverter {
-    private val converterCache = HashMap<Pair<String, String>, LessonTypeInfo>()
-    private val dbCache = HashMap<LessonTypeInfo, String>()
+    private val converterCache = HashMap<Pair<String, String>, LessonTypeCache>()
 
     private fun convertType(
         rawType: String,
         rawTitle: String,
-    ): LessonTypeInfo {
+    ): LessonTypeCache {
         return converterCache.getOrPut(rawType to rawTitle) {
             fixType(rawType, rawTitle)
         }
@@ -23,41 +18,17 @@ class LessonTypeConverter {
     fun getCachedId(
         rawType: String,
         rawTitle: String,
-    ): String {
+    ): Pair<String, Importance> {
         val dtoCache = checkNotNull(converterCache[rawType to rawTitle])
-        return checkNotNull(dbCache[dtoCache])
+        return dtoCache.title.toLessonTypeId() to dtoCache.isImportant
     }
 
-    suspend fun cacheAll(rawTypeToTitles: Set<Pair<String, String>>) {
-        MosPolyDb.transaction {
-            val allDbItems = LessonTypeEntity.all().map { cacheDb(it) }.toSet()
-
-            val dtoList = rawTypeToTitles.map { convertType(it.first, it.second) }
-
-            val notInDb = dtoList subtract allDbItems
-
-            val rows =
-                LessonTypesDb.batchInsert(notInDb) { dto ->
-                    this[LessonTypesDb.title] = dto.title
-                    this[LessonTypesDb.shortTitle] = dto.shortTitle
-                    this[LessonTypesDb.description] = dto.description
-                    this[LessonTypesDb.isImportant] = dto.isImportant
-                }
-
-            LessonTypeEntity.wrapRows(SizedCollection(rows)).forEach { cacheDb(it) }
-        }
-    }
-
-    private fun cacheDb(entity: LessonTypeEntity): LessonTypeInfo {
-        val model = entity.toModel()
-        val modelWithoutId = model.copy(id = "")
-        dbCache[modelWithoutId] = model.id
-        return modelWithoutId
+    fun cacheAll(rawTypeToTitles: Set<Pair<String, String>>) {
+        rawTypeToTitles.map { convertType(it.first, it.second) }
     }
 
     fun clearCache() {
         converterCache.clear()
-        dbCache.clear()
     }
 
     internal class LessonTypeParserPack(
@@ -88,34 +59,43 @@ class LessonTypeConverter {
     private fun fixType(
         type: String,
         lessonTitle: String,
-    ): LessonTypeInfo {
+    ): LessonTypeCache {
         val fixedType = lessonParserPacks.firstOrNull { it.sourceGroupType.equals(type, true) }
         if (fixedType?.fixedType == LessonTypes.Other) {
             return fixOtherType(type, lessonTitle)
         }
         return fixedType?.fixedType?.toInfo()
-            ?: LessonTypeInfo(
-                id = "",
+            ?: LessonTypeCache(
                 title = type,
                 shortTitle = type,
-                description = "",
-                isImportant = false,
+                description = null,
+                isImportant = Importance.Normal,
             )
     }
 
     private fun fixOtherType(
         type: String,
         lessonTitle: String,
-    ): LessonTypeInfo {
+    ): LessonTypeCache {
         val res = regex.findAll(lessonTitle).joinToString { it.value }
         return if (res.isNotEmpty()) {
-            findCombinedShortTypeOrNull(res) ?: LessonTypeInfo(id = "", type, type, "", false)
+            findCombinedShortTypeOrNull(res) ?: LessonTypeCache(
+                title = type,
+                shortTitle = type,
+                description = null,
+                isImportant = Importance.Normal,
+            )
         } else {
-            LessonTypeInfo(id = "", title = type, type, "", false)
+            LessonTypeCache(
+                title = type,
+                shortTitle = type,
+                description = null,
+                isImportant = Importance.Normal,
+            )
         }
     }
 
-    private fun findCombinedShortTypeOrNull(type: String): LessonTypeInfo? {
+    private fun findCombinedShortTypeOrNull(type: String): LessonTypeCache? {
         val lecture = type.contains(LECTURE_SHORT, true)
         val practise = type.contains(PRACTICE_SHORT, true)
         val lab = type.contains(LABORATORY_SHORT, true)
@@ -136,4 +116,11 @@ class LessonTypeConverter {
         private const val LECTURE_SHORT = "Лек"
         private const val LABORATORY_SHORT = "Лаб"
     }
+
+    data class LessonTypeCache(
+        val title: String,
+        val shortTitle: String,
+        val description: String?,
+        val isImportant: Importance,
+    )
 }

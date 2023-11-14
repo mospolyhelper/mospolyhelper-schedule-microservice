@@ -7,6 +7,5 @@ data class LessonTypeInfo(
     val id: String,
     val title: String,
     val shortTitle: String,
-    val description: String,
-    val isImportant: Boolean,
+    val description: String?,
 )

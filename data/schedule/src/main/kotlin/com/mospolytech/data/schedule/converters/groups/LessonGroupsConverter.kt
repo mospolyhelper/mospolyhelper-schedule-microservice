@@ -3,10 +3,10 @@ package com.mospolytech.data.schedule.converters.groups
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.peoples.model.db.GroupsDb
 import com.mospolytech.data.schedule.model.response.ApiGroup
+import com.mospolytech.domain.peoples.utils.toGroupId
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.selectAll
-import java.util.*
 import kotlin.collections.HashMap
 
 class LessonGroupsConverter {
@@ -41,7 +41,7 @@ class LessonGroupsConverter {
 
             val rows =
                 GroupsDb.batchInsert(notInDb) { dto ->
-                    this[GroupsDb.id] = UUID.randomUUID().toString()
+                    this[GroupsDb.id] = dto.title.toGroupId()
                     this[GroupsDb.title] = dto.title
                 }
 

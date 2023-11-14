@@ -1,7 +1,5 @@
 package com.mospolytech.data.peoples.model.db
 
-import com.mospolytech.data.peoples.model.db.TeachersDb.index
-import com.mospolytech.data.peoples.model.db.TeachersDb.nullable
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.Column
@@ -11,7 +9,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.timestamp
 object StudentsDb : IdTable<String>() {
     override val id: Column<EntityID<String>> = text("id").entityId()
     val lkId = text("lk_id").nullable().index()
-    val name = text("name")
+    val name = text("name").index()
     val birthday = date("birthday").nullable()
     val avatar = text("avatar").nullable()
     val group = reference("group", GroupsDb).nullable()

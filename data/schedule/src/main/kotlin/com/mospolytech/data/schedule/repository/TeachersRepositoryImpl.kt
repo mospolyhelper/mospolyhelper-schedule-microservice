@@ -18,14 +18,6 @@ class TeachersRepositoryImpl : TeachersRepository {
         }
     }
 
-    override suspend fun getAll(): List<Teacher> {
-        return MosPolyDb.transaction {
-            TeacherEntity.all()
-                .orderBy(TeachersDb.name to SortOrder.ASC)
-                .map { it.toModel() }
-        }
-    }
-
     override suspend fun getPaging(
         query: String,
         pageSize: Int,
@@ -33,7 +25,7 @@ class TeachersRepositoryImpl : TeachersRepository {
     ): PagingDTO<Teacher> {
         return MosPolyDb.transaction {
             createPagingDto(pageSize, page) { offset ->
-                TeacherEntity.findOrAllIfEmpty(query) { TeachersDb.name like query }
+                TeacherEntity.findOrAllIfEmpty(query) { TeachersDb.name like "%$query%" }
                     .orderBy(TeachersDb.name to SortOrder.ASC)
                     .limit(pageSize, offset.toLong())
                     .mapLazy { it.toModel() }

@@ -1,6 +1,6 @@
 package com.mospolytech.domain.schedule.model.place
 
-import com.mospolytech.domain.base.model.Location
+import com.mospolytech.domain.base.model.Coordinates
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -8,14 +8,13 @@ import kotlinx.serialization.Serializable
 sealed class PlaceInfo : Comparable<PlaceInfo> {
     abstract val id: String
     abstract val title: String
-    abstract val description: String
+    abstract val description: String?
 
     private fun getTypeNumber(): Int {
         return when (this) {
             is Building -> 0
             is Online -> 1
             is Other -> 2
-            is Unclassified -> 3
         }
     }
 
@@ -33,13 +32,13 @@ sealed class PlaceInfo : Comparable<PlaceInfo> {
     data class Building(
         override val id: String,
         override val title: String,
-        override val description: String,
+        override val description: String?,
         val areaAlias: String? = null,
         val street: String? = null,
         val building: String? = null,
         val floor: String? = null,
         val auditorium: String? = null,
-        val location: Location? = null,
+        val coordinates: Coordinates? = null,
     ) : PlaceInfo()
 
     @Serializable
@@ -47,7 +46,7 @@ sealed class PlaceInfo : Comparable<PlaceInfo> {
     data class Online(
         override val id: String,
         override val title: String,
-        override val description: String,
+        override val description: String?,
         val url: String? = null,
     ) : PlaceInfo()
 
@@ -56,14 +55,6 @@ sealed class PlaceInfo : Comparable<PlaceInfo> {
     data class Other(
         override val id: String,
         override val title: String,
-        override val description: String,
-    ) : PlaceInfo()
-
-    @Serializable
-    @SerialName("unclassified")
-    data class Unclassified(
-        override val id: String,
-        override val title: String,
-        override val description: String,
+        override val description: String?,
     ) : PlaceInfo()
 }

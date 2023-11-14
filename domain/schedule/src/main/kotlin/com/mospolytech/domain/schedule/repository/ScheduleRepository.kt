@@ -20,7 +20,7 @@ interface ScheduleRepository {
         sourceType: ScheduleSources,
         query: String,
         page: Int,
-        pageSize: Int,
+        limit: Int,
     ): PagingDTO<ScheduleSourceFull>
 
     suspend fun updateData(recreateDb: Boolean)

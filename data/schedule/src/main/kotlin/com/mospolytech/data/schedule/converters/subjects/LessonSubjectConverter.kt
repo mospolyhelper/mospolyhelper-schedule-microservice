@@ -3,66 +3,66 @@ package com.mospolytech.data.schedule.converters.subjects
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.schedule.model.db.SubjectsDb
 import com.mospolytech.data.schedule.model.entity.SubjectEntity
-import com.mospolytech.domain.schedule.model.lessonSubject.LessonSubjectInfo
-import org.jetbrains.exposed.sql.SizedCollection
+import com.mospolytech.domain.peoples.utils.toLessonSubjectId
 import org.jetbrains.exposed.sql.batchInsert
 
 class LessonSubjectConverter {
-    private val converterCache = HashMap<String, LessonSubjectInfo>()
-    private val dbCache = HashMap<LessonSubjectInfo, String>()
+    private val converterCache = HashMap<String, LessonSubjectCache>()
 
-    private fun convertTitle(rawTitle: String): LessonSubjectInfo {
-        val title = rawTitle
-        val type: String? = null
-        val description =
-            buildString {
-                type?.let {
-                    append(type)
-                }
+    private val regexList =
+        listOf(
+            """,\s*п/г\s*(\d)""".toRegex(),
+            """\s*(\d)гр""".toRegex(),
+            """\s*\(\s*(\d)\s*подгруппа\)""".toRegex(),
+            """\s*\(\s*(\d)-я\s*подгруппа\)""".toRegex(),
+        )
+    // Обрезать пробелы по краям
+
+    private fun convertTitle(rawTitle: String): LessonSubjectCache {
+        val matchedRegex = regexList.firstOrNull { it.containsMatchIn(rawTitle) }
+        val subgroup = matchedRegex?.find(rawTitle)?.groups?.get(1)?.value?.toByteOrNull()
+
+        val title =
+            if (matchedRegex != null) {
+                rawTitle.replace(matchedRegex, "")
+            } else {
+                rawTitle
             }
 
         return converterCache.getOrPut(rawTitle) {
-            LessonSubjectInfo(
-                id = "",
+            LessonSubjectCache(
                 title = title,
-                type = type,
-                description = description,
+                subgroup = subgroup,
             )
         }
     }
 
-    fun getCachedId(rawTitle: String): String {
+    fun getCachedId(rawTitle: String): Pair<String, Byte?> {
         val dtoCache = checkNotNull(converterCache[rawTitle])
-        return checkNotNull(dbCache[dtoCache])
+        return dtoCache.title.toLessonSubjectId() to dtoCache.subgroup
     }
 
     suspend fun cacheAll(rawTitles: Set<String>) {
         MosPolyDb.transaction {
-            val allDbItems = SubjectEntity.all().map { cacheDb(it) }.toSet()
+            val allDbItems = SubjectEntity.all().map { it.title }.toSet()
 
-            val dtoList = rawTitles.map { convertTitle(it) }
+            val dtoList = rawTitles.map { convertTitle(it) }.map { it.title }
 
-            val notInDb = dtoList subtract allDbItems
+            val notInDbSet = dtoList subtract allDbItems
 
-            val rows =
-                SubjectsDb.batchInsert(notInDb) { dto ->
-                    this[SubjectsDb.title] = dto.title
-                    this[SubjectsDb.type] = dto.type
-                }
-
-            SubjectEntity.wrapRows(SizedCollection(rows)).forEach { cacheDb(it) }
+            SubjectsDb.batchInsert(notInDbSet) { dto ->
+                this[SubjectsDb.id] = dto.toLessonSubjectId()
+                this[SubjectsDb.title] = dto
+            }
         }
-    }
-
-    private fun cacheDb(entity: SubjectEntity): LessonSubjectInfo {
-        val model = entity.toModel()
-        val modelWithoutId = model.copy(id = "")
-        dbCache[modelWithoutId] = model.id
-        return modelWithoutId
     }
 
     fun clearCache() {
         converterCache.clear()
-        dbCache.clear()
     }
+
+    data class LessonSubjectCache(
+        val title: String,
+        val subgroup: Byte?,
+    )
 }

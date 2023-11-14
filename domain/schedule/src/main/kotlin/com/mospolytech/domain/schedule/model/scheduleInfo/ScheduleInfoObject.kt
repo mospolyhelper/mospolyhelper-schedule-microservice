@@ -19,7 +19,4 @@ enum class ScheduleInfoObject {
 
     @SerialName("subject")
     Subject,
-
-    @SerialName("lesson-type")
-    LessonType,
 }

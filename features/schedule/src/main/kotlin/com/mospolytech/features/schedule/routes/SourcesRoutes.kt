@@ -17,14 +17,14 @@ fun Routing.sourcesRoutesV1(repository: ScheduleRepository) {
             get<ScheduleSourceListRequest> {
                 val query = call.request.queryParameters["query"] ?: ""
                 val page = call.request.queryParameters["page"]?.toIntOrNull() ?: 1
-                val pageSize = call.request.queryParameters["pageSize"]?.toIntOrNull() ?: 100
+                val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 100
 
                 val sourceList =
                     repository.getSourceList(
                         sourceType = it.type,
                         query = query,
                         page = page,
-                        pageSize = pageSize,
+                        limit = limit,
                     )
 
                 call.respond(sourceList)

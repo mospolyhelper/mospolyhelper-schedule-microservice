@@ -19,7 +19,7 @@ data class Teacher(
     }
 }
 
-val Teacher.description: String
+val Teacher.description: String?
     get() {
         return buildString {
             grade?.let { append(it) }
@@ -33,5 +33,5 @@ val Teacher.description: String
                 ifNotEmpty { append(", ") }
                 append(departmentParent)
             }
-        }
+        }.ifEmpty { null }
     }

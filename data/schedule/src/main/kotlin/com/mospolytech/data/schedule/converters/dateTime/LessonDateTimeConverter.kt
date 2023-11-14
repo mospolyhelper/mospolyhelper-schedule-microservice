@@ -1,77 +1,54 @@
 package com.mospolytech.data.schedule.converters.dateTime
 
-import com.mospolytech.data.common.db.MosPolyDb
-import com.mospolytech.data.schedule.model.db.LessonDateTimesDb
-import com.mospolytech.data.schedule.model.entity.LessonDateTimeEntity
 import com.mospolytech.domain.base.utils.MAX
 import com.mospolytech.domain.base.utils.MIN
-import com.mospolytech.domain.schedule.model.lesson.LessonDateTime
-import com.mospolytech.domain.schedule.model.lesson.LessonTime
+import com.mospolytech.domain.base.utils.Moscow
+import com.mospolytech.domain.schedule.model.pack.LessonDateTime
+import com.mospolytech.domain.schedule.model.rrule.Frequency
+import com.mospolytech.domain.schedule.model.rrule.RRule
 import kotlinx.datetime.*
-import org.jetbrains.exposed.sql.SizedCollection
-import org.jetbrains.exposed.sql.batchInsert
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import kotlin.time.Duration
 import java.time.LocalDate as JavaLocalDate
 
 class LessonDateTimeConverter {
-    private val converterCache = HashMap<ApiDateTimeData, LessonDateTime>()
-    private val dbCache = HashMap<LessonDateTime, String>()
+    fun convertDateTime(rawDateTime: ApiDateTimeData): LessonParserDateTime {
+        val orderInt = rawDateTime.order.toIntOrNull() ?: 0
+        val (timeStart, timeEnd) = LessonTimeConverter.getLocalTime(orderInt - 1, rawDateTime.groupIsEvening)
 
-    private fun convertDateTime(rawDateTime: ApiDateTimeData): LessonDateTime {
-        return converterCache.getOrPut(rawDateTime) {
-            val orderInt = rawDateTime.order.toIntOrNull() ?: 0
-            val (timeStart, timeEnd) = LessonTimeConverter.getLocalTime(orderInt - 1, rawDateTime.groupIsEvening)
+        val dateFrom = parseDate(rawDateTime.apiLesson.df, LocalDate.MIN)
+        val dateTo = parseDate(rawDateTime.apiLesson.dt, LocalDate.MAX)
+        val dates = getDates(rawDateTime.day, rawDateTime.isByDate, dateFrom, dateTo)
+        val (realDateFrom, realDateTo) = dates
 
-            val dateFrom = parseDate(rawDateTime.apiLesson.df, LocalDate.MIN)
-            val dateTo = parseDate(rawDateTime.apiLesson.dt, LocalDate.MAX)
-            val dates = getDates(rawDateTime.day, rawDateTime.isByDate, dateFrom, dateTo)
-
-            convertLessonDateTime(
-                dates = dates,
-                timeStart = timeStart,
-                timeEnd = timeEnd,
+        val start =
+            LessonDateTime(
+                dateTime = realDateFrom.atTime(timeStart),
+                timeZone = TimeZone.Moscow,
             )
-        }
-    }
 
-    fun getCachedId(rawDateTime: ApiDateTimeData): String {
-        val dtoCache = checkNotNull(converterCache[rawDateTime])
-        return checkNotNull(dbCache[dtoCache])
-    }
+        val end =
+            LessonDateTime(
+                dateTime = realDateFrom.atTime(timeEnd),
+                timeZone = TimeZone.Moscow,
+            )
 
-    suspend fun cacheAll(rawDateTimes: Set<ApiDateTimeData>) {
-        MosPolyDb.transaction {
-            val allDbItems = LessonDateTimeEntity.all().map { cacheDb(it) }.toSet()
+        val rrule =
+            if (realDateTo == null) {
+                null
+            } else {
+                RRule().apply {
+                    freq = Frequency.Weekly
+                    until = realDateTo.atTime(LocalTime.MAX).toInstant(TimeZone.UTC)
+                }.toRFC5545String()
+            }
 
-            val dtoList = rawDateTimes.map { convertDateTime(it) }
-
-            val notInDb = dtoList subtract allDbItems
-
-            val rows =
-                LessonDateTimesDb.batchInsert(notInDb) { dto ->
-                    this[LessonDateTimesDb.startDate] = dto.startDate
-                    this[LessonDateTimesDb.endDate] = dto.endDate
-                    this[LessonDateTimesDb.startTime] = dto.time.start
-                    this[LessonDateTimesDb.endTime] = dto.time.end
-                }
-
-            LessonDateTimeEntity.wrapRows(SizedCollection(rows)).forEach { cacheDb(it) }
-        }
-    }
-
-    @Suppress("UnnecessaryVariable")
-    private fun cacheDb(entity: LessonDateTimeEntity): LessonDateTime {
-        val model = entity.toModel()
-        val modelWithoutId = model
-        dbCache[modelWithoutId] = entity.id.toString()
-        return modelWithoutId
-    }
-
-    fun clearCache() {
-        converterCache.clear()
-        dbCache.clear()
+        return LessonParserDateTime(
+            start = start,
+            end = end,
+            recurrence = rrule,
+        )
     }
 
     private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
@@ -129,23 +106,6 @@ class LessonDateTimeConverter {
         )
     }
 
-    private fun convertLessonDateTime(
-        dates: Pair<LocalDate, LocalDate?>,
-        timeStart: LocalTime,
-        timeEnd: LocalTime,
-    ): LessonDateTime {
-
-        return LessonDateTime(
-            startDate = dates.first,
-            endDate = dates.second,
-            time =
-                LessonTime(
-                    start = timeStart,
-                    end = timeEnd,
-                ),
-        )
-    }
-
     private fun parseDate(
         date: String?,
         default: LocalDate,
@@ -160,4 +120,10 @@ class LessonDateTimeConverter {
             }
         }
     }
+
+    class LessonParserDateTime(
+        val start: LessonDateTime,
+        val end: LessonDateTime,
+        val recurrence: String?,
+    )
 }

@@ -7,7 +7,7 @@ interface TeachersRepository {
     suspend fun getTeachers(
         name: String = "",
         page: Int = 1,
-        pageSize: Int = 100,
+        limit: Int = 100,
     ): PagingDTO<Teacher>
 
     suspend fun getTeacher(name: String): Result<Teacher?>

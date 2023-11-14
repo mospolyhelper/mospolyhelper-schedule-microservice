@@ -8,8 +8,6 @@ import com.mospolytech.data.schedule.model.response.ApiGroup
 import com.mospolytech.data.schedule.model.response.ApiLesson
 import com.mospolytech.data.schedule.model.response.ScheduleResponse
 import com.mospolytech.data.schedule.model.response.ScheduleSessionResponse
-import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
-import com.mospolytech.domain.schedule.model.pack.CompactLessonFeatures
 import org.slf4j.LoggerFactory
 
 class ApiScheduleConverter(
@@ -132,8 +130,8 @@ class ApiScheduleConverter(
         days.forEach { (day, dailyLessons) ->
             dailyLessons.forEach { (order, lessons) ->
                 lessons.forEach { apiLesson ->
-                    val timesId =
-                        lessonDateTimeConverter.getCachedId(
+                    val lessonDateTime =
+                        lessonDateTimeConverter.convertDateTime(
                             ApiDateTimeData(
                                 order = order,
                                 groupIsEvening = groupIsEvening,
@@ -143,48 +141,15 @@ class ApiScheduleConverter(
                             ),
                         )
 
-                    lessonConverter.cacheLesson(apiLesson, groups, listOf(timesId))
+                    lessonConverter.cacheLesson(
+                        apiLesson = apiLesson,
+                        apiGroups = groups,
+                        startDateTime = lessonDateTime.start,
+                        endDateTime = lessonDateTime.end,
+                        recurrence = lessonDateTime.recurrence,
+                    )
                 }
             }
         }
     }
-}
-
-fun mergeLessons(vararg lessonsList: List<CompactLessonAndTimes>): List<CompactLessonAndTimes> {
-    val countTotal = lessonsList.sumOf { it.size }
-    val suggestedNewCount = (countTotal * 0.85).toInt()
-    val resList: MutableList<CompactLessonAndTimes> = ArrayList(suggestedNewCount)
-
-    for (lessons in lessonsList) {
-        for (lessonDateTimes in lessons) {
-            val indexToMerge = resList.indexOfFirst { lessonDateTimes.canMergeByGroup(it) }
-            if (indexToMerge != -1) {
-                resList[indexToMerge] = resList[indexToMerge].mergeByGroup(lessonDateTimes)
-            } else {
-                resList.add(lessonDateTimes)
-            }
-        }
-    }
-    // resList.sort()
-    return resList
-}
-
-fun CompactLessonAndTimes.mergeByGroup(other: CompactLessonAndTimes): CompactLessonAndTimes {
-    return this.copy(
-        lesson =
-            lesson.copy(
-                groupsId = (lesson.groupsId + other.lesson.groupsId).sorted(),
-            ),
-    )
-}
-
-fun CompactLessonAndTimes.canMergeByGroup(other: CompactLessonAndTimes): Boolean {
-    return lesson.canMergeByGroup(other.lesson) &&
-        times == other.times
-}
-
-fun CompactLessonFeatures.canMergeByGroup(other: CompactLessonFeatures): Boolean {
-    return subjectId == other.subjectId &&
-        placesId == other.placesId &&
-        teachersId == other.teachersId
 }

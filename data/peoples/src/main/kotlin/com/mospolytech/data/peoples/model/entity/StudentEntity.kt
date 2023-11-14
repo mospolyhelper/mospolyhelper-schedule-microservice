@@ -59,10 +59,10 @@ class StudentEntity(id: EntityID<String>) : Entity<String>(id) {
     }
 }
 
-val StudentEntity.description
+val StudentEntity.description: String?
     get() =
         buildString {
             group?.let {
                 append(it.description)
             }
-        }
+        }.ifEmpty { null }

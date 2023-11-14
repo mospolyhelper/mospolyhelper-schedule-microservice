@@ -1,24 +1,22 @@
 package com.mospolytech.data.schedule.repository
 
 import com.mospolytech.data.common.db.MosPolyDb
+import com.mospolytech.data.peoples.model.entity.GroupEntity
 import com.mospolytech.data.peoples.model.entity.StudentEntity
 import com.mospolytech.data.peoples.model.entity.TeacherEntity
 import com.mospolytech.data.peoples.model.entity.description
-import com.mospolytech.data.peoples.model.entity.toModelShort
 import com.mospolytech.data.schedule.converters.ApiScheduleConverter
 import com.mospolytech.data.schedule.model.db.*
 import com.mospolytech.data.schedule.model.entity.LessonEntity
 import com.mospolytech.data.schedule.model.entity.SubjectEntity
 import com.mospolytech.data.schedule.service.ScheduleService
-import com.mospolytech.domain.peoples.model.GroupShort
 import com.mospolytech.domain.schedule.model.ScheduleComplexFilter
 import com.mospolytech.domain.schedule.model.lessonSubject.CompactLessonSubjectInfo
-import com.mospolytech.domain.schedule.model.lessonType.LessonTypeInfo
-import com.mospolytech.domain.schedule.model.pack.CompactLessonAndTimes
+import com.mospolytech.domain.schedule.model.pack.AttendeeInfo
+import com.mospolytech.domain.schedule.model.pack.AttendeeType
+import com.mospolytech.domain.schedule.model.pack.CompactLessonEvent
 import com.mospolytech.domain.schedule.model.pack.CompactSchedule
-import com.mospolytech.domain.schedule.model.pack.ScheduleInfo
 import com.mospolytech.domain.schedule.model.place.CompactPlaceInfo
-import com.mospolytech.domain.schedule.model.teacher.CompactLessonTeacherInfo
 import com.mospolytech.domain.schedule.repository.LessonsRepository
 import org.jetbrains.exposed.sql.*
 import java.util.UUID
@@ -38,7 +36,7 @@ class LessonsRepositoryImpl(
         converter.clearCache()
     }
 
-    override suspend fun getLessonsByPlaces(placeIds: List<String>): List<CompactLessonAndTimes> {
+    override suspend fun getLessonsByPlaces(placeIds: List<String>): List<CompactLessonEvent> {
         return MosPolyDb.transaction {
             val resLessons =
                 if (placeIds.isNotEmpty()) {
@@ -144,7 +142,7 @@ class LessonsRepositoryImpl(
         return MosPolyDb.transaction {
             val query =
                 fullQuery().select {
-                    LessonsDb.subject eq UUID.fromString(subjectId)
+                    LessonsDb.subject eq subjectId
                 }
 
             buildSchedule(query)
@@ -204,14 +202,14 @@ class LessonsRepositoryImpl(
             }
 
             if (filter.subjectsId.isNotEmpty()) {
-                val subjectsId = filter.subjectsId.map { UUID.fromString(it) }
+                val subjectsId = filter.subjectsId
                 query.andWhere {
                     LessonsDb.subject inList subjectsId
                 }
             }
 
             if (filter.typesId.isNotEmpty()) {
-                val typesId = filter.typesId.map { UUID.fromString(it) }
+                val typesId = filter.typesId
                 query.andWhere {
                     LessonsDb.type inList typesId
                 }
@@ -247,42 +245,45 @@ class LessonsRepositoryImpl(
     }
 
     private fun buildSchedule(query: Query): CompactSchedule {
-        val types: MutableCollection<LessonTypeInfo> = LinkedHashSet()
         val subjects: MutableCollection<CompactLessonSubjectInfo> = LinkedHashSet()
-        val teachers: MutableCollection<CompactLessonTeacherInfo> = LinkedHashSet()
-        val groups: MutableCollection<GroupShort> = LinkedHashSet()
+        val attendees: MutableCollection<AttendeeInfo> = LinkedHashSet()
         val places: MutableCollection<CompactPlaceInfo> = LinkedHashSet()
-        val lessonsList = mutableListOf<CompactLessonAndTimes>()
+        val lessonsList = mutableListOf<CompactLessonEvent>()
 
         LessonEntity.wrapRows(query).forEach {
-            types.add(it.type.toModel())
             subjects.add(it.subject.toLessonSubjectInfo())
-            teachers.addAll(it.teachers.map { it.toLessonTeacherInfo() })
-            groups.addAll(it.groups.map { it.toModelShort() })
+            attendees.addAll(it.teachers.map { it.toAttendee() })
+            attendees.addAll(it.groups.map { it.toAttendee() })
             places.addAll(it.places.map { it.toCompactModel() })
-            lessonsList.add(it.toFullModel())
+            lessonsList.add(it.toModel())
         }
 
         return CompactSchedule(
             lessons = lessonsList,
-            info =
-                ScheduleInfo(
-                    typesInfo = types.toList(),
-                    subjectsInfo = subjects.toList(),
-                    teachersInfo = teachers.toList(),
-                    groupsInfo = groups.toList(),
-                    placesInfo = places.toList(),
-                ),
+            subjects = subjects.toList(),
+            attendees = attendees.toList(),
+            places = places.toList(),
         )
     }
 }
 
-fun TeacherEntity.toLessonTeacherInfo(): CompactLessonTeacherInfo {
-    return CompactLessonTeacherInfo(
-        id = this.id.toString(),
+fun TeacherEntity.toAttendee(): AttendeeInfo {
+    return AttendeeInfo(
+        id = "${AttendeeType.Teacher.name.lowercase()}-${this.id}",
+        type = AttendeeType.Teacher,
         name = this.name,
         description = this.description,
         avatar = this.avatar,
+    )
+}
+
+fun GroupEntity.toAttendee(): AttendeeInfo {
+    return AttendeeInfo(
+        id = "${AttendeeType.Group.name.lowercase()}-${this.id}",
+        type = AttendeeType.Group,
+        name = this.title,
+        description = this.description,
+        avatar = null,
     )
 }
 

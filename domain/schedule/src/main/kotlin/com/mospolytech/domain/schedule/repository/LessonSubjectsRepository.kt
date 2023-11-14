@@ -6,8 +6,6 @@ import com.mospolytech.domain.schedule.model.lessonSubject.LessonSubjectInfo
 interface LessonSubjectsRepository {
     suspend fun get(id: String): LessonSubjectInfo?
 
-    suspend fun getAll(): List<LessonSubjectInfo>
-
     suspend fun getPaging(
         query: String,
         pageSize: Int,

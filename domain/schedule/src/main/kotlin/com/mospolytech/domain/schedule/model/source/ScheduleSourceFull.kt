@@ -7,6 +7,6 @@ data class ScheduleSourceFull(
     val type: ScheduleSources,
     val key: String,
     val title: String,
-    val description: String,
+    val description: String?,
     val avatarUrl: String?,
 )

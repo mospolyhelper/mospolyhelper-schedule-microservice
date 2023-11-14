@@ -5,7 +5,7 @@ import com.mospolytech.data.base.findOrAllIfEmpty
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.schedule.model.db.PlacesDb
 import com.mospolytech.data.schedule.model.entity.PlaceEntity
-import com.mospolytech.domain.base.model.Location
+import com.mospolytech.domain.base.model.Coordinates
 import com.mospolytech.domain.base.model.PagingDTO
 import com.mospolytech.domain.schedule.model.place.CompactPlaceInfo
 import com.mospolytech.domain.schedule.model.place.PlaceInfo
@@ -22,14 +22,6 @@ class PlacesRepositoryImpl : PlacesRepository {
         }
     }
 
-    override suspend fun getAll(): List<PlaceInfo> {
-        return MosPolyDb.transaction {
-            PlaceEntity.all()
-                .orderBy(PlacesDb.type to SortOrder.ASC, PlacesDb.title to SortOrder.ASC)
-                .map { it.toModel() }
-        }
-    }
-
     override suspend fun getPaging(
         query: String,
         pageSize: Int,
@@ -37,7 +29,7 @@ class PlacesRepositoryImpl : PlacesRepository {
     ): PagingDTO<PlaceInfo> {
         return MosPolyDb.transaction {
             createPagingDto(pageSize, page) { offset ->
-                PlaceEntity.findOrAllIfEmpty(query) { PlacesDb.title like query }
+                PlaceEntity.findOrAllIfEmpty(query) { PlacesDb.title like "%$query%" }
                     .orderBy(PlacesDb.type to SortOrder.ASC, PlacesDb.title to SortOrder.ASC)
                     .limit(pageSize, offset.toLong())
                     .mapLazy { it.toModel() }
@@ -58,35 +50,29 @@ fun PlaceEntity.toModel(): PlaceInfo {
                 building = building,
                 floor = floor,
                 auditorium = auditorium,
-                location =
+                coordinates =
                     lat?.let { lat ->
                         lng?.let { lng ->
-                            Location(
+                            Coordinates(
                                 lat = lat,
                                 lng = lng,
                             )
                         }
                     },
-                description = description.orEmpty(),
+                description = description,
             )
         PlaceTypes.Online ->
             PlaceInfo.Online(
                 id = id.value.toString(),
                 title = title,
                 url = url,
-                description = description.orEmpty(),
+                description = description,
             )
         PlaceTypes.Other ->
             PlaceInfo.Other(
                 id = id.value.toString(),
                 title = title,
-                description = description.orEmpty(),
-            )
-        PlaceTypes.Unclassified ->
-            PlaceInfo.Unclassified(
-                id = id.value.toString(),
-                title = title,
-                description = description.orEmpty(),
+                description = description,
             )
     }
 }
@@ -97,35 +83,29 @@ fun PlaceEntity.toCompactModel(): CompactPlaceInfo {
             CompactPlaceInfo.Building(
                 id = id.value.toString(),
                 title = title,
-                location =
+                coordinates =
                     lat?.let { lat ->
                         lng?.let { lng ->
-                            Location(
+                            Coordinates(
                                 lat = lat,
                                 lng = lng,
                             )
                         }
                     },
-                description = description.orEmpty(),
+                description = description,
             )
         PlaceTypes.Online ->
             CompactPlaceInfo.Online(
                 id = id.value.toString(),
                 title = title,
                 url = url,
-                description = description.orEmpty(),
+                description = description,
             )
         PlaceTypes.Other ->
             CompactPlaceInfo.Other(
                 id = id.value.toString(),
                 title = title,
-                description = description.orEmpty(),
-            )
-        PlaceTypes.Unclassified ->
-            CompactPlaceInfo.Other(
-                id = id.value.toString(),
-                title = title,
-                description = description.orEmpty(),
+                description = description,
             )
     }
 }

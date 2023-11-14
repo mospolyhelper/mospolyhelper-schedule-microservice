@@ -69,7 +69,6 @@ class TeachersRemoteDS {
                     },
                 ) {
                     this.name = teacher.name
-                    this.avatar = "https://e.mospolytech.ru/old/img/no_avatar.jpg"
                     this.stuffType = stuffType
                     this.grade = teacher.post
                     this.departmentParent = teacher.departmentParent
@@ -97,7 +96,7 @@ class TeachersRemoteDS {
                 ) {
                     this.name = teacher.fio
                     this.lkId = teacher.id
-                    this.avatar = teacher.avatar
+                    this.avatar = teacher.avatar.ifEmpty { null }
                     this.grade = teacher.post
                     this.department = teacher.division
                     this.email = teacher.email

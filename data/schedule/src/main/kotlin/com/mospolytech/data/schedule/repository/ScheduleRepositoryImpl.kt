@@ -2,14 +2,12 @@ package com.mospolytech.data.schedule.repository
 
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.peoples.model.db.GroupsDb
-import com.mospolytech.data.schedule.model.db.LessonDateTimesDb
 import com.mospolytech.data.schedule.model.db.LessonToGroupsDb
-import com.mospolytech.data.schedule.model.db.LessonToLessonDateTimesDb
 import com.mospolytech.data.schedule.model.db.LessonToPlacesDb
 import com.mospolytech.data.schedule.model.db.LessonToTeachersDb
-import com.mospolytech.data.schedule.model.db.LessonTypesDb
 import com.mospolytech.data.schedule.model.db.LessonsDb
 import com.mospolytech.data.schedule.model.db.PlacesDb
+import com.mospolytech.data.schedule.model.db.RecurrenceDb
 import com.mospolytech.data.schedule.model.db.SubjectsDb
 import com.mospolytech.domain.base.model.PagingDTO
 import com.mospolytech.domain.base.utils.map
@@ -22,7 +20,6 @@ import com.mospolytech.domain.schedule.model.source.ScheduleSourceFull
 import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import com.mospolytech.domain.schedule.repository.GroupsRepository
 import com.mospolytech.domain.schedule.repository.LessonSubjectsRepository
-import com.mospolytech.domain.schedule.repository.LessonTypesRepository
 import com.mospolytech.domain.schedule.repository.LessonsRepository
 import com.mospolytech.domain.schedule.repository.PlacesRepository
 import com.mospolytech.domain.schedule.repository.ScheduleRepository
@@ -34,7 +31,6 @@ import org.jetbrains.exposed.sql.select
 class ScheduleRepositoryImpl(
     private val lessonsRepository: LessonsRepository,
     private val lessonSubjectsRepository: LessonSubjectsRepository,
-    private val lessonTypesRepository: LessonTypesRepository,
     private val teachersRepository: TeachersRepository,
     private val groupsRepository: GroupsRepository,
     private val placesRepository: PlacesRepository,
@@ -62,14 +58,14 @@ class ScheduleRepositoryImpl(
         sourceType: ScheduleSources,
         query: String,
         page: Int,
-        pageSize: Int,
+        limit: Int,
     ): PagingDTO<ScheduleSourceFull> {
         return when (sourceType) {
             ScheduleSources.Group -> {
                 groupsRepository.getPagingShort(
                     query = query,
                     page = page,
-                    pageSize = pageSize,
+                    pageSize = limit,
                 ).map {
                     ScheduleSourceFull(
                         type = sourceType,
@@ -84,7 +80,7 @@ class ScheduleRepositoryImpl(
                 teachersRepository.getPaging(
                     query = query,
                     page = page,
-                    pageSize = pageSize,
+                    pageSize = limit,
                 ).map {
                     ScheduleSourceFull(
                         type = sourceType,
@@ -99,7 +95,7 @@ class ScheduleRepositoryImpl(
                 studentsRepository.getShortStudents(
                     query = query,
                     page = page,
-                    pageSize = pageSize,
+                    pageSize = limit,
                 ).map {
                     ScheduleSourceFull(
                         type = sourceType,
@@ -114,7 +110,7 @@ class ScheduleRepositoryImpl(
                 placesRepository.getPaging(
                     query = query,
                     page = page,
-                    pageSize = pageSize,
+                    pageSize = limit,
                 ).map {
                     ScheduleSourceFull(
                         type = sourceType,
@@ -129,7 +125,7 @@ class ScheduleRepositoryImpl(
                 lessonSubjectsRepository.getPaging(
                     query = query,
                     page = page,
-                    pageSize = pageSize,
+                    pageSize = limit,
                 ).map {
                     ScheduleSourceFull(
                         type = sourceType,
@@ -178,47 +174,41 @@ class ScheduleRepositoryImpl(
             MosPolyDb.transaction {
                 SchemaUtils.drop(
                     LessonsDb,
-                    LessonToLessonDateTimesDb,
+                    RecurrenceDb,
                     LessonToTeachersDb,
                     LessonToGroupsDb,
                     LessonToPlacesDb,
-                    LessonTypesDb,
                     SubjectsDb,
-                    LessonDateTimesDb,
                     PlacesDb,
                 )
             }
             MosPolyDb.transaction {
                 SchemaUtils.create(
+                    SubjectsDb,
+                    PlacesDb,
+                    RecurrenceDb,
                     LessonsDb,
-                    LessonToLessonDateTimesDb,
                     LessonToTeachersDb,
                     LessonToGroupsDb,
                     LessonToPlacesDb,
-                    LessonTypesDb,
-                    SubjectsDb,
-                    LessonDateTimesDb,
-                    PlacesDb,
                 )
             }
         } else {
             MosPolyDb.transaction {
                 SchemaUtils.createMissingTablesAndColumns(
+                    SubjectsDb,
+                    PlacesDb,
+                    RecurrenceDb,
                     LessonsDb,
-                    LessonToLessonDateTimesDb,
                     LessonToTeachersDb,
                     LessonToGroupsDb,
                     LessonToPlacesDb,
-                    LessonTypesDb,
-                    SubjectsDb,
-                    LessonDateTimesDb,
-                    PlacesDb,
                 )
             }
 
             MosPolyDb.transaction {
                 // Сперва очищаем таблицы с перекрёстными ссылками
-                LessonToLessonDateTimesDb.deleteAll()
+                RecurrenceDb.deleteAll()
                 LessonToGroupsDb.deleteAll()
                 LessonToPlacesDb.deleteAll()
                 LessonToTeachersDb.deleteAll()

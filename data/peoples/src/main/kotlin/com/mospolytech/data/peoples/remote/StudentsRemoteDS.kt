@@ -13,6 +13,7 @@ import com.mospolytech.data.peoples.model.response.StudentsResponse
 import com.mospolytech.data.peoples.model.xml.StudentEducationGroupXml
 import com.mospolytech.data.peoples.model.xml.StudentInfoXml
 import com.mospolytech.data.peoples.model.xml.StudentXml
+import com.mospolytech.domain.peoples.utils.toGroupId
 import kotlinx.datetime.Clock
 import kotlinx.datetime.toKotlinLocalDate
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -47,7 +48,7 @@ class StudentsRemoteDS {
                 StudentsDb.leftJoin(GroupsDb)
                     .slice(StudentsDb.columns)
                     .selectOrSelectAllIfEmpty(query) {
-                        (GroupsDb.title like query) or
+                        (GroupsDb.title like "%$query%") or
                             (StudentsDb.name.lowerCase() like "%${query.lowercase()}%")
                     }.orderBy(StudentsDb.name to SortOrder.ASC)
 
@@ -90,7 +91,7 @@ class StudentsRemoteDS {
                 StudentsDb.leftJoin(GroupsDb)
                     .slice(StudentsDb.columns)
                     .selectOrSelectAllIfEmpty(query) {
-                        (GroupsDb.title like query) or
+                        (GroupsDb.title like "%$query%") or
                             (StudentsDb.name.lowerCase() like "%${query.lowercase()}%")
                     }.orderBy(StudentsDb.name to SortOrder.ASC)
 
@@ -133,7 +134,6 @@ class StudentsRemoteDS {
                     newId = { student.studentInfo.recordBookId },
                 ) {
                     this.name = fullName
-                    this.avatar = "https://e.mospolytech.ru/old/img/no_avatar.jpg"
                     this.birthday = birthday
                     this.faculty = faculty
                     this.direction = direction
@@ -172,7 +172,7 @@ class StudentsRemoteDS {
                 ) {
                     this.lkId = student.id
                     this.name = student.fio
-                    this.avatar = student.avatar
+                    this.avatar = student.avatar.ifEmpty { null }
                     this.faculty = student.faculty
                     this.group = groupEntity
                     this.lastUpdate = Clock.System.now()
@@ -215,12 +215,7 @@ class StudentsRemoteDS {
         faculty: String?,
     ): GroupEntity? {
         if (title == null) return null
-        return GroupEntity.upsert(
-            op = {
-                GroupsDb.title eq title
-            },
-            newId = { UUID.randomUUID().toString() },
-        ) {
+        return GroupEntity.upsert(title.toGroupId()) {
             this.title = title
             this.faculty = faculty
         }

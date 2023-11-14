@@ -3,6 +3,8 @@ package com.mospolytech.data.common.db
 import com.mospolytech.domain.base.AppConfig
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 object MosPolyDb {
@@ -48,7 +50,16 @@ object MosPolyDb {
 //        log.info("Flyway migration has finished")
 //    }
 
-    suspend fun <T> transaction(block: suspend () -> T): T = newSuspendedTransaction(Dispatchers.IO) { block() }
+    suspend fun <T> transaction(
+        isLogEnabled: Boolean = false,
+        block: suspend () -> T,
+    ): T =
+        newSuspendedTransaction(Dispatchers.IO) {
+            if (isLogEnabled) {
+                addLogger(StdOutSqlLogger)
+            }
+            block()
+        }
 
     suspend fun <T> transactionCatching(block: suspend () -> T): Result<T> =
         kotlin.runCatching {
