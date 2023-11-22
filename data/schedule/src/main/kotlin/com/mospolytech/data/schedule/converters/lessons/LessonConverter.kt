@@ -45,7 +45,7 @@ class LessonConverter(
         recurrence: String?,
     ) {
         val (subjectId, subgroup) = lessonSubjectConverter.getCachedId(apiLesson.sbj)
-        val (type, importance) = lessonTypeConverter.getCachedId(apiLesson.type, apiLesson.sbj)
+        val (type, importance) = lessonTypeConverter.getCached(apiLesson.type, apiLesson.sbj)
         val teachersId = teachersConverter.getCachedIds(apiLesson.teacher)
         val groupsId = groupsConverter.getCachedIds(apiGroups)
         val placesId = placesConverter.getCachedIds(apiLesson.auditories)

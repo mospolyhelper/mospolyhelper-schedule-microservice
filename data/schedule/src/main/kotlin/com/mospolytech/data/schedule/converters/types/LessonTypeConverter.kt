@@ -1,7 +1,6 @@
 package com.mospolytech.data.schedule.converters.types
 
 import com.mospolytech.domain.schedule.model.lessonType.Importance
-import com.mospolytech.domain.schedule.utils.toLessonTypeId
 
 class LessonTypeConverter {
     private val converterCache = HashMap<Pair<String, String>, LessonTypeCache>()
@@ -15,12 +14,12 @@ class LessonTypeConverter {
         }
     }
 
-    fun getCachedId(
+    fun getCached(
         rawType: String,
         rawTitle: String,
     ): Pair<String, Importance> {
         val dtoCache = checkNotNull(converterCache[rawType to rawTitle])
-        return dtoCache.title.toLessonTypeId() to dtoCache.isImportant
+        return dtoCache.title to dtoCache.isImportant
     }
 
     fun cacheAll(rawTypeToTitles: Set<Pair<String, String>>) {
