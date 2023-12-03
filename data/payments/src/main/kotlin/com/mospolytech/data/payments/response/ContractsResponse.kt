@@ -168,7 +168,7 @@ fun PaymentsResponse.toModel(): Contract {
 }
 
 fun PaymentResponse.toModel(title: String): Payment {
-    val valueDecimal = value.toBigDecimalOrNull()
+    val valueDecimal = value.filterNot { it.isWhitespace() }.toBigDecimalOrNull()
     val isNegativeValue = valueDecimal?.let { it < 0.toBigDecimal() } ?: false
     val formattedValue = valueDecimal?.formatRoubles() ?: value
 

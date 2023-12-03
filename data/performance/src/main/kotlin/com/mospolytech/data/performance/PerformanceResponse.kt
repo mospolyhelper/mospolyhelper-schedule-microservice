@@ -62,7 +62,7 @@ fun PerformanceResponse.toModel(): Performance {
 }
 
 private fun getShortName(fullName: String): String {
-    val names = fullName.split(" ")
+    val names = fullName.split(" ").filter { it.isNotEmpty() }
     return if (names.isEmpty()) {
         return fullName
     } else {
@@ -70,7 +70,8 @@ private fun getShortName(fullName: String): String {
             append(names.first())
             for (index in 1..names.lastIndex) {
                 append(" ")
-                append(names[index])
+                append(names[index].first())
+                append('.')
             }
         }
     }
@@ -127,8 +128,8 @@ private fun parseGrade(grade: String): Grade {
 
 private val dateFormatter = DateTimeFormatter.ofPattern("MMMM d',' yyyy", Locale.US)
 private val dateFormatterRu =
-    DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
-        .withLocale(Locale("ru"))
+    DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
+        .withLocale(Locale("ru", "RU"))
 
 fun String.toDate(): LocalDate? {
     return try {

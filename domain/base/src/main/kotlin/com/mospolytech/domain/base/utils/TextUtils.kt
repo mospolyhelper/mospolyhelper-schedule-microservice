@@ -20,7 +20,7 @@ fun String.capitalized(): String {
  */
 fun String.decapitalized(): String {
     return this.replaceFirstChar {
-        if (it.isTitleCase()) {
+        if (it.isUpperCase()) {
             it.lowercase(Locale.getDefault())
         } else {
             it.toString()
