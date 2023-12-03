@@ -186,7 +186,7 @@ fun PaygraphResponse.toModel(
     title: String,
     today: LocalDate,
 ): Payment? {
-    val date = datePlan.toDate()
+    val date = LocalDate.parse(datePlan)
     if (date > today) return null
 
     val valueDecimal = sum.toBigDecimalOrNull()

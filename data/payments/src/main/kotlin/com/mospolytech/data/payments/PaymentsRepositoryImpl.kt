@@ -18,10 +18,7 @@ class PaymentsRepositoryImpl(private val service: PaymentsService) : PaymentsRep
         }
     }
 
-    override suspend fun getPayments(
-        token: String,
-        paymentType: PaymentType?,
-    ): Result<List<Contract>> {
+    override suspend fun getPayments(token: String): Result<List<Contract>> {
         return runCatching {
             val paymentsResponse = service.getPayments(token).contracts
             paymentsResponse.toModel()
