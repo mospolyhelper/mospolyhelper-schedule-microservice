@@ -16,8 +16,7 @@ import com.mospolytech.domain.peoples.repository.StudentsRepository
 import com.mospolytech.domain.schedule.model.ScheduleComplexFilter
 import com.mospolytech.domain.schedule.model.pack.CompactSchedule
 import com.mospolytech.domain.schedule.model.source.ScheduleSource
-import com.mospolytech.domain.schedule.model.source.ScheduleSourceFull
-import com.mospolytech.domain.schedule.model.source.ScheduleSources
+import com.mospolytech.domain.schedule.model.source.ScheduleSourceTypes
 import com.mospolytech.domain.schedule.repository.GroupsRepository
 import com.mospolytech.domain.schedule.repository.LessonSubjectsRepository
 import com.mospolytech.domain.schedule.repository.LessonsRepository
@@ -55,88 +54,88 @@ class ScheduleRepositoryImpl(
 //    }
 
     override suspend fun getSourceList(
-        sourceType: ScheduleSources,
+        sourceType: ScheduleSourceTypes,
         query: String,
         page: Int,
         limit: Int,
-    ): PagingDTO<ScheduleSourceFull> {
+    ): PagingDTO<ScheduleSource> {
         return when (sourceType) {
-            ScheduleSources.Group -> {
+            ScheduleSourceTypes.Group -> {
                 groupsRepository.getPagingShort(
                     query = query,
                     page = page,
                     pageSize = limit,
                 ).map {
-                    ScheduleSourceFull(
+                    ScheduleSource(
                         type = sourceType,
-                        key = it.id,
+                        id = it.id,
                         title = it.title,
                         description = it.description,
-                        avatarUrl = null,
+                        avatar = null,
                     )
                 }
             }
-            ScheduleSources.Teacher -> {
+            ScheduleSourceTypes.Teacher -> {
                 teachersRepository.getPaging(
                     query = query,
                     page = page,
                     pageSize = limit,
                 ).map {
-                    ScheduleSourceFull(
+                    ScheduleSource(
                         type = sourceType,
-                        key = it.id,
+                        id = it.id,
                         title = it.name,
                         description = it.description,
-                        avatarUrl = it.avatar,
+                        avatar = it.avatar,
                     )
                 }
             }
-            ScheduleSources.Student -> {
+            ScheduleSourceTypes.Student -> {
                 studentsRepository.getShortStudents(
                     query = query,
                     page = page,
                     pageSize = limit,
                 ).map {
-                    ScheduleSourceFull(
+                    ScheduleSource(
                         type = sourceType,
-                        key = it.id,
+                        id = it.id,
                         title = it.name,
                         description = it.description,
-                        avatarUrl = it.avatar,
+                        avatar = it.avatar,
                     )
                 }
             }
-            ScheduleSources.Place -> {
+            ScheduleSourceTypes.Place -> {
                 placesRepository.getPaging(
                     query = query,
                     page = page,
                     pageSize = limit,
                 ).map {
-                    ScheduleSourceFull(
+                    ScheduleSource(
                         type = sourceType,
-                        key = it.id,
+                        id = it.id,
                         title = it.title,
                         description = it.description,
-                        avatarUrl = null,
+                        avatar = null,
                     )
                 }
             }
-            ScheduleSources.Subject -> {
+            ScheduleSourceTypes.Subject -> {
                 lessonSubjectsRepository.getPaging(
                     query = query,
                     page = page,
                     pageSize = limit,
                 ).map {
-                    ScheduleSourceFull(
+                    ScheduleSource(
                         type = sourceType,
-                        key = it.id,
+                        id = it.id,
                         title = it.title,
                         description = it.description,
-                        avatarUrl = null,
+                        avatar = null,
                     )
                 }
             }
-            ScheduleSources.Complex -> error("Can't process ScheduleSources.Complex")
+            ScheduleSourceTypes.Complex -> error("Can't process ScheduleSources.Complex")
         }
     }
 
@@ -144,14 +143,17 @@ class ScheduleRepositoryImpl(
         return lessonsRepository.getAllLessons()
     }
 
-    override suspend fun getCompactSchedule(source: ScheduleSource): CompactSchedule {
-        return when (source.type) {
-            ScheduleSources.Group -> lessonsRepository.getLessonsByGroup(source.key)
-            ScheduleSources.Teacher -> lessonsRepository.getLessonsByTeacher(source.key)
-            ScheduleSources.Student -> lessonsRepository.getLessonsByStudent(source.key)
-            ScheduleSources.Place -> lessonsRepository.getLessonsByPlace(source.key)
-            ScheduleSources.Subject -> lessonsRepository.getLessonsBySubject(source.key)
-            ScheduleSources.Complex -> error("Can't process ScheduleSources.Complex")
+    override suspend fun getCompactSchedule(
+        id: String,
+        type: ScheduleSourceTypes,
+    ): CompactSchedule {
+        return when (type) {
+            ScheduleSourceTypes.Group -> lessonsRepository.getLessonsByGroup(id)
+            ScheduleSourceTypes.Teacher -> lessonsRepository.getLessonsByTeacher(id)
+            ScheduleSourceTypes.Student -> lessonsRepository.getLessonsByStudent(id)
+            ScheduleSourceTypes.Place -> lessonsRepository.getLessonsByPlace(id)
+            ScheduleSourceTypes.Subject -> lessonsRepository.getLessonsBySubject(id)
+            ScheduleSourceTypes.Complex -> error("Can't process ScheduleSources.Complex")
         }
     }
 

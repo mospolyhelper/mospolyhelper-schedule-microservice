@@ -1,12 +1,14 @@
 package com.mospolytech.data.personal
 
-import com.mospolytech.domain.personal.model.Order
-import com.mospolytech.domain.personal.model.Personal
-import com.mospolytech.domain.personal.model.Subdivision
+import com.mospolytech.domain.personal.Order
+import com.mospolytech.domain.personal.Personal
+import com.mospolytech.domain.personal.Subdivision
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.LocalDate as JavaLocalDate
 
 @Serializable
 data class PersonalResponse(
@@ -50,29 +52,37 @@ data class PersonalResponse(
 }
 
 fun PersonalResponse.toModel(): Personal {
+    val fullName = this.user.surname + " " + this.user.name + " " + this.user.patronymic
+    val isStudent = user.userStatus != "staff"
+    val description =
+        if (isStudent) {
+            "Студент • ${user.group} • ${user.degreeLevel.lowercase()} "
+        } else {
+            "Преподаватель"
+        }
     return Personal(
-        id = this.user.id,
-        userStatus = this.user.userStatus,
-        status = this.user.status,
-        course = this.user.course,
-        name = this.user.name,
-        surname = this.user.surname,
-        patronymic = this.user.patronymic,
+        id = this.user.id.toString(),
+        name = fullName,
+        description = description,
         avatar = this.user.avatar,
-        birthday = this.user.birthday,
-        sex = this.user.sex.getSex(),
-        code = this.user.code,
-        faculty = this.user.faculty,
-        group = this.user.group,
-        specialty = this.user.specialty,
-        specialization = this.user.specialization.ifEmpty { null },
-        degreeLength = this.user.degreeLength.filter { it.isDigit() },
-        educationForm = this.user.educationForm,
-        finance = this.user.finance,
-        degreeLevel = this.user.degreeLevel,
-        enterYear = this.user.enterYear,
-        orders = this.user.orders.map { it.toModel() },
-        subdivisions = this.user.subdivisions?.map { it.toModel() },
+        data =
+            buildMap {
+                put("Статус", user.status)
+                put("Курс", user.group)
+                put("Дата рождения", user.birthday)
+                put("Пол", user.sex.getSex())
+                put("Код студента", user.code)
+                put("Факультет", user.faculty)
+                put("Группа", user.group)
+                put("Направление", user.specialty)
+                user.specialization.ifEmpty { null }?.let { specialization ->
+                    put("Специализация", specialization)
+                }
+                put("Срок обучения", user.degreeLength.filter { it.isDigit() })
+                put("Форма обучения", user.educationForm)
+                put("Вид финансирования", user.finance)
+                put("Год набора", user.enterYear)
+            },
     )
 }
 
@@ -112,7 +122,8 @@ private fun String.toModel(): Order {
 
 fun String.toDate(): LocalDate? {
     return try {
-        LocalDate.parse(this, DateTimeFormatter.ofPattern("'от' d MMMM yyyy 'г.'"))
+        JavaLocalDate.parse(this, DateTimeFormatter.ofPattern("'от' d MMMM yyyy 'г.'"))
+            .toKotlinLocalDate()
     } catch (e: Throwable) {
         null
     }

@@ -4,21 +4,22 @@ import com.mospolytech.data.peoples.model.response.PaginationResponse
 import com.mospolytech.data.peoples.model.response.StudentsResponse
 import com.mospolytech.data.peoples.model.xml.StudentXml
 import com.mospolytech.domain.base.AppConfig
+import com.mospolytech.domain.base.utils.Moscow
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.plugins.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 import kotlinx.serialization.decodeFromString
 import nl.adaptivity.xmlutil.serialization.UnknownChildHandler
 import nl.adaptivity.xmlutil.serialization.XML
 import java.io.File
-import java.time.LocalDate
 
 class StudentsService(
     private val client: HttpClient,
@@ -98,7 +99,7 @@ class StudentsService(
   <soap:Body>
     <GetUsers xmlns="http://sgu-infocom.ru/WebExchangeLK">
       <PersonalGUID></PersonalGUID>
-      <ActualStatusDate>${LocalDate.now()}Z</ActualStatusDate>
+      <ActualStatusDate>${Clock.System.todayIn(TimeZone.Moscow)}Z</ActualStatusDate>
       <PeriodOfDismiss></PeriodOfDismiss>
       <PeriodOfGraduate></PeriodOfGraduate>
     </GetUsers>

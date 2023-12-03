@@ -1,14 +1,9 @@
 package com.mospolytech.features.schedule.routes
 
 import com.mospolytech.domain.base.AppConfig
-import com.mospolytech.domain.personal.repository.PersonalRepository
+import com.mospolytech.domain.personal.PersonalRepository
 import com.mospolytech.domain.schedule.model.ScheduleComplexFilter
-import com.mospolytech.domain.schedule.model.source.ScheduleSource
-import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import com.mospolytech.domain.schedule.repository.ScheduleRepository
-import com.mospolytech.features.base.AuthConfigs
-import com.mospolytech.features.base.utils.getTokenOrRespondError
-import com.mospolytech.features.base.utils.respondResult
 import com.mospolytech.features.schedule.ScheduleJobLauncher
 import com.mospolytech.features.schedule.routes.model.ScheduleRequest
 import io.ktor.http.*
@@ -31,27 +26,27 @@ fun Routing.scheduleRoutesV1(
                 call.respond(repository.getCompactSchedule())
             }
             get<ScheduleRequest> {
-                call.respond(repository.getCompactSchedule(ScheduleSource(it.type, it.key)))
+                call.respond(repository.getCompactSchedule(it.key, it.type))
             }
             post("/complex") {
                 val filter = call.receive<ScheduleComplexFilter>()
                 call.respond(repository.getCompactSchedule(filter))
             }
         }
-        authenticate(AuthConfigs.MPU, optional = true) {
-            get("my") {
-                val token = call.getTokenOrRespondError() ?: return@get
-
-                call.respondResult(
-                    userRepository.getPersonalInfo(token).map {
-                        val id = repository.findGroupByTitle(it.group)
-                        id?.let {
-                            repository.getCompactSchedule(ScheduleSource(ScheduleSources.Group, id))
-                        }
-                    },
-                )
-            }
-        }
+//        authenticate(AuthConfigs.MPU, optional = true) {
+//            get("my") {
+//                val token = call.getTokenOrRespondError() ?: return@get
+//
+//                call.respondResult(
+//                    userRepository.getPersonalInfo(token).map {
+//                        val id = repository.findGroupByTitle(it.name)
+//                        id?.let {
+//                            repository.getCompactSchedule(id, ScheduleSourceTypes.Group)
+//                        }
+//                    },
+//                )
+//            }
+//        }
         route("/update-schedules") {
             get {
                 if (call.request.queryParameters["key"] != appConfig.adminKey) {

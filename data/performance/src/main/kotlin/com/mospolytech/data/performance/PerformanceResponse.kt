@@ -1,12 +1,14 @@
 package com.mospolytech.data.performance
 
+import com.mospolytech.domain.perfomance.model.Grade
+import com.mospolytech.domain.perfomance.model.GradeValue
 import com.mospolytech.domain.perfomance.model.Performance
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.Month
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.*
 
 @Serializable
@@ -39,32 +41,105 @@ data class PerformanceResponse(
 )
 
 fun PerformanceResponse.toModel(): Performance {
-    val examMonth = examDate.toDate()?.month ?: Month.JANUARY
-    val semester = if (examMonth.value > Month.FEBRUARY.value && examMonth.value < Month.SEPTEMBER.value) course * 2 else course * 2 - 1
+    val grade = convertGrade(grade)
+    val teacherName = getShortName(teacher)
+    val date = examDate.toDate()?.toRussianText()
+
+    val description =
+        if (date == null) {
+            teacherName
+        } else {
+            "$teacherName • $date"
+        }
+
     return Performance(
-        id = id,
-        billNum = billNum,
-        billType = billType.ifEmpty { null },
-        docType = docType,
-        name = name,
-        date = examDate.toDate(),
-        time = examTime.toTime(),
+        id = id.toString(),
+        title = name,
+        type = examType,
+        description = description,
         grade = grade,
-        ticketNum = ticketNum.ifEmpty { null },
-        teacher = teacher,
-        course = course,
-        semester = semester,
-        examType = examType,
-        chair = chair,
     )
 }
 
+private fun getShortName(fullName: String): String {
+    val names = fullName.split(" ")
+    return if (names.isEmpty()) {
+        return fullName
+    } else {
+        buildString {
+            append(names.first())
+            for (index in 1..names.lastIndex) {
+                append(" ")
+                append(names[index])
+            }
+        }
+    }
+}
+
+private fun convertGrade(grade: String): Grade {
+    return gradePool.getOrPut(grade) { parseGrade(grade) }
+}
+
+private val gradePool = hashMapOf<String, Grade>()
+
+private fun parseGrade(grade: String): Grade {
+    val value: GradeValue?
+    val title: String
+    when (grade) {
+        "Зачтено" -> {
+            title = "✔"
+            value = GradeValue.VERY_GOOD
+        }
+        "Не зачтено" -> {
+            title = "×"
+            value = GradeValue.VERY_BAD
+        }
+        "Отлично" -> {
+            title = "5"
+            value = GradeValue.VERY_GOOD
+        }
+        "Хорошо" -> {
+            title = "4"
+            value = GradeValue.GOOD
+        }
+        "Удовлетворительно" -> {
+            title = "3"
+            value = GradeValue.BAD
+        }
+        "Не явился" -> {
+            title = "Неявка"
+            value = GradeValue.VERY_BAD
+        }
+        "Неудовлетворительно" -> {
+            title = "2"
+            value = GradeValue.VERY_BAD
+        }
+        else -> {
+            title = grade
+            value = null
+        }
+    }
+    return Grade(
+        title = title,
+        value = value,
+    )
+}
+
+private val dateFormatter = DateTimeFormatter.ofPattern("MMMM d',' yyyy", Locale.US)
+private val dateFormatterRu =
+    DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)
+        .withLocale(Locale("ru"))
+
 fun String.toDate(): LocalDate? {
     return try {
-        LocalDate.parse(this, DateTimeFormatter.ofPattern("MMMM d',' yyyy", Locale.US))
+        LocalDate.parse(this, dateFormatter)
     } catch (e: Throwable) {
         null
     }
+}
+
+fun LocalDate.toRussianText(): String {
+    return dateFormatterRu.format(this)
 }
 
 fun String.toTime(): LocalTime? {

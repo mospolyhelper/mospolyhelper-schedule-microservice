@@ -1,6 +1,5 @@
 package com.mospolytech.features.schedule.routes
 
-import com.mospolytech.domain.schedule.model.source.ScheduleSources
 import com.mospolytech.domain.schedule.repository.ScheduleRepository
 import com.mospolytech.features.schedule.routes.model.ScheduleSourceListRequest
 import io.ktor.server.application.*
@@ -12,7 +11,7 @@ fun Routing.sourcesRoutesV1(repository: ScheduleRepository) {
     route("/schedule") {
         route("/sources") {
             get {
-                call.respond(ScheduleSources.entries.map { it.name.lowercase() })
+                call.respond(repository.getSourceTypes())
             }
             get<ScheduleSourceListRequest> {
                 val query = call.request.queryParameters["query"] ?: ""

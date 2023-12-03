@@ -9,7 +9,7 @@ import com.mospolytech.domain.base.model.PagingDTO
 import com.mospolytech.domain.peoples.model.Student
 import com.mospolytech.domain.peoples.model.StudentShort
 import com.mospolytech.domain.peoples.repository.StudentsRepository
-import com.mospolytech.domain.personal.repository.PersonalRepository
+import com.mospolytech.domain.personal.PersonalRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.buffer
@@ -40,8 +40,8 @@ class StudentsRepositoryImpl(
     override suspend fun getShortStudents() = studentsDS.getShortStudents()
 
     override suspend fun getClassmates(token: String): Result<List<Student>> {
-        return personalRepository.getPersonalInfo(token).mapCatching {
-            studentsDS.getStudents(it.group)
+        return personalRepository.getPersonalGroup(token).mapCatching {
+            studentsDS.getStudents(it)
         }
     }
 

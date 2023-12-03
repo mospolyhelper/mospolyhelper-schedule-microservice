@@ -1,7 +1,7 @@
 package com.mospolytech.data.personal
 
-import com.mospolytech.domain.personal.model.Personal
-import com.mospolytech.domain.personal.repository.PersonalRepository
+import com.mospolytech.domain.personal.Personal
+import com.mospolytech.domain.personal.PersonalRepository
 
 class PersonalRepositoryImpl(
     private val service: PersonalService,
@@ -10,6 +10,19 @@ class PersonalRepositoryImpl(
         return runCatching {
             val personalResponse = service.getPersonalInfo(token)
             personalResponse.toModel()
+        }
+    }
+
+    override suspend fun getPersonalGroup(token: String): Result<String> {
+        return runCatching {
+            val personalResponse = service.getPersonalInfo(token)
+            personalResponse.user.group
+        }
+    }
+
+    override suspend fun getCourse(token: String): Result<Int> {
+        return runCatching {
+            service.getPersonalInfo(token).user.course.toIntOrNull() ?: 1
         }
     }
 }

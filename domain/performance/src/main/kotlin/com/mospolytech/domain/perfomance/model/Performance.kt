@@ -1,27 +1,44 @@
 package com.mospolytech.domain.perfomance.model
 
-import com.mospolytech.domain.base.utils.converters.LocalDateConverter
-import com.mospolytech.domain.base.utils.converters.LocalTimeConverter
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.time.LocalDate
-import java.time.LocalTime
 
 @Serializable
 data class Performance(
-    val id: Int,
-    val billNum: String,
-    val billType: String?,
-    val docType: String,
-    val name: String,
-    @Serializable(with = LocalDateConverter::class)
-    val date: LocalDate?,
-    @Serializable(with = LocalTimeConverter::class)
-    val time: LocalTime?,
-    val grade: String,
-    val ticketNum: String?,
-    val teacher: String,
-    val course: Int,
-    val semester: Int,
-    val examType: String,
-    val chair: String,
+    @SerialName("id")
+    val id: String,
+    @SerialName("title")
+    val title: String,
+    @SerialName("type")
+    val type: String,
+    @SerialName("description")
+    val description: String,
+    @SerialName("grade")
+    val grade: Grade,
 )
+
+@Serializable
+data class Grade(
+    @SerialName("title")
+    val title: String,
+    @SerialName("value")
+    val value: GradeValue?,
+)
+
+@Serializable
+enum class GradeValue {
+    @SerialName("very_good")
+    VERY_GOOD,
+
+    @SerialName("good")
+    GOOD,
+
+    @SerialName("normal")
+    NORMAL,
+
+    @SerialName("bad")
+    BAD,
+
+    @SerialName("very_bad")
+    VERY_BAD,
+}

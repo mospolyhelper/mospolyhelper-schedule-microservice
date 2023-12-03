@@ -10,7 +10,7 @@ import com.mospolytech.domain.schedule.repository.LessonsRepository
 import com.mospolytech.domain.schedule.repository.PlacesRepository
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
-import java.time.LocalTime
+import kotlinx.datetime.LocalTime
 
 class FreePlacesRepositoryImpl(
     private val lessonsRepository: LessonsRepository,

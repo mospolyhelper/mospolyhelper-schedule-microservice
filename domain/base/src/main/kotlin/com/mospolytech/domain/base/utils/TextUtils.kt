@@ -14,3 +14,16 @@ fun String.capitalized(): String {
         }
     }
 }
+
+/**
+ * Replacement for Kotlin's deprecated `capitalize()` function.
+ */
+fun String.decapitalized(): String {
+    return this.replaceFirstChar {
+        if (it.isTitleCase()) {
+            it.lowercase(Locale.getDefault())
+        } else {
+            it.toString()
+        }
+    }
+}

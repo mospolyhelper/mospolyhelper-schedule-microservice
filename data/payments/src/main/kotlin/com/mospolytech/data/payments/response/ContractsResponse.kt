@@ -1,14 +1,21 @@
 package com.mospolytech.data.payments.response
 
-import com.mospolytech.domain.payments.model.Contracts
+import com.mospolytech.domain.base.utils.Moscow
+import com.mospolytech.domain.base.utils.decapitalized
+import com.mospolytech.domain.base.utils.formatRoubles
+import com.mospolytech.domain.payments.model.Contract
 import com.mospolytech.domain.payments.model.Payment
-import com.mospolytech.domain.payments.model.PaymentType
-import com.mospolytech.domain.payments.model.Payments
+import com.mospolytech.domain.payments.model.PaymentMethod
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toKotlinLocalDate
+import kotlinx.datetime.todayIn
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
+import java.time.LocalDate as JavaLocalDate
 
 @Serializable
 data class Response(
@@ -101,46 +108,103 @@ data class PaygraphResponse(
     val sumPay: String,
 )
 
-fun ContractsResponse.toModel(): Contracts {
+fun ContractsResponse.toModel(): List<Contract> {
     val payments =
-        mutableMapOf<PaymentType, Payments>().apply {
-            if (dormitory.isNotEmpty()) put(PaymentType.Dormitory, dormitory.map { it.toModel() }.first())
-            if (education.isNotEmpty()) put(PaymentType.Education, education.map { it.toModel() }.first())
+        buildList<Contract> {
+            addAll(dormitory.map { it.toModel() })
+            addAll(education.map { it.toModel() })
         }
-    return Contracts(payments)
+    return payments
 }
 
-fun PaymentsResponse.toModel(): Payments {
-    val lastPayment =
-        try {
-            lastPaymentDate.toDate()
-        } catch (e: Throwable) {
-            null
+private const val INFO = """Вы можете сделать скриншот экрана или скачать QR-код на устройство, затем открыть его в мобильном приложении вашего банка:
+Оплата по QR-коду -> Загрузить изображение
+"""
+
+fun PaymentsResponse.toModel(): Contract {
+    val paymentMethods =
+        buildList {
+            if (qrCurrent.isNotEmpty()) {
+                add(
+                    PaymentMethod(
+                        type = PaymentMethod.URL_TYPE,
+                        url = qrCurrent,
+                        info = INFO,
+                    ),
+                )
+            }
+            if (qrTotal.isNotEmpty()) {
+                add(
+                    PaymentMethod(
+                        type = PaymentMethod.URL_TYPE,
+                        url = qrTotal,
+                        info = INFO,
+                    ),
+                )
+            }
         }
-    return Payments(
+
+    val today = Clock.System.todayIn(TimeZone.Moscow)
+
+    val balanceDecimal = balance.toBigDecimalOrNull()
+    val isNegativeBalance = balanceDecimal?.let { it < 0.toBigDecimal() } ?: false
+    val formattedBalance = balanceDecimal?.formatRoubles() ?: balance
+
+    val replenishments = payments.map { it.toModel(title = type) }
+    val contractPayments = paygraph.mapNotNull { it.toModel(title = type, today = today) }
+    val allPayments = (replenishments + contractPayments).sortedByDescending { it.date }
+
+    return Contract(
         id = id,
-        student = student,
-        number = number,
-        name = name,
-        type = type,
-        level = level.ifEmpty { null },
-        dormNum = dormNum.ifEmpty { null },
-        dormRoom = dormRoom.ifEmpty { null },
+        title = "$type $number",
+        description = name,
         startDate = startDate.toDate(),
         endDate = endDateFact.ifEmpty { endDatePlan }.toDate(),
-        qrCurrent = qrCurrent.ifEmpty { null },
-        qrTotal = qrCurrent.ifEmpty { null },
-        requestDate = LocalDate.now(),
-        sum = sum,
-        balance = balance,
-        balanceCurrent = balanceCurrdate,
-        lastPaymentDate = lastPayment,
-        payments = payments.map { it.toModel() },
+        balance = formattedBalance,
+        paymentMethods = paymentMethods,
+        isNegativeBalance = isNegativeBalance,
+        payments = allPayments,
     )
 }
 
-fun PaymentResponse.toModel() = Payment(date.toDate(), value)
+fun PaymentResponse.toModel(title: String): Payment {
+    val valueDecimal = value.toBigDecimalOrNull()
+    val isNegativeValue = valueDecimal?.let { it < 0.toBigDecimal() } ?: false
+    val formattedValue = valueDecimal?.formatRoubles() ?: value
+
+    return Payment(
+        id = "",
+        title = title,
+        description = "Пополнение баланса",
+        date = date.toDate(),
+        value = formattedValue,
+        isNegative = isNegativeValue,
+    )
+}
+
+fun PaygraphResponse.toModel(
+    title: String,
+    today: LocalDate,
+): Payment? {
+    val date = datePlan.toDate()
+    if (date > today) return null
+
+    val valueDecimal = sum.toBigDecimalOrNull()
+    val isNegativeValue = valueDecimal?.let { it < 0.toBigDecimal() } ?: false
+    val formattedValue = valueDecimal?.formatRoubles() ?: sum
+
+    return Payment(
+        id = "",
+        title = title,
+        description = "Оплата за ${title.decapitalized()}",
+        date = date,
+        value = formattedValue,
+        isNegative = isNegativeValue,
+    )
+}
 
 fun String.toDate(): LocalDate {
-    return LocalDate.parse(this, DateTimeFormatter.ofPattern("MMMM d',' yyyy", Locale.US))
+    return JavaLocalDate.parse(this, apiDateFormatter).toKotlinLocalDate()
 }
+
+private val apiDateFormatter = DateTimeFormatter.ofPattern("MMMM d',' yyyy", Locale.US)

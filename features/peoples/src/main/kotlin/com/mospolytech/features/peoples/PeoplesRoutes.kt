@@ -1,6 +1,7 @@
 package com.mospolytech.features.peoples
 
 import com.mospolytech.domain.base.AppConfig
+import com.mospolytech.domain.base.model.PagingDTO
 import com.mospolytech.domain.peoples.repository.StudentsRepository
 import com.mospolytech.domain.peoples.repository.TeachersRepository
 import com.mospolytech.features.base.AuthConfigs
@@ -58,7 +59,12 @@ fun Application.peoplesRoutesV1(
                 route("/classmates") {
                     get {
                         val token = call.getTokenOrRespondError() ?: return@get
-                        call.respondResult(studentsRepository.getClassmates(token))
+                        val result =
+                            studentsRepository.getClassmates(token)
+                                .map {
+                                    PagingDTO.from(it)
+                                }
+                        call.respondResult(result)
                     }
                 }
                 route("/update-students") {

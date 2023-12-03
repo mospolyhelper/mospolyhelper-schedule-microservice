@@ -1,16 +1,12 @@
 package com.mospolytech.data.schedule.model.response
 
-import com.mospolytech.domain.base.utils.converters.LocalDateConverter
-import com.mospolytech.domain.base.utils.converters.LocalTimeConverter
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 import kotlinx.serialization.Serializable
-import java.time.LocalDate
-import java.time.LocalTime
 
 @Serializable
 data class ScheduleSessionResponse(
-    @Serializable(with = LocalDateConverter::class)
     val date: LocalDate,
-    @Serializable(with = LocalTimeConverter::class)
     val time: LocalTime,
     val v: String,
     val copyright: String,

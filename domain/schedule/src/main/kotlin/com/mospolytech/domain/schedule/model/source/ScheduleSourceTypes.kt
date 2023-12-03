@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class ScheduleSources {
+enum class ScheduleSourceTypes {
     @SerialName("group")
     Group,
 

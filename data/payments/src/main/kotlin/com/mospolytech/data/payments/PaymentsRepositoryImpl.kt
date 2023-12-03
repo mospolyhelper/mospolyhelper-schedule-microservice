@@ -1,7 +1,7 @@
 package com.mospolytech.data.payments
 
 import com.mospolytech.data.payments.response.toModel
-import com.mospolytech.domain.payments.model.Contracts
+import com.mospolytech.domain.payments.model.Contract
 import com.mospolytech.domain.payments.model.PaymentType
 import com.mospolytech.domain.payments.model.PaymentType.Dormitory
 import com.mospolytech.domain.payments.model.PaymentType.Education
@@ -21,7 +21,7 @@ class PaymentsRepositoryImpl(private val service: PaymentsService) : PaymentsRep
     override suspend fun getPayments(
         token: String,
         paymentType: PaymentType?,
-    ): Result<Contracts> {
+    ): Result<List<Contract>> {
         return runCatching {
             val paymentsResponse = service.getPayments(token).contracts
             paymentsResponse.toModel()

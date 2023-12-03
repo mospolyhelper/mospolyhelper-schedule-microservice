@@ -5,4 +5,5 @@ plugins {
 dependencies {
     api(projects.data.base)
     api(projects.domain.performance)
+    implementation(projects.domain.personal)
 }

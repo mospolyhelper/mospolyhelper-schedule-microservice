@@ -1,7 +1,7 @@
 package com.mospolytech.features.schedule
 
 import com.mospolytech.domain.base.AppConfig
-import com.mospolytech.domain.personal.repository.PersonalRepository
+import com.mospolytech.domain.personal.PersonalRepository
 import com.mospolytech.domain.schedule.repository.FreePlacesRepository
 import com.mospolytech.domain.schedule.repository.LessonsRepository
 import com.mospolytech.domain.schedule.repository.ScheduleInfoRepository

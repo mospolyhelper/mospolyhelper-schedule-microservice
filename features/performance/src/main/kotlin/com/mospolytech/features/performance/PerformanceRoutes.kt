@@ -13,41 +13,20 @@ fun Application.performanceRoutesV1(repository: PerformanceRepository) {
     routing {
         authenticate(AuthConfigs.MPU, optional = true) {
             route("/performance") {
-                route("/semesters") {
-                    get<SemesterRequest> {
-                        val token = call.getTokenOrRespondError() ?: return@get
-                        call.respondResult(repository.getPerformance(it.semester, token))
-                    }
-                    get<AllSemesters> {
-                        val token = call.getTokenOrRespondError() ?: return@get
-                        call.respondResult(repository.getPerformance(null, token))
-                    }
-                    get {
-                        val token = call.getTokenOrRespondError() ?: return@get
-                        call.respondResult(repository.getSemesters(token))
-                    }
+                get("/periods") {
+                    val token = call.getTokenOrRespondError() ?: return@get
+                    call.respondResult(repository.getPeriods(token))
                 }
-                route("/courses") {
-                    get {
-                        val token = call.getTokenOrRespondError() ?: return@get
-                        call.respondResult(repository.getCourses(token))
-                    }
-                }
-                route("/courses_semesters") {
-                    get {
-                        val token = call.getTokenOrRespondError() ?: return@get
-                        call.respondResult(repository.getCoursesWithSemesters(token))
-                    }
+                get<PeriodRequest> {
+                    val token = call.getTokenOrRespondError() ?: return@get
+                    call.respondResult(repository.getPerformance(it.periodId, token))
                 }
             }
         }
     }
 }
 
-@Location("/{semester}")
-data class SemesterRequest(
-    val semester: String,
+@Location("/{periodId}")
+data class PeriodRequest(
+    val periodId: String,
 )
-
-@Location("/")
-object AllSemesters

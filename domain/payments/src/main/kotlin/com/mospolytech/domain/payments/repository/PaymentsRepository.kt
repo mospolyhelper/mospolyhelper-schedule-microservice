@@ -1,6 +1,6 @@
 package com.mospolytech.domain.payments.repository
 
-import com.mospolytech.domain.payments.model.Contracts
+import com.mospolytech.domain.payments.model.Contract
 import com.mospolytech.domain.payments.model.PaymentType
 
 interface PaymentsRepository {
@@ -9,5 +9,5 @@ interface PaymentsRepository {
     suspend fun getPayments(
         token: String,
         paymentType: PaymentType? = null,
-    ): Result<Contracts>
+    ): Result<List<Contract>>
 }
