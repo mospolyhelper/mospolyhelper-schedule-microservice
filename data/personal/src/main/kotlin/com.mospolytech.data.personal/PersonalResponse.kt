@@ -2,6 +2,7 @@ package com.mospolytech.data.personal
 
 import com.mospolytech.domain.personal.Order
 import com.mospolytech.domain.personal.Personal
+import com.mospolytech.domain.personal.PersonalData
 import com.mospolytech.domain.personal.Subdivision
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toKotlinLocalDate
@@ -56,7 +57,7 @@ fun PersonalResponse.toModel(): Personal {
     val isStudent = user.userStatus != "staff"
     val description =
         if (isStudent) {
-            "Студент • ${user.group} • ${user.degreeLevel.lowercase()} "
+            "${user.group} • ${user.degreeLevel.lowercase()}"
         } else {
             "Преподаватель"
         }
@@ -64,24 +65,24 @@ fun PersonalResponse.toModel(): Personal {
         id = this.user.id.toString(),
         name = fullName,
         description = description,
-        avatar = this.user.avatar,
+        avatar = this.user.avatar.ifEmpty { null },
         data =
-            buildMap {
-                put("Статус", user.status)
-                put("Курс", user.group)
-                put("Дата рождения", user.birthday)
-                put("Пол", user.sex.getSex())
-                put("Код студента", user.code)
-                put("Факультет", user.faculty)
-                put("Группа", user.group)
-                put("Направление", user.specialty)
+            buildList {
+                add(PersonalData(title = "Статус", value = user.status))
+                add(PersonalData(title = "Курс", value = user.group))
+                add(PersonalData(title = "Дата рождения", value = user.birthday))
+                add(PersonalData(title = "Пол", value = user.sex.getSex()))
+                add(PersonalData(title = "Код студента", value = user.code))
+                add(PersonalData(title = "Факультет", value = user.faculty))
+                add(PersonalData(title = "Группа", value = user.group))
+                add(PersonalData(title = "Направление", value = user.specialty))
                 user.specialization.ifEmpty { null }?.let { specialization ->
-                    put("Специализация", specialization)
+                    add(PersonalData(title = "Специализация", value = specialization))
                 }
-                put("Срок обучения", user.degreeLength.filter { it.isDigit() })
-                put("Форма обучения", user.educationForm)
-                put("Вид финансирования", user.finance)
-                put("Год набора", user.enterYear)
+                add(PersonalData(title = "Срок обучения", value = user.degreeLength.filter { it.isDigit() }))
+                add(PersonalData(title = "Форма обучения", value = user.educationForm))
+                add(PersonalData(title = "Вид финансирования", value = user.finance))
+                add(PersonalData(title = "Год набора", value = user.enterYear))
             },
     )
 }

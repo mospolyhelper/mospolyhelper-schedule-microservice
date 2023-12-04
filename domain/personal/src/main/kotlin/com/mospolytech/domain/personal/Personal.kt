@@ -13,9 +13,17 @@ data class Personal(
     @SerialName("description")
     val description: String,
     @SerialName("avatar")
-    val avatar: String,
+    val avatar: String?,
     @SerialName("data")
-    val data: Map<String, String>,
+    val data: List<PersonalData>,
+)
+
+@Serializable
+data class PersonalData(
+    @SerialName("title")
+    val title: String,
+    @SerialName("value")
+    val value: String,
 )
 
 @Serializable

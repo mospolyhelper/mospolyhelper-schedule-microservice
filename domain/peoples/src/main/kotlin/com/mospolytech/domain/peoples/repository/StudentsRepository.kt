@@ -1,27 +1,16 @@
 package com.mospolytech.domain.peoples.repository
 
 import com.mospolytech.domain.base.model.PagingDTO
-import com.mospolytech.domain.peoples.model.Student
-import com.mospolytech.domain.peoples.model.StudentShort
+import com.mospolytech.domain.peoples.model.Person
 
 interface StudentsRepository {
-    suspend fun getStudents(
-        query: String = "",
-        page: Int = 1,
-        limit: Int = 100,
-    ): PagingDTO<Student>
-
     suspend fun getShortStudents(
         query: String = "",
         page: Int = 1,
-        pageSize: Int = 100,
-    ): PagingDTO<StudentShort>
+        limit: Int = 100,
+    ): PagingDTO<Person>
 
-    suspend fun getClassmates(token: String): Result<List<Student>>
-
-    suspend fun getStudents(): List<Student>
-
-    suspend fun getShortStudents(): List<StudentShort>
+    suspend fun getClassmates(token: String): Result<List<Person>>
 
     suspend fun updateData(recreateDb: Boolean)
 }

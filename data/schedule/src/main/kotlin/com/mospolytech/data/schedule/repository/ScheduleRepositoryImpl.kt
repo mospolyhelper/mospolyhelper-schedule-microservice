@@ -11,8 +11,8 @@ import com.mospolytech.data.schedule.model.db.RecurrenceDb
 import com.mospolytech.data.schedule.model.db.SubjectsDb
 import com.mospolytech.domain.base.model.PagingDTO
 import com.mospolytech.domain.base.utils.map
-import com.mospolytech.domain.peoples.model.description
 import com.mospolytech.domain.peoples.repository.StudentsRepository
+import com.mospolytech.domain.peoples.repository.TeachersRepository
 import com.mospolytech.domain.schedule.model.ScheduleComplexFilter
 import com.mospolytech.domain.schedule.model.pack.CompactSchedule
 import com.mospolytech.domain.schedule.model.source.ScheduleSource
@@ -22,7 +22,6 @@ import com.mospolytech.domain.schedule.repository.LessonSubjectsRepository
 import com.mospolytech.domain.schedule.repository.LessonsRepository
 import com.mospolytech.domain.schedule.repository.PlacesRepository
 import com.mospolytech.domain.schedule.repository.ScheduleRepository
-import com.mospolytech.domain.schedule.repository.TeachersRepository
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.select
@@ -76,10 +75,10 @@ class ScheduleRepositoryImpl(
                 }
             }
             ScheduleSourceTypes.Teacher -> {
-                teachersRepository.getPaging(
+                teachersRepository.getTeachers(
                     query = query,
                     page = page,
-                    pageSize = limit,
+                    limit = limit,
                 ).map {
                     ScheduleSource(
                         type = sourceType,
@@ -94,7 +93,7 @@ class ScheduleRepositoryImpl(
                 studentsRepository.getShortStudents(
                     query = query,
                     page = page,
-                    pageSize = limit,
+                    limit = limit,
                 ).map {
                     ScheduleSource(
                         type = sourceType,

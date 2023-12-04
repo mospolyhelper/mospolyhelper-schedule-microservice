@@ -10,7 +10,6 @@ import com.mospolytech.features.base.utils.respondResult
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.locations.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
@@ -32,7 +31,7 @@ fun Application.peoplesRoutesV1(
 
                         call.getTokenOrRespondError() ?: return@get
                         call.respond(
-                            studentsRepository.getStudents(
+                            studentsRepository.getShortStudents(
                                 query = query,
                                 page = page,
                                 limit = limit,
@@ -49,7 +48,7 @@ fun Application.peoplesRoutesV1(
                         call.getTokenOrRespondError() ?: return@get
                         call.respond(
                             teachersRepository.getTeachers(
-                                name = query,
+                                query = query,
                                 page = page,
                                 limit = limit,
                             ),

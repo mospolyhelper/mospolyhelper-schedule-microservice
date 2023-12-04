@@ -2,7 +2,6 @@ package com.mospolytech.data.peoples.model.entity
 
 import com.mospolytech.data.peoples.model.db.StudentsDb
 import com.mospolytech.domain.peoples.model.Student
-import com.mospolytech.domain.peoples.model.StudentShort
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -45,16 +44,6 @@ class StudentEntity(id: EntityID<String>) : Entity<String>(id) {
             branch = branch,
             faculty = faculty,
             direction = direction,
-        )
-    }
-
-    fun toModelShort(): StudentShort {
-        return StudentShort(
-            id = id.value,
-            name = name,
-            avatar = avatar,
-            course = course,
-            group = group?.toModel(),
         )
     }
 }

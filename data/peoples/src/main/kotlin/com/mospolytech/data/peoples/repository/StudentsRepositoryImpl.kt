@@ -6,8 +6,8 @@ import com.mospolytech.data.peoples.remote.StudentsRemoteDS
 import com.mospolytech.data.peoples.service.StudentsService
 import com.mospolytech.domain.auth.AuthRepository
 import com.mospolytech.domain.base.model.PagingDTO
-import com.mospolytech.domain.peoples.model.Student
-import com.mospolytech.domain.peoples.model.StudentShort
+import com.mospolytech.domain.peoples.model.Person
+import com.mospolytech.domain.peoples.model.toPerson
 import com.mospolytech.domain.peoples.repository.StudentsRepository
 import com.mospolytech.domain.personal.PersonalRepository
 import kotlinx.coroutines.delay
@@ -21,27 +21,17 @@ class StudentsRepositoryImpl(
     private val personalRepository: PersonalRepository,
     private val authRepository: AuthRepository,
 ) : StudentsRepository {
-    override suspend fun getStudents(
-        query: String,
-        page: Int,
-        limit: Int,
-    ) = studentsDS.getStudentsPaging(query, limit, page)
-
     override suspend fun getShortStudents(
         query: String,
         page: Int,
-        pageSize: Int,
-    ): PagingDTO<StudentShort> {
-        return studentsDS.getShortStudents(query, pageSize, page)
+        limit: Int,
+    ): PagingDTO<Person> {
+        return studentsDS.getShortStudents(query, limit, page)
     }
 
-    override suspend fun getStudents() = studentsDS.getStudents()
-
-    override suspend fun getShortStudents() = studentsDS.getShortStudents()
-
-    override suspend fun getClassmates(token: String): Result<List<Student>> {
+    override suspend fun getClassmates(token: String): Result<List<Person>> {
         return personalRepository.getPersonalGroup(token).mapCatching {
-            studentsDS.getStudents(it)
+            studentsDS.getStudents(it).map { it.toPerson() }
         }
     }
 

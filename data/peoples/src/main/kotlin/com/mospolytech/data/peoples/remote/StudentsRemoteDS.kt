@@ -13,12 +13,13 @@ import com.mospolytech.data.peoples.model.response.StudentsResponse
 import com.mospolytech.data.peoples.model.xml.StudentEducationGroupXml
 import com.mospolytech.data.peoples.model.xml.StudentInfoXml
 import com.mospolytech.data.peoples.model.xml.StudentXml
+import com.mospolytech.domain.peoples.model.Student
+import com.mospolytech.domain.peoples.model.toPerson
 import com.mospolytech.domain.peoples.utils.toGroupId
 import kotlinx.datetime.Clock
 import kotlinx.datetime.toKotlinLocalDate
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.lowerCase
@@ -31,20 +32,13 @@ import java.util.*
 import kotlin.sequences.Sequence
 
 class StudentsRemoteDS {
-    suspend fun getStudents() =
-        MosPolyDb.transaction {
-            StudentEntity.all()
-                .orderBy(StudentsDb.name to SortOrder.ASC)
-                .map { it.toModel() }
-        }
-
     suspend fun getStudentsPaging(
         query: String,
         pageSize: Int,
         page: Int,
     ) = MosPolyDb.transaction {
         createPagingDto(pageSize, page) { offset ->
-            val query =
+            val dbQuery =
                 StudentsDb.leftJoin(GroupsDb)
                     .slice(StudentsDb.columns)
                     .selectOrSelectAllIfEmpty(query) {
@@ -52,14 +46,14 @@ class StudentsRemoteDS {
                             (StudentsDb.name.lowerCase() like "%${query.lowercase()}%")
                     }.orderBy(StudentsDb.name to SortOrder.ASC)
 
-            StudentEntity.wrapRows(query)
+            StudentEntity.wrapRows(dbQuery)
                 .limit(pageSize, offset.toLong())
-                .mapLazy { it.toModel() }
+                .mapLazy { it.toModel().toPerson() }
                 .toList()
         }
     }
 
-    suspend fun getStudents(group: String) =
+    suspend fun getStudents(group: String): List<Student> =
         MosPolyDb.transaction {
             val query =
                 StudentsDb.leftJoin(GroupsDb)
@@ -72,13 +66,6 @@ class StudentsRemoteDS {
             StudentEntity.wrapRows(query)
                 .mapLazy { it.toModel() }
                 .sortedBy { it.name }
-        }
-
-    suspend fun getShortStudents() =
-        MosPolyDb.transaction {
-            StudentShortEntity.find { StudentsDb.group neq null }
-                .orderBy(StudentsDb.name to SortOrder.ASC)
-                .map { it.toModel() }
         }
 
     suspend fun getShortStudents(

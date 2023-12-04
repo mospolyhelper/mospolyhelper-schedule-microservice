@@ -17,7 +17,6 @@ import com.mospolytech.domain.schedule.repository.LessonsRepository
 import com.mospolytech.domain.schedule.repository.PlacesRepository
 import com.mospolytech.domain.schedule.repository.ScheduleInfoRepository
 import com.mospolytech.domain.schedule.repository.ScheduleRepository
-import com.mospolytech.domain.schedule.repository.TeachersRepository
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -40,7 +39,6 @@ val scheduleDataModule =
         singleOf(::FreePlacesRepositoryImpl) { bind<FreePlacesRepository>() }
 
         singleOf(::LessonSubjectsRepositoryImpl) { bind<LessonSubjectsRepository>() }
-        singleOf(::TeachersRepositoryImpl) { bind<TeachersRepository>() }
         singleOf(::GroupsRepositoryImpl) { bind<GroupsRepository>() }
         singleOf(::PlacesRepositoryImpl) { bind<PlacesRepository>() }
     }

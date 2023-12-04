@@ -1,10 +1,14 @@
 package com.mospolytech.data.peoples.repository
 
 import com.mospolytech.data.base.retryIO
+import com.mospolytech.data.common.db.MosPolyDb
+import com.mospolytech.data.peoples.model.entity.TeacherEntity
 import com.mospolytech.data.peoples.model.response.StaffResponse
 import com.mospolytech.data.peoples.remote.TeachersRemoteDS
 import com.mospolytech.data.peoples.service.TeachersService
 import com.mospolytech.domain.auth.AuthRepository
+import com.mospolytech.domain.base.model.PagingDTO
+import com.mospolytech.domain.peoples.model.Person
 import com.mospolytech.domain.peoples.model.Teacher
 import com.mospolytech.domain.peoples.repository.TeachersRepository
 import kotlinx.coroutines.delay
@@ -18,16 +22,16 @@ class TeachersRepositoryImpl(
     private val authRepository: AuthRepository,
 ) : TeachersRepository {
     override suspend fun getTeachers(
-        name: String,
+        query: String,
         page: Int,
         limit: Int,
-    ) = teachersDS.getTeachersPaging(name, limit, page)
+    ): PagingDTO<Person> {
+        return teachersDS.getTeachersPaging(query, limit, page)
+    }
 
-    override suspend fun getTeachers() = teachersDS.getTeachers()
-
-    override suspend fun getTeacher(name: String): Result<Teacher?> {
-        return kotlin.runCatching {
-            teachersDS.getTeacher(name)
+    override suspend fun getTeacher(id: String): Teacher? {
+        return MosPolyDb.transaction {
+            TeacherEntity.findById(id)?.toModel()
         }
     }
 

@@ -5,7 +5,7 @@ import java.text.NumberFormat
 import java.util.*
 
 fun BigDecimal.formatRoubles(): String {
-    return formatter.format(this) + "₽"
+    return formatter.format(this)
 }
 
 private val locale = Locale("ru", "RU")

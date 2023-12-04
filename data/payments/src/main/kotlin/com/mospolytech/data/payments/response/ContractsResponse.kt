@@ -117,9 +117,9 @@ fun ContractsResponse.toModel(): List<Contract> {
     return payments
 }
 
-private const val INFO = """Вы можете сделать скриншот экрана или скачать QR-код на устройство, затем открыть его в мобильном приложении вашего банка:
-Оплата по QR-коду -> Загрузить изображение
-"""
+private const val PAYMENT_QR_DESCRIPTION = """Вы можете сделать скриншот экрана или скачать QR-код на устройство, затем открыть его в мобильном приложении вашего банка:
+Оплата по QR-коду -> Загрузить изображение"""
+private const val PAYMENT_QR_TITLE = "Оплата по QR"
 
 fun PaymentsResponse.toModel(): Contract {
     val paymentMethods =
@@ -128,8 +128,9 @@ fun PaymentsResponse.toModel(): Contract {
                 add(
                     PaymentMethod(
                         type = PaymentMethod.URL_TYPE,
+                        title = PAYMENT_QR_TITLE,
+                        description = PAYMENT_QR_DESCRIPTION,
                         url = qrCurrent,
-                        info = INFO,
                     ),
                 )
             }
@@ -137,8 +138,9 @@ fun PaymentsResponse.toModel(): Contract {
                 add(
                     PaymentMethod(
                         type = PaymentMethod.URL_TYPE,
+                        title = PAYMENT_QR_TITLE,
+                        description = PAYMENT_QR_DESCRIPTION,
                         url = qrTotal,
-                        info = INFO,
                     ),
                 )
             }
@@ -146,7 +148,7 @@ fun PaymentsResponse.toModel(): Contract {
 
     val today = Clock.System.todayIn(TimeZone.Moscow)
 
-    val balanceDecimal = balance.toBigDecimalOrNull()
+    val balanceDecimal = fixBalance(balance).toBigDecimalOrNull()
     val isNegativeBalance = balanceDecimal?.let { it < 0.toBigDecimal() } ?: false
     val formattedBalance = balanceDecimal?.formatRoubles() ?: balance
 
@@ -165,6 +167,14 @@ fun PaymentsResponse.toModel(): Contract {
         isNegativeBalance = isNegativeBalance,
         payments = allPayments,
     )
+}
+
+private fun fixBalance(balance: String): String {
+    return when {
+        balance.isEmpty() -> balance
+        balance.first().isDigit().not() -> balance.takeLast(balance.length - 1)
+        else -> "-$balance"
+    }
 }
 
 fun PaymentResponse.toModel(title: String): Payment {
@@ -190,7 +200,7 @@ fun PaygraphResponse.toModel(
     if (date > today) return null
 
     val valueDecimal = sum.toBigDecimalOrNull()
-    val isNegativeValue = valueDecimal?.let { it < 0.toBigDecimal() } ?: false
+    val isNegativeValue = true
     val formattedValue = valueDecimal?.formatRoubles() ?: sum
 
     return Payment(

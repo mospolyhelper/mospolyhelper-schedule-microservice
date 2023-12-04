@@ -8,6 +8,7 @@ import com.mospolytech.data.peoples.model.db.TeachersDb
 import com.mospolytech.data.peoples.model.entity.TeacherEntity
 import com.mospolytech.data.peoples.model.response.StaffResponse
 import com.mospolytech.data.peoples.model.xml.EmployeeInfo
+import com.mospolytech.domain.peoples.model.toPerson
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.*
 import java.util.UUID
@@ -37,7 +38,7 @@ class TeachersRemoteDS {
             TeacherEntity.findOrAllIfEmpty(query) { TeachersDb.name.lowerCase() like "%${query.lowercase()}%" }
                 .orderBy(TeachersDb.name to SortOrder.ASC)
                 .limit(pageSize, offset.toLong())
-                .map { it.toModel() }
+                .map { it.toModel().toPerson() }
         }
     }
 

@@ -19,9 +19,9 @@ data class Teacher(
     }
 }
 
-val Teacher.description: String?
-    get() {
-        return buildString {
+fun Teacher.toPerson(): Person {
+    val description =
+        buildString {
             grade?.let { append(it) }
 
             department?.let {
@@ -34,4 +34,11 @@ val Teacher.description: String?
                 append(departmentParent)
             }
         }.ifEmpty { null }
-    }
+
+    return Person(
+        id = id,
+        name = name,
+        description = description,
+        avatar = avatar,
+    )
+}
