@@ -1,14 +1,13 @@
 package com.mospolytech.features.schedule.routes
 
 import com.mospolytech.domain.base.AppConfig
-import com.mospolytech.domain.personal.PersonalRepository
 import com.mospolytech.domain.schedule.model.ScheduleComplexFilter
 import com.mospolytech.domain.schedule.repository.ScheduleRepository
+import com.mospolytech.domain.services.personal.PersonalRepository
 import com.mospolytech.features.schedule.ScheduleJobLauncher
 import com.mospolytech.features.schedule.routes.model.ScheduleRequest
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
 import io.ktor.server.locations.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*

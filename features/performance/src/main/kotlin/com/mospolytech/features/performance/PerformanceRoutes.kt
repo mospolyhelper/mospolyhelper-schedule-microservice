@@ -1,6 +1,6 @@
 package com.mospolytech.features.performance
 
-import com.mospolytech.domain.perfomance.repository.PerformanceRepository
+import com.mospolytech.domain.services.performance.PerformanceRepository
 import com.mospolytech.features.base.AuthConfigs
 import com.mospolytech.features.base.utils.getTokenOrRespondError
 import com.mospolytech.features.base.utils.respondResult

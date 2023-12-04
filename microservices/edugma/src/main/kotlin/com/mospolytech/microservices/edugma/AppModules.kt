@@ -8,12 +8,12 @@ import com.mospolytech.data.peoples.peoplesDataModule
 import com.mospolytech.data.performance.performanceDataModule
 import com.mospolytech.data.personal.personalDataModule
 import com.mospolytech.data.schedule.scheduleDataModule
-import com.mospolytech.domain.applications.applicationsDomainModule
-import com.mospolytech.domain.payments.paymentsDomainModule
 import com.mospolytech.domain.peoples.peoplesDomainModule
-import com.mospolytech.domain.perfomance.performanceDomainModule
-import com.mospolytech.domain.personal.personalDomainModule
 import com.mospolytech.domain.schedule.scheduleDomainModule
+import com.mospolytech.domain.services.applications.applicationsDomainModule
+import com.mospolytech.domain.services.payments.paymentsDomainModule
+import com.mospolytech.domain.services.performance.performanceDomainModule
+import com.mospolytech.domain.services.personal.personalDomainModule
 import com.mospolytech.features.applications.applicationsFeatureModule
 import com.mospolytech.features.base.BaseFeatureModule
 import com.mospolytech.features.payments.paymentsFeatureModule

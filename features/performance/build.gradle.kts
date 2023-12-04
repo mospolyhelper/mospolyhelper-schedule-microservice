@@ -4,5 +4,5 @@ plugins {
 
 dependencies {
     api(projects.features.base)
-    api(projects.domain.performance)
+    api(projects.domain.services)
 }

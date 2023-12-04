@@ -5,7 +5,6 @@ import com.mospolytech.features.applications.applicationsRoutesV1
 import com.mospolytech.features.auth.authRoutesV1
 import com.mospolytech.features.base.JobSchedulerManager
 import com.mospolytech.features.base.plugins.*
-import com.mospolytech.features.payments.paymentsDataConversion
 import com.mospolytech.features.payments.paymentsRoutesV1
 import com.mospolytech.features.peoples.StudentsJobLauncher
 import com.mospolytech.features.peoples.TeachersJobLauncher
@@ -47,7 +46,6 @@ fun Application.setRoutes() {
 
 fun Application.setDataConversions() {
     install(DataConversion) {
-        paymentsDataConversion()
         scheduleDataConversion()
     }
 }

@@ -3,7 +3,7 @@ package com.mospolytech.features.auth
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.mospolytech.domain.auth.AuthRepository
-import com.mospolytech.domain.personal.PersonalRepository
+import com.mospolytech.domain.services.personal.PersonalRepository
 import com.mospolytech.features.base.AuthConfigs
 import com.mospolytech.features.base.MpuPrincipal
 import com.mospolytech.features.base.utils.respondResult

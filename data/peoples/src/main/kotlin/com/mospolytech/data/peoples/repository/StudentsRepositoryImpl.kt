@@ -9,7 +9,7 @@ import com.mospolytech.domain.base.model.PagingDTO
 import com.mospolytech.domain.peoples.model.Person
 import com.mospolytech.domain.peoples.model.toPerson
 import com.mospolytech.domain.peoples.repository.StudentsRepository
-import com.mospolytech.domain.personal.PersonalRepository
+import com.mospolytech.domain.services.personal.PersonalRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.buffer

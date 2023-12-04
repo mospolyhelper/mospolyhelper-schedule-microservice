@@ -3,9 +3,9 @@ package com.mospolytech.data.payments.response
 import com.mospolytech.domain.base.utils.Moscow
 import com.mospolytech.domain.base.utils.decapitalized
 import com.mospolytech.domain.base.utils.formatRoubles
-import com.mospolytech.domain.payments.model.Contract
-import com.mospolytech.domain.payments.model.Payment
-import com.mospolytech.domain.payments.model.PaymentMethod
+import com.mospolytech.domain.services.payments.Contract
+import com.mospolytech.domain.services.payments.Payment
+import com.mospolytech.domain.services.payments.PaymentMethod
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone

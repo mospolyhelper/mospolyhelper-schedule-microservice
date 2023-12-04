@@ -1,9 +1,9 @@
 package com.mospolytech.data.performance
 
-import com.mospolytech.domain.perfomance.model.Performance
-import com.mospolytech.domain.perfomance.model.PerformancePeriod
-import com.mospolytech.domain.perfomance.repository.PerformanceRepository
-import com.mospolytech.domain.personal.PersonalRepository
+import com.mospolytech.domain.services.performance.Performance
+import com.mospolytech.domain.services.performance.PerformancePeriod
+import com.mospolytech.domain.services.performance.PerformanceRepository
+import com.mospolytech.domain.services.personal.PersonalRepository
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number

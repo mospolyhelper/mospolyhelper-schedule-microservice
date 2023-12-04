@@ -1,8 +1,8 @@
 package com.mospolytech.data.performance
 
-import com.mospolytech.domain.perfomance.model.Grade
-import com.mospolytech.domain.perfomance.model.GradeValue
-import com.mospolytech.domain.perfomance.model.Performance
+import com.mospolytech.domain.services.performance.Grade
+import com.mospolytech.domain.services.performance.GradeValue
+import com.mospolytech.domain.services.performance.Performance
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.LocalDate

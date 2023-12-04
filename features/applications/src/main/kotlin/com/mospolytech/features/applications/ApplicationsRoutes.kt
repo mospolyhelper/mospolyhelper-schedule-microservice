@@ -1,6 +1,6 @@
 package com.mospolytech.features.applications
 
-import com.mospolytech.domain.applications.repository.ApplicationsRepository
+import com.mospolytech.domain.services.applications.ApplicationsRepository
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*

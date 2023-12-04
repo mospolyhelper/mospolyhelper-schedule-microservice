@@ -11,5 +11,5 @@ kotlin {
 
 dependencies {
     api(projects.data.base)
-    api(projects.domain.applications)
+    api(projects.domain.services)
 }

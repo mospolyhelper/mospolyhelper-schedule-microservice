@@ -1,6 +1,6 @@
 package com.mospolytech.features.personal
 
-import com.mospolytech.domain.personal.PersonalRepository
+import com.mospolytech.domain.services.personal.PersonalRepository
 import com.mospolytech.features.base.AuthConfigs
 import com.mospolytech.features.base.utils.getTokenOrRespondError
 import com.mospolytech.features.base.utils.respondResult

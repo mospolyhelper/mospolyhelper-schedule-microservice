@@ -1,11 +1,11 @@
 package com.mospolytech.features.schedule
 
 import com.mospolytech.domain.base.AppConfig
-import com.mospolytech.domain.personal.PersonalRepository
 import com.mospolytech.domain.schedule.repository.FreePlacesRepository
 import com.mospolytech.domain.schedule.repository.LessonsRepository
 import com.mospolytech.domain.schedule.repository.ScheduleInfoRepository
 import com.mospolytech.domain.schedule.repository.ScheduleRepository
+import com.mospolytech.domain.services.personal.PersonalRepository
 import com.mospolytech.features.schedule.routes.*
 import io.ktor.server.application.*
 import io.ktor.server.routing.*

@@ -1,7 +1,7 @@
 package com.mospolytech.data.applications
 
-import com.mospolytech.domain.applications.model.Application
-import com.mospolytech.domain.applications.repository.ApplicationsRepository
+import com.mospolytech.domain.services.applications.Application
+import com.mospolytech.domain.services.applications.ApplicationsRepository
 import kotlinx.datetime.toKotlinLocalDateTime
 import java.time.LocalDateTime
 

@@ -1,9 +1,9 @@
 package com.mospolytech.data.personal
 
-import com.mospolytech.domain.personal.Order
-import com.mospolytech.domain.personal.Personal
-import com.mospolytech.domain.personal.PersonalData
-import com.mospolytech.domain.personal.Subdivision
+import com.mospolytech.domain.services.personal.Order
+import com.mospolytech.domain.services.personal.Personal
+import com.mospolytech.domain.services.personal.PersonalData
+import com.mospolytech.domain.services.personal.Subdivision
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.serialization.SerialName

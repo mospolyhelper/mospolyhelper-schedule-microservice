@@ -1,6 +1,6 @@
 package com.mospolytech.data.personal
 
-import com.mospolytech.domain.personal.PersonalRepository
+import com.mospolytech.domain.services.personal.PersonalRepository
 import org.koin.dsl.module
 
 val personalDataModule =

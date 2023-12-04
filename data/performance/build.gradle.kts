@@ -4,6 +4,6 @@ plugins {
 
 dependencies {
     api(projects.data.base)
-    api(projects.domain.performance)
-    implementation(projects.domain.personal)
+    api(projects.domain.services)
+    implementation(projects.domain.services)
 }

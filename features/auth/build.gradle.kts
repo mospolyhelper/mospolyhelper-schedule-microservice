@@ -4,6 +4,6 @@ plugins {
 
 dependencies {
     api(projects.domain.auth)
-    api(projects.domain.personal)
+    api(projects.domain.services)
     api(projects.features.base)
 }

@@ -1,7 +1,7 @@
 package com.mospolytech.data.personal
 
-import com.mospolytech.domain.personal.Personal
-import com.mospolytech.domain.personal.PersonalRepository
+import com.mospolytech.domain.services.personal.Personal
+import com.mospolytech.domain.services.personal.PersonalRepository
 
 class PersonalRepositoryImpl(
     private val service: PersonalService,

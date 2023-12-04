@@ -1,6 +1,6 @@
 package com.mospolytech.data.performance
 
-import com.mospolytech.domain.perfomance.repository.PerformanceRepository
+import com.mospolytech.domain.services.performance.PerformanceRepository
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
