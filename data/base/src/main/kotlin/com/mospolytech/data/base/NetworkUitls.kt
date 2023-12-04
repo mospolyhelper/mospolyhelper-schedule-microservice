@@ -2,6 +2,7 @@ package com.mospolytech.data.base
 
 import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.delay
+import kotlinx.serialization.SerializationException
 
 suspend fun <T> retryIO(
     times: Int = 10,
@@ -17,6 +18,9 @@ suspend fun <T> retryIO(
         } catch (e: IOException) {
             // you can log an error here and/or make a more finer-grained
             // analysis of the cause to see if retry is needed
+        } catch (e: SerializationException) {
+            // Сервер вуза может вернуть невалидный json, если
+            // одновременно смотреть другие странички
         }
         delay(currentDelay)
         currentDelay = (currentDelay * factor).toLong().coerceAtMost(maxDelay)
