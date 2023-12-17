@@ -1,4 +1,4 @@
-package com.mospolytech.features.performance
+package com.mospolytech.features.services.performance
 
 import org.koin.dsl.module
 

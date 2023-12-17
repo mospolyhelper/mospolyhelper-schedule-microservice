@@ -1,4 +1,4 @@
-package com.mospolytech.features.personal
+package com.mospolytech.features.services.personal
 
 import com.mospolytech.domain.services.personal.PersonalRepository
 import com.mospolytech.features.base.AuthConfigs

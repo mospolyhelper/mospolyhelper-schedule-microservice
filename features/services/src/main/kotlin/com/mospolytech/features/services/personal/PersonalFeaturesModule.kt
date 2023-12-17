@@ -1,4 +1,4 @@
-package com.mospolytech.features.personal
+package com.mospolytech.features.services.personal
 
 import org.koin.dsl.module
 

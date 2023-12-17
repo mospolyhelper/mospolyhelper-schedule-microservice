@@ -30,9 +30,9 @@ dependencies {
 
     implementation(projects.features.auth)
     implementation(projects.features.schedule)
-    implementation(projects.features.performance)
+    implementation(projects.features.services)
     implementation(projects.features.peoples)
-    implementation(projects.features.applications)
-    implementation(projects.features.payments)
-    implementation(projects.features.personal)
+    implementation(projects.features.services)
+    implementation(projects.features.services)
+    implementation(projects.features.services)
 }

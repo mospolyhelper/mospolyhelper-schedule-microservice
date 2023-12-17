@@ -1,4 +1,4 @@
-package com.mospolytech.features.payments
+package com.mospolytech.features.services.payments
 
 import com.mospolytech.domain.services.payments.PaymentsRepository
 import com.mospolytech.features.base.AuthConfigs

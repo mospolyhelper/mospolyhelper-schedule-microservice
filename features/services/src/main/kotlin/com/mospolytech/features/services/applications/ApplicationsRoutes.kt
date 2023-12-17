@@ -1,4 +1,4 @@
-package com.mospolytech.features.applications
+package com.mospolytech.features.services.applications
 
 import com.mospolytech.domain.services.applications.ApplicationsRepository
 import io.ktor.server.application.*

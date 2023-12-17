@@ -1,4 +1,4 @@
-package com.mospolytech.features.payments
+package com.mospolytech.features.services.payments
 
 import org.koin.dsl.module
 

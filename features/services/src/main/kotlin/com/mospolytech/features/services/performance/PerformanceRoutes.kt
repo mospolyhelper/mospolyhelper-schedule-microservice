@@ -1,4 +1,4 @@
-package com.mospolytech.features.performance
+package com.mospolytech.features.services.performance
 
 import com.mospolytech.domain.services.performance.PerformanceRepository
 import com.mospolytech.features.base.AuthConfigs

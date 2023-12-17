@@ -10,12 +10,12 @@ import com.mospolytech.domain.services.applications.applicationsDomainModule
 import com.mospolytech.domain.services.payments.paymentsDomainModule
 import com.mospolytech.domain.services.performance.performanceDomainModule
 import com.mospolytech.domain.services.personal.personalDomainModule
-import com.mospolytech.features.applications.applicationsFeatureModule
+import com.mospolytech.features.services.applications.applicationsFeatureModule
 import com.mospolytech.features.base.BaseFeatureModule
-import com.mospolytech.features.payments.paymentsFeatureModule
+import com.mospolytech.features.services.payments.paymentsFeatureModule
 import com.mospolytech.features.peoples.peoplesFeaturesModule
-import com.mospolytech.features.performance.performanceFeaturesModule
-import com.mospolytech.features.personal.personalFeaturesModule
+import com.mospolytech.features.services.performance.performanceFeaturesModule
+import com.mospolytech.features.services.personal.personalFeaturesModule
 import com.mospolytech.features.schedule.scheduleFeatureModule
 import com.mospolyteh.data.services.applications.applicationsDataModule
 import com.mospolyteh.data.services.payments.paymentsDataModule
