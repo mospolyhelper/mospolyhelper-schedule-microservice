@@ -1,12 +1,8 @@
 package com.mospolytech.microservices.edugma
 
-import com.mospolytech.data.applications.applicationsDataModule
 import com.mospolytech.data.auth.authDataModule
 import com.mospolytech.data.base.baseDataModule
-import com.mospolytech.data.payments.paymentsDataModule
 import com.mospolytech.data.peoples.peoplesDataModule
-import com.mospolytech.data.performance.performanceDataModule
-import com.mospolytech.data.personal.personalDataModule
 import com.mospolytech.data.schedule.scheduleDataModule
 import com.mospolytech.domain.peoples.peoplesDomainModule
 import com.mospolytech.domain.schedule.scheduleDomainModule
@@ -21,6 +17,10 @@ import com.mospolytech.features.peoples.peoplesFeaturesModule
 import com.mospolytech.features.performance.performanceFeaturesModule
 import com.mospolytech.features.personal.personalFeaturesModule
 import com.mospolytech.features.schedule.scheduleFeatureModule
+import com.mospolyteh.data.services.applications.applicationsDataModule
+import com.mospolyteh.data.services.payments.paymentsDataModule
+import com.mospolyteh.data.services.performance.performanceDataModule
+import com.mospolyteh.data.services.personal.personalDataModule
 
 val appModules =
     listOf(

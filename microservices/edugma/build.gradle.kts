@@ -12,11 +12,11 @@ ktor {
 
 dependencies {
     implementation(projects.data.auth)
-    implementation(projects.data.performance)
+    implementation(projects.data.services)
     implementation(projects.data.peoples)
-    implementation(projects.data.applications)
-    implementation(projects.data.payments)
-    implementation(projects.data.personal)
+    implementation(projects.data.services)
+    implementation(projects.data.services)
+    implementation(projects.data.services)
 
     implementation(projects.data.common)
 
