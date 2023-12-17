@@ -34,9 +34,11 @@ fun Student.toPerson(): Person {
             }
 
             group?.let {
-                group.direction?.let {
+                val directionOrFaculty = group.direction ?: group.faculty
+
+                directionOrFaculty?.let {
                     ifNotEmpty { append(", ") }
-                    append(group.direction)
+                    append(directionOrFaculty)
                 }
             }
         }.ifEmpty { null }

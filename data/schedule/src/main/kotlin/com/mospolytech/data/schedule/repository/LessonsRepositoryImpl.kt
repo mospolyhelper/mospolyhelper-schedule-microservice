@@ -268,9 +268,10 @@ class LessonsRepositoryImpl(
 }
 
 fun TeacherEntity.toAttendee(): AttendeeInfo {
+    val type = AttendeeType.Teacher
     return AttendeeInfo(
-        id = "${AttendeeType.Teacher.name.lowercase()}-${this.id}",
-        type = AttendeeType.Teacher,
+        id = type.createFullId(this.id.toString()),
+        type = type,
         name = this.name,
         description = this.description,
         avatar = this.avatar,
@@ -278,9 +279,10 @@ fun TeacherEntity.toAttendee(): AttendeeInfo {
 }
 
 fun GroupEntity.toAttendee(): AttendeeInfo {
+    val type = AttendeeType.Group
     return AttendeeInfo(
-        id = "${AttendeeType.Group.name.lowercase()}-${this.id}",
-        type = AttendeeType.Group,
+        id = type.createFullId(this.id.toString()),
+        type = type,
         name = this.title,
         description = this.description,
         avatar = null,

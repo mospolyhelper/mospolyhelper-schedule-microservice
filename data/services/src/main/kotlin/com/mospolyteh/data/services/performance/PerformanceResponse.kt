@@ -77,7 +77,8 @@ private fun getShortName(fullName: String): String {
     }
 }
 
-private fun convertGrade(grade: String): Grade {
+private fun convertGrade(grade: String): Grade? {
+    if (grade.isEmpty()) return null
     return gradePool.getOrPut(grade) { parseGrade(grade) }
 }
 
@@ -123,6 +124,7 @@ private fun parseGrade(grade: String): Grade {
     return Grade(
         title = title,
         value = value,
+        description = grade,
     )
 }
 

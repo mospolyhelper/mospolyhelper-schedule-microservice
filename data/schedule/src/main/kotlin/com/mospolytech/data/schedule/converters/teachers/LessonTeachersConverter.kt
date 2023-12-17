@@ -2,7 +2,6 @@ package com.mospolytech.data.schedule.converters.teachers
 
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.peoples.model.db.TeachersDb
-import com.mospolytech.domain.peoples.model.Teacher
 import kotlinx.datetime.Clock
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.batchInsert
@@ -11,25 +10,18 @@ import java.util.*
 import kotlin.collections.HashMap
 
 class LessonTeachersConverter {
-    private val converterCache = HashMap<String, Teacher>()
-    private val dbCache = HashMap<Teacher, String>()
+    private val converterCache = HashMap<String, TeacherCache>()
+    private val dbCache = HashMap<TeacherCache, String>()
 
-    private fun convertTeacher(rawName: String): Teacher {
+    private fun convertTeacher(rawName: String): TeacherCache {
         return converterCache.getOrPut(rawName) {
-            Teacher(
-                id = "",
-                name = rawName.replace('ё', 'e'),
-                avatar = null,
-                stuffType = null,
-                grade = null,
-                departmentParent = null,
-                department = null,
-                email = null,
+            TeacherCache(
+                name = rawName,
             )
         }
     }
 
-    private fun convertTeachers(rawTeachers: String): List<Teacher> {
+    private fun convertTeachers(rawTeachers: String): List<TeacherCache> {
         return rawTeachers.split(", ").mapNotNull {
             if (it.isEmpty()) {
                 null
@@ -65,8 +57,20 @@ class LessonTeachersConverter {
 
             val notInDb = dtoList subtract allDbItems
 
+            // Пытаемся найти с заменой `ё` и добавляем дополнительный ключ
+            val notInDb2 =
+                notInDb.filter { rawCacheKey ->
+                    val fixedCacheKey = rawCacheKey.copy(name = rawCacheKey.name.fixName())
+                    if (fixedCacheKey in allDbItems) {
+                        dbCache[rawCacheKey] = dbCache[fixedCacheKey]!!
+                        false
+                    } else {
+                        true
+                    }
+                }
+
             val rows =
-                TeachersDb.batchInsert(notInDb) { dto ->
+                TeachersDb.batchInsert(notInDb2) { dto ->
                     this[TeachersDb.id] = UUID.randomUUID().toString()
                     this[TeachersDb.name] = dto.name
                     this[TeachersDb.lastUpdate] = Clock.System.now()
@@ -88,18 +92,11 @@ class LessonTeachersConverter {
             "Младший обслуживающий персонал" to 7,
         )
 
-    private fun cacheDb(raw: ResultRow): Teacher {
+    private fun cacheDb(raw: ResultRow): TeacherCache {
         val id = raw[TeachersDb.id].value
         val model =
-            Teacher(
-                id = "",
-                name = raw[TeachersDb.name].replace('ё', 'e'),
-                avatar = null,
-                stuffType = null,
-                grade = null,
-                departmentParent = null,
-                department = null,
-                email = null,
+            TeacherCache(
+                name = raw[TeachersDb.name],
             )
         dbCache.putIfAbsent(model, id)
         return model
@@ -109,4 +106,12 @@ class LessonTeachersConverter {
         converterCache.clear()
         dbCache.clear()
     }
+
+    private fun String.fixName(): String {
+        return replace('ё', 'е')
+    }
+
+    data class TeacherCache(
+        val name: String,
+    )
 }

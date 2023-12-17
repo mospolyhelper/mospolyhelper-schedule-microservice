@@ -1,19 +1,19 @@
 package com.mospolytech.microservices.edugma
 
 import com.mospolytech.data.common.db.MosPolyDb
-import com.mospolytech.features.services.applications.applicationsRoutesV1
 import com.mospolytech.features.auth.authRoutesV1
 import com.mospolytech.features.base.JobSchedulerManager
 import com.mospolytech.features.base.plugins.*
-import com.mospolytech.features.services.payments.paymentsRoutesV1
 import com.mospolytech.features.peoples.StudentsJobLauncher
 import com.mospolytech.features.peoples.TeachersJobLauncher
 import com.mospolytech.features.peoples.peoplesRoutesV1
-import com.mospolytech.features.services.performance.performanceRoutesV1
-import com.mospolytech.features.services.personal.personalRoutesV1
 import com.mospolytech.features.schedule.ScheduleJobLauncher
 import com.mospolytech.features.schedule.scheduleDataConversion
 import com.mospolytech.features.schedule.scheduleRoutes
+import com.mospolytech.features.services.applications.applicationsRoutesV1
+import com.mospolytech.features.services.payments.paymentsRoutesV1
+import com.mospolytech.features.services.performance.performanceRoutesV1
+import com.mospolytech.features.services.personal.personalRoutesV1
 import io.ktor.server.application.*
 import io.ktor.server.plugins.dataconversion.*
 import org.koin.ktor.ext.get

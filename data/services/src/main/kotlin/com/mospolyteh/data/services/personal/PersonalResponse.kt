@@ -69,7 +69,7 @@ fun PersonalResponse.toModel(): Personal {
         data =
             buildList {
                 add(PersonalData(title = "Статус", value = user.status))
-                add(PersonalData(title = "Курс", value = user.group))
+                add(PersonalData(title = "Курс", value = user.course))
                 add(PersonalData(title = "Дата рождения", value = user.birthday))
                 add(PersonalData(title = "Пол", value = user.sex.getSex()))
                 add(PersonalData(title = "Код студента", value = user.code))

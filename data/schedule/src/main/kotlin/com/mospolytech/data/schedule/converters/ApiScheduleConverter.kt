@@ -22,7 +22,7 @@ class ApiScheduleConverter(
         val lessonData = ApiLessonData()
 
         lessons.forEach { (_, apiSchedule) ->
-            lessonData.groups += apiSchedule.group.title
+            lessonData.groups += apiSchedule.group.title to apiSchedule.group.course
 
             apiSchedule.grid.forEach { (day, dailyLessons) ->
                 dailyLessons.forEach { (order, lessonsPerOrder) ->
@@ -70,7 +70,7 @@ class ApiScheduleConverter(
         val lessonData = ApiLessonData()
 
         lessons.forEach { apiSchedule ->
-            lessonData.groups += apiSchedule.group.title
+            lessonData.groups += apiSchedule.group.title to apiSchedule.group.course
 
             apiSchedule.grid.forEach { (day, dailyLessons) ->
                 dailyLessons.forEach { (order, lessonsPerOrder) ->

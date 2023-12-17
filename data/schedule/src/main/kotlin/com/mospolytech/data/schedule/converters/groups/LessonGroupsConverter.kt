@@ -7,17 +7,19 @@ import com.mospolytech.domain.peoples.utils.toGroupId
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.update
 import kotlin.collections.HashMap
 
 class LessonGroupsConverter {
     private val converterCache = HashMap<String, GroupCache>()
     private val dbCache = HashMap<GroupCache, String>()
 
-    private fun convertGroup(rawTitle: String): GroupCache {
-        return converterCache.getOrPut(rawTitle) {
+    private fun convertGroup(rawModel: Pair<String, Int>): GroupCache {
+        val (title, course) = rawModel
+        return converterCache.getOrPut(title) {
             GroupCache(
-                id = "",
-                title = rawTitle,
+                title = title,
+                course = course,
             )
         }
     }
@@ -31,21 +33,38 @@ class LessonGroupsConverter {
         return checkNotNull(dbCache[dtoCache])
     }
 
-    suspend fun cacheAll(rawTitles: Set<String>) {
+    suspend fun cacheAll(rawTitles: Set<Pair<String, Int>>) {
         MosPolyDb.transaction {
             val allDbItems = GroupsDb.selectAll().map { cacheDb(it) }.toSet()
 
             val dtoList = rawTitles.map { convertGroup(it) }
 
-            val notInDb = dtoList subtract allDbItems
+            val notInDb = mutableListOf<GroupCache>()
+            val needUpdateDb = mutableListOf<GroupCache>()
+
+            dtoList.forEach { dbCacheKey ->
+                val dtoCacheKey = allDbItems.firstOrNull { dbCacheKey == it }
+                if (dtoCacheKey == null) {
+                    notInDb.add(dbCacheKey)
+                } else if (dbCacheKey.course != dtoCacheKey.course) {
+                    needUpdateDb.add(dbCacheKey)
+                }
+            }
 
             val rows =
                 GroupsDb.batchInsert(notInDb) { dto ->
                     this[GroupsDb.id] = dto.title.toGroupId()
                     this[GroupsDb.title] = dto.title
+                    this[GroupsDb.course] = dto.course
                 }
 
             rows.forEach { cacheDb(it) }
+
+            for (dto in needUpdateDb) {
+                GroupsDb.update({ GroupsDb.id eq dto.title.toGroupId() }) {
+                    it[GroupsDb.course] = dto.course
+                }
+            }
         }
     }
 
@@ -53,7 +72,6 @@ class LessonGroupsConverter {
         val id = row[GroupsDb.id].value
         val model =
             GroupCache(
-                id = "",
                 title = row[GroupsDb.title],
             )
         dbCache[model] = id
@@ -65,8 +83,21 @@ class LessonGroupsConverter {
         dbCache.clear()
     }
 
-    private data class GroupCache(
-        val id: String,
+    private class GroupCache(
         val title: String,
-    )
+        val course: Int? = null,
+    ) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as GroupCache
+
+            return title == other.title
+        }
+
+        override fun hashCode(): Int {
+            return title.hashCode()
+        }
+    }
 }

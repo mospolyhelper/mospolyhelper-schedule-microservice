@@ -19,4 +19,10 @@ enum class AttendeeType {
 
     @SerialName("group")
     Group,
+
+    ;
+
+    fun createFullId(id: String): String {
+        return this.name.lowercase() + "#" + id
+    }
 }

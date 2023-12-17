@@ -5,6 +5,7 @@ import com.mospolytech.data.peoples.model.entity.TeacherEntity
 import com.mospolytech.data.schedule.model.db.*
 import com.mospolytech.domain.base.utils.Moscow
 import com.mospolytech.domain.schedule.model.lessonType.Importance
+import com.mospolytech.domain.schedule.model.pack.AttendeeType
 import com.mospolytech.domain.schedule.model.pack.CompactLessonEvent
 import com.mospolytech.domain.schedule.model.pack.LessonDateTime
 import kotlinx.datetime.TimeZone
@@ -28,8 +29,14 @@ class LessonEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     val importance by LessonsDb.importance
 
     fun toModel(): CompactLessonEvent {
-        val groupAttendees = groups.map { it.id.toString() }
-        val teacherAttendees = teachers.map { it.id.toString() }
+        val groupAttendees =
+            groups.map {
+                AttendeeType.Group.createFullId(it.id.toString())
+            }
+        val teacherAttendees =
+            teachers.map {
+                AttendeeType.Teacher.createFullId(it.id.toString())
+            }
         val tags =
             if (subgroup != null) {
                 listOf(type, "Подгруппа $subgroup")

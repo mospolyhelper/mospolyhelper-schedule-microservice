@@ -119,7 +119,8 @@ fun ContractsResponse.toModel(): List<Contract> {
 
 private const val PAYMENT_QR_DESCRIPTION = """Вы можете сделать скриншот экрана или скачать QR-код на устройство, затем открыть его в мобильном приложении вашего банка:
 Оплата по QR-коду -> Загрузить изображение"""
-private const val PAYMENT_QR_TITLE = "Оплата по QR"
+private const val PAYMENT_QR_TITLE = "Оплата долга по QR"
+private const val PAYMENT_QR_TITLE_ALL = "Оплата всей суммы по QR"
 
 fun PaymentsResponse.toModel(): Contract {
     val paymentMethods =
@@ -138,7 +139,7 @@ fun PaymentsResponse.toModel(): Contract {
                 add(
                     PaymentMethod(
                         type = PaymentMethod.URL_TYPE,
-                        title = PAYMENT_QR_TITLE,
+                        title = PAYMENT_QR_TITLE_ALL,
                         description = PAYMENT_QR_DESCRIPTION,
                         url = qrTotal,
                     ),
@@ -198,10 +199,11 @@ fun PaygraphResponse.toModel(
 ): Payment? {
     val date = LocalDate.parse(datePlan)
     if (date > today) return null
+    val sumWithSign = "-$sum"
 
-    val valueDecimal = sum.toBigDecimalOrNull()
+    val valueDecimal = sumWithSign.toBigDecimalOrNull()
     val isNegativeValue = true
-    val formattedValue = valueDecimal?.formatRoubles() ?: sum
+    val formattedValue = valueDecimal?.formatRoubles() ?: sumWithSign
 
     return Payment(
         id = "",
