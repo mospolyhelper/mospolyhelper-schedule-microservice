@@ -24,6 +24,7 @@ auth:
 
 admin:
   key: $ADMIN_KEY
+  logLevel: $LOG_LEVEL
 
 mainlk:
   login: $MAIN_LK_LOGIN

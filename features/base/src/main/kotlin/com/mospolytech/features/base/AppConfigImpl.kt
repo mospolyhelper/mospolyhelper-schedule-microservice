@@ -1,6 +1,7 @@
 package com.mospolytech.features.base
 
 import com.mospolytech.domain.base.AppConfig
+import com.mospolytech.domain.base.model.AdminLogLevel
 import io.ktor.server.config.*
 
 class AppConfigImpl(private val config: ApplicationConfig) : AppConfig {
@@ -11,6 +12,14 @@ class AppConfigImpl(private val config: ApplicationConfig) : AppConfig {
 
     override val adminKey: String by lazy {
         config.propertyOrNull("admin.key")?.getString().orEmpty()
+    }
+
+    override val adminLogLevel: AdminLogLevel by lazy {
+        val level = config.propertyOrNull("admin.logLevel")?.getString().orEmpty()
+        when (level) {
+            "FULL" -> AdminLogLevel.FULL
+            else -> AdminLogLevel.MIN
+        }
     }
 
     override val getStudentsUrl: String by lazy {

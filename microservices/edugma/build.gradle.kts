@@ -27,12 +27,8 @@ dependencies {
     implementation(projects.domain.auth)
     implementation(projects.domain.schedule)
 
-
     implementation(projects.features.auth)
     implementation(projects.features.schedule)
     implementation(projects.features.services)
     implementation(projects.features.peoples)
-    implementation(projects.features.services)
-    implementation(projects.features.services)
-    implementation(projects.features.services)
 }

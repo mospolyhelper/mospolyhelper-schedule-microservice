@@ -40,14 +40,20 @@ val GroupEntity.description: String?
         buildString {
             course?.let { append("$course-й курс") }
 
-            direction?.let {
-                ifNotEmpty { append(", ") }
-                append(direction)
-            }
-
-            faculty?.let { faculty ->
-                ifNotEmpty { append(", ") }
-                append(getShortFaculty(faculty) ?: faculty)
+            if (direction != null) {
+                direction?.let {
+                    ifNotEmpty { append(", ") }
+                    append(direction)
+                    faculty?.let { faculty ->
+                        val shortFaculty = getShortFaculty(faculty)
+                        append(shortFaculty)
+                    }
+                }
+            } else {
+                faculty?.let { faculty ->
+                    ifNotEmpty { append(", ") }
+                    append(faculty)
+                }
             }
         }.ifEmpty { null }
 

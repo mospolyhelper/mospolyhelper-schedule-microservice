@@ -1,15 +1,15 @@
 [versions]
-kotlin = "1.9.20"
+kotlin = "1.9.21"
 ktlint = "4.0.0"
 
-ktor = "2.3.5"
-logback = "1.4.11"
+ktor = "2.3.7"
+logback = "1.4.14"
 prometeus = "1.11.5"
 koin = "3.5.1"
-exposed = "0.44.1"
-xmlutil = "0.86.2"
-kotlinxDatetime = "0.4.1"
-postgresql = "42.6.0"
+exposed = "0.45.0"
+xmlutil = "0.86.3"
+kotlinxDatetime = "0.5.0"
+postgresql = "42.7.1"
 quartz = "2.3.2"
 
 

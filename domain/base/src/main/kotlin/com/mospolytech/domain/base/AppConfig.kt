@@ -1,5 +1,7 @@
 package com.mospolytech.domain.base
 
+import com.mospolytech.domain.base.model.AdminLogLevel
+
 interface AppConfig {
     val url: String
     val driver: String
@@ -7,6 +9,7 @@ interface AppConfig {
     val password: String
 
     val adminKey: String
+    val adminLogLevel: AdminLogLevel
 
     val getStudentsUrl: String
     val getStudentsAuth: String
