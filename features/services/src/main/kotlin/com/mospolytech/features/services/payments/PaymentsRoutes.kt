@@ -13,16 +13,13 @@ fun Application.paymentsRoutesV1(repository: PaymentsRepository) {
     routing {
         authenticate(AuthConfigs.MPU, optional = true) {
             route("/payments") {
-                get<PaymentsRequest> {
+                get("/{contractId?}") {
                     val token = call.getTokenOrRespondError() ?: return@get
-                    call.respondResult(repository.getPayments(id = it.contractId, token = token))
+
+                    val contractId = call.parameters["contractId"]
+                    call.respondResult(repository.getPayments(id = contractId, token = token))
                 }
             }
         }
     }
 }
-
-@Location("/{contractId}")
-internal data class PaymentsRequest(
-    val contractId: String,
-)

@@ -13,16 +13,13 @@ fun Application.performanceRoutesV1(repository: PerformanceRepository) {
     routing {
         authenticate(AuthConfigs.MPU, optional = true) {
             route("/performance") {
-                get<PeriodRequest> {
+                get("/{periodId?}") {
                     val token = call.getTokenOrRespondError() ?: return@get
-                    call.respondResult(repository.getPerformance(it.periodId, token))
+
+                    val periodId = call.parameters["periodId"]
+                    call.respondResult(repository.getPerformance(periodId, token))
                 }
             }
         }
     }
 }
-
-@Location("/{periodId}")
-data class PeriodRequest(
-    val periodId: String,
-)
