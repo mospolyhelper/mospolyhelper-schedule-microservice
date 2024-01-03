@@ -51,7 +51,7 @@ fun PerformanceResponse.toModel(): Performance {
         } else if (teacherName != null) {
             "$teacherName • $date"
         } else {
-            ""
+            date
         }
 
     return Performance(
