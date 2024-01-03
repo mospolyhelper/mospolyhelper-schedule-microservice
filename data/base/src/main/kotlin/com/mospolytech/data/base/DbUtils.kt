@@ -3,6 +3,9 @@ package com.mospolytech.data.base
 import com.mospolytech.domain.base.model.PagingDTO
 import org.jetbrains.exposed.dao.Entity
 import org.jetbrains.exposed.dao.EntityClass
+import org.jetbrains.exposed.sql.Column
+import org.jetbrains.exposed.sql.CustomStringFunction
+import org.jetbrains.exposed.sql.Expression
 import org.jetbrains.exposed.sql.FieldSet
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.Query
@@ -10,6 +13,7 @@ import org.jetbrains.exposed.sql.SizedIterable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.stringParam
 
 fun <T : Entity<ID>, ID : Comparable<ID>> EntityClass<ID, T>.upsert(
     id: ID,
@@ -90,4 +94,16 @@ inline fun FieldSet.selectOrSelectAllIfEmpty(
     } else {
         select(where)
     }
+}
+
+fun Column<String>.replace(
+    oldValue: String,
+    newValue: String,
+): Expression<String?> {
+    return CustomStringFunction(
+        "REPLACE",
+        this,
+        stringParam(oldValue),
+        stringParam(newValue),
+    )
 }

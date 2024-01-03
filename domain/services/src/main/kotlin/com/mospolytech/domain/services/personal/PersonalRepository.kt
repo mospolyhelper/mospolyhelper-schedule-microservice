@@ -6,4 +6,6 @@ interface PersonalRepository {
     suspend fun getPersonalGroup(token: String): Result<String>
 
     suspend fun getCourse(token: String): Result<Int>
+
+    suspend fun getSupportedServices(token: String): Result<SupportedServices>
 }

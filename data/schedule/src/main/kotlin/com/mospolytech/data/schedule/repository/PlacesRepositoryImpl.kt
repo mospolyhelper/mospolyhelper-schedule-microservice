@@ -2,6 +2,7 @@ package com.mospolytech.data.schedule.repository
 
 import com.mospolytech.data.base.createPagingDto
 import com.mospolytech.data.base.findOrAllIfEmpty
+import com.mospolytech.data.base.replace
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.schedule.model.db.PlacesDb
 import com.mospolytech.data.schedule.model.entity.PlaceEntity
@@ -12,6 +13,7 @@ import com.mospolytech.domain.schedule.model.place.PlaceInfo
 import com.mospolytech.domain.schedule.model.place.PlaceTypes
 import com.mospolytech.domain.schedule.repository.PlacesRepository
 import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.mapLazy
 import java.util.*
 
@@ -29,8 +31,9 @@ class PlacesRepositoryImpl : PlacesRepository {
     ): PagingDTO<PlaceInfo> {
         return MosPolyDb.transaction {
             createPagingDto(pageSize, page) { offset ->
-                PlaceEntity.findOrAllIfEmpty(query) { PlacesDb.title like "%$query%" }
-                    .orderBy(PlacesDb.type to SortOrder.ASC, PlacesDb.title to SortOrder.ASC)
+                PlaceEntity.findOrAllIfEmpty(query) {
+                    PlacesDb.title.replace(" ", "").lowerCase() like "%${query.lowercase()}%"
+                }.orderBy(PlacesDb.type to SortOrder.ASC, PlacesDb.title to SortOrder.ASC)
                     .limit(pageSize, offset.toLong())
                     .mapLazy { it.toModel() }
                     .toList()

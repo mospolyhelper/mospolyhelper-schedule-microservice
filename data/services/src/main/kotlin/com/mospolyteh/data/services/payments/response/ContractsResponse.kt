@@ -1,11 +1,12 @@
 package com.mospolyteh.data.services.payments.response
 
 import com.mospolytech.domain.base.utils.Moscow
-import com.mospolytech.domain.base.utils.decapitalized
 import com.mospolytech.domain.base.utils.formatRoubles
 import com.mospolytech.domain.services.payments.Contract
+import com.mospolytech.domain.services.payments.ContractHeader
 import com.mospolytech.domain.services.payments.Payment
 import com.mospolytech.domain.services.payments.PaymentMethod
+import com.mospolytech.domain.services.payments.PaymentsApi
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -108,19 +109,45 @@ data class PaygraphResponse(
     val sumPay: String,
 )
 
-fun ContractsResponse.toModel(): List<Contract> {
-    val payments =
-        buildList<Contract> {
-            addAll(dormitory.map { it.toModel() })
-            addAll(education.map { it.toModel() })
+fun ContractsResponse.toModel(selectedId: String?): PaymentsApi {
+    if (dormitory.isEmpty() && education.isEmpty()) {
+        return PaymentsApi(
+            contracts = emptyList(),
+            selected = null,
+        )
+    }
+
+    val contracts =
+        buildList<ContractHeader> {
+            addAll(dormitory.map { it.toHeaderModel() })
+            addAll(education.map { it.toHeaderModel() })
         }
-    return payments
+
+    val selected =
+        if (selectedId == null) {
+            dormitory.firstOrNull()?.toModel()
+                ?: education.firstOrNull()?.toModel()
+        } else {
+            dormitory.firstOrNull { it.id == selectedId }?.toModel()
+                ?: education.firstOrNull { it.id == selectedId }?.toModel()
+        }
+    return PaymentsApi(
+        contracts = contracts,
+        selected = selected!!,
+    )
 }
 
 private const val PAYMENT_QR_DESCRIPTION = """Вы можете сделать скриншот экрана или скачать QR-код на устройство, затем открыть его в мобильном приложении вашего банка:
 Оплата по QR-коду -> Загрузить изображение"""
-private const val PAYMENT_QR_TITLE = "Оплата долга по QR"
-private const val PAYMENT_QR_TITLE_ALL = "Оплата всей суммы по QR"
+private const val PAYMENT_QR_TITLE = "Оплатить долг по QR-коду"
+private const val PAYMENT_QR_TITLE_ALL = "Оплатить всю сумму по QR-коду"
+
+fun PaymentsResponse.toHeaderModel(): ContractHeader {
+    return ContractHeader(
+        id = id,
+        title = "$type $number",
+    )
+}
 
 fun PaymentsResponse.toModel(): Contract {
     val paymentMethods =
@@ -131,6 +158,7 @@ fun PaymentsResponse.toModel(): Contract {
                         type = PaymentMethod.URL_TYPE,
                         title = PAYMENT_QR_TITLE,
                         description = PAYMENT_QR_DESCRIPTION,
+                        icon = "https://img.icons8.com/fluency/96/qr-code.png",
                         url = qrCurrent,
                     ),
                 )
@@ -141,6 +169,7 @@ fun PaymentsResponse.toModel(): Contract {
                         type = PaymentMethod.URL_TYPE,
                         title = PAYMENT_QR_TITLE_ALL,
                         description = PAYMENT_QR_DESCRIPTION,
+                        icon = "https://img.icons8.com/fluency/96/qr-code.png",
                         url = qrTotal,
                     ),
                 )
@@ -153,8 +182,8 @@ fun PaymentsResponse.toModel(): Contract {
     val isNegativeBalance = balanceDecimal?.let { it < 0.toBigDecimal() } ?: false
     val formattedBalance = balanceDecimal?.formatRoubles() ?: balance
 
-    val replenishments = payments.map { it.toModel(title = type) }
-    val contractPayments = paygraph.mapNotNull { it.toModel(title = type, today = today) }
+    val replenishments = payments.map { it.toModel(title = getTitle()) }
+    val contractPayments = paygraph.mapNotNull { it.toModel(title = getTitle(), today = today) }
     val allPayments = (replenishments + contractPayments).sortedByDescending { it.date }
 
     return Contract(
@@ -170,6 +199,19 @@ fun PaymentsResponse.toModel(): Contract {
     )
 }
 
+private fun PaymentsResponse.getTitle(): String {
+    if (type == "Общежитие") {
+        val dormNum = dormNum.takeIf { it.isNotEmpty() }
+        return if (dormNum != null) {
+            "Общежитие №$dormNum"
+        } else {
+            type
+        }
+    } else {
+        return type
+    }
+}
+
 private fun fixBalance(balance: String): String {
     return when {
         balance.isEmpty() -> balance
@@ -183,10 +225,17 @@ fun PaymentResponse.toModel(title: String): Payment {
     val isNegativeValue = valueDecimal?.let { it < 0.toBigDecimal() } ?: false
     val formattedValue = valueDecimal?.formatRoubles() ?: value
 
+    val description =
+        if (isNegativeValue) {
+            "Перевод"
+        } else {
+            "Пополнение"
+        }
+
     return Payment(
         id = "",
         title = title,
-        description = "Пополнение баланса",
+        description = description,
         date = date.toDate(),
         value = formattedValue,
         isNegative = isNegativeValue,
@@ -208,7 +257,7 @@ fun PaygraphResponse.toModel(
     return Payment(
         id = "",
         title = title,
-        description = "Оплата за ${title.decapitalized()}",
+        description = "Оплата по договору",
         date = date,
         value = formattedValue,
         isNegative = isNegativeValue,

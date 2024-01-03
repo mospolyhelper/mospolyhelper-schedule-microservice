@@ -19,12 +19,16 @@ data class Performance(
 
 @Serializable
 data class Grade(
-    @SerialName("title")
-    val title: String,
+    @SerialName("value")
+    val value: Int,
+    @SerialName("maxValue")
+    val maxValue: Int,
+    @SerialName("minValue")
+    val minValue: Int,
+    @SerialName("normalizedValue")
+    val normalizedValue: GradeValue?,
     @SerialName("description")
     val description: String,
-    @SerialName("value")
-    val value: GradeValue?,
 )
 
 @Serializable

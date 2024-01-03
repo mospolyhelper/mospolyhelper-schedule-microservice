@@ -16,7 +16,7 @@ class LessonTeachersConverter {
     private fun convertTeacher(rawName: String): TeacherCache {
         return converterCache.getOrPut(rawName) {
             TeacherCache(
-                name = rawName,
+                name = rawName.fixName1(),
             )
         }
     }
@@ -48,6 +48,7 @@ class LessonTeachersConverter {
 
     suspend fun cacheAll(rawTeachers: Set<String>) {
         MosPolyDb.transaction {
+            // toSet использует LinkedHashSet, который должен сохранять порядок при итерации
             val allDbItems =
                 TeachersDb.selectAll()
                     .sortedBy { stuffTypeOrder[it[TeachersDb.stuffType]] ?: stuffTypeOrder.size }
@@ -57,10 +58,10 @@ class LessonTeachersConverter {
 
             val notInDb = dtoList subtract allDbItems
 
-            // Пытаемся найти с заменой `ё` и добавляем дополнительный ключ
+            // Пытаемся найти с заменой `ё` и добавляем дополнительный ключ для найденных
             val notInDb2 =
                 notInDb.filter { rawCacheKey ->
-                    val fixedCacheKey = rawCacheKey.copy(name = rawCacheKey.name.fixName())
+                    val fixedCacheKey = rawCacheKey.copy(name = rawCacheKey.name.fixName2())
                     if (fixedCacheKey in allDbItems) {
                         dbCache[rawCacheKey] = dbCache[fixedCacheKey]!!
                         false
@@ -69,8 +70,24 @@ class LessonTeachersConverter {
                     }
                 }
 
+            // Пытаемся найти преподавателей без отчества в расписании, но с отчеством в БД
+            val notInDb3 =
+                notInDb2.filter { rawCacheKey ->
+                    if (rawCacheKey.name.isProbablyName()) {
+                        val newCacheKey = allDbItems.firstOrNull { it.name.startsWith(rawCacheKey.name) }
+                        if (newCacheKey == null) {
+                            true
+                        } else {
+                            dbCache[rawCacheKey] = dbCache[newCacheKey]!!
+                            false
+                        }
+                    } else {
+                        true
+                    }
+                }
+
             val rows =
-                TeachersDb.batchInsert(notInDb2) { dto ->
+                TeachersDb.batchInsert(notInDb3) { dto ->
                     this[TeachersDb.id] = UUID.randomUUID().toString()
                     this[TeachersDb.name] = dto.name
                     this[TeachersDb.lastUpdate] = Clock.System.now()
@@ -107,8 +124,24 @@ class LessonTeachersConverter {
         dbCache.clear()
     }
 
-    private fun String.fixName(): String {
+    private fun String.fixName1(): String {
+        return trim().replace("  ", " ")
+    }
+
+    /**
+     * Фикс ФИО, который желаетельно использовать, как вторую проверку*
+     */
+    private fun String.fixName2(): String {
         return replace('ё', 'е')
+    }
+
+    private fun String.isProbablyName(): Boolean {
+        return (
+            lastOrNull()?.isDigit() == true ||
+                contains("Вакансия", true) ||
+                contains("ППС", true) ||
+                contains("Зав.каф.", true)
+        ).not()
     }
 
     data class TeacherCache(

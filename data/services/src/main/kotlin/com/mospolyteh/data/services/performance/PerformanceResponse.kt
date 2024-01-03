@@ -42,14 +42,16 @@ data class PerformanceResponse(
 
 fun PerformanceResponse.toModel(): Performance {
     val grade = convertGrade(grade)
-    val teacherName = getShortName(teacher)
+    val teacherName = getShortName(teacher).takeIf { it.isNotEmpty() }
     val date = examDate.toDate()?.toRussianText()
 
     val description =
         if (date == null) {
-            teacherName
-        } else {
+            teacherName.orEmpty()
+        } else if (teacherName != null) {
             "$teacherName • $date"
+        } else {
+            ""
         }
 
     return Performance(
@@ -85,45 +87,56 @@ private fun convertGrade(grade: String): Grade? {
 private val gradePool = hashMapOf<String, Grade>()
 
 private fun parseGrade(grade: String): Grade {
-    val value: GradeValue?
-    val title: String
+    val normalizedValue: GradeValue?
+    val value: Int
+    val range: IntRange
     when (grade) {
         "Зачтено" -> {
-            title = "✔"
-            value = GradeValue.VERY_GOOD
+            value = 1
+            range = 0..1
+            normalizedValue = GradeValue.VERY_GOOD
         }
         "Не зачтено" -> {
-            title = "×"
-            value = GradeValue.VERY_BAD
+            value = 0
+            range = 0..1
+            normalizedValue = GradeValue.VERY_BAD
         }
         "Отлично" -> {
-            title = "5"
-            value = GradeValue.VERY_GOOD
+            value = 5
+            range = 2..5
+            normalizedValue = GradeValue.VERY_GOOD
         }
         "Хорошо" -> {
-            title = "4"
-            value = GradeValue.GOOD
+            value = 4
+            range = 2..5
+            normalizedValue = GradeValue.GOOD
         }
         "Удовлетворительно" -> {
-            title = "3"
-            value = GradeValue.BAD
+            value = 3
+            range = 2..5
+            normalizedValue = GradeValue.BAD
         }
         "Не явился" -> {
-            title = "Неявка"
-            value = GradeValue.VERY_BAD
+            value = 0
+            range = 0..1
+            normalizedValue = GradeValue.VERY_BAD
         }
         "Неудовлетворительно" -> {
-            title = "2"
-            value = GradeValue.VERY_BAD
+            value = 2
+            range = 2..5
+            normalizedValue = GradeValue.VERY_BAD
         }
         else -> {
-            title = grade
-            value = null
+            value = 0
+            range = 0..1
+            normalizedValue = null
         }
     }
     return Grade(
-        title = title,
         value = value,
+        maxValue = range.first,
+        minValue = range.last,
+        normalizedValue = normalizedValue,
         description = grade,
     )
 }

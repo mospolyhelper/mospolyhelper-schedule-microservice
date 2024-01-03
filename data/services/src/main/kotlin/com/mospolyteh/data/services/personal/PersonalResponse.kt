@@ -52,9 +52,17 @@ data class PersonalResponse(
     )
 }
 
+fun PersonalResponse.User.isStudent(): Boolean {
+    return userStatus == "student"
+}
+
+fun PersonalResponse.User.isStaff(): Boolean {
+    return userStatus == "staff"
+}
+
 fun PersonalResponse.toModel(): Personal {
     val fullName = this.user.surname + " " + this.user.name + " " + this.user.patronymic
-    val isStudent = user.userStatus != "staff"
+    val isStudent = user.isStudent()
     val description =
         if (isStudent) {
             "${user.group} • ${user.degreeLevel.lowercase()}"
