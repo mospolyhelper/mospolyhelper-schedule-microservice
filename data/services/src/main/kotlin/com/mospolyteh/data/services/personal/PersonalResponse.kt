@@ -53,7 +53,7 @@ data class PersonalResponse(
 }
 
 fun PersonalResponse.User.isStudent(): Boolean {
-    return userStatus == "student"
+    return userStatus == "stud"
 }
 
 fun PersonalResponse.User.isStaff(): Boolean {

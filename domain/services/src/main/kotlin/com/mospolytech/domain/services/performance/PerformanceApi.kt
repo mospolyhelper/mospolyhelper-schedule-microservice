@@ -8,5 +8,5 @@ data class PerformanceApi(
     @SerialName("periods")
     val periods: List<PerformancePeriod>,
     @SerialName("selected")
-    val selected: List<Performance>,
+    val selected: Performance?,
 )

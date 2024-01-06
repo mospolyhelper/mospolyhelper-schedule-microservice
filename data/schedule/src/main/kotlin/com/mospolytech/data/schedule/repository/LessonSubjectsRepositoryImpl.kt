@@ -29,7 +29,7 @@ class LessonSubjectsRepositoryImpl : LessonSubjectsRepository {
         return MosPolyDb.transaction {
             createPagingDto(pageSize, page) { offset ->
                 SubjectEntity.findOrAllIfEmpty(query) {
-                    SubjectsDb.title.replace(" ", "").lowerCase() like "%$${query.lowercase()}%"
+                    SubjectsDb.title.replace(" ", "").lowerCase() like "%${query.lowercase()}%"
                 }.orderBy(SubjectsDb.title to SortOrder.ASC)
                     .limit(pageSize, offset.toLong())
                     .mapLazy { it.toModel() }

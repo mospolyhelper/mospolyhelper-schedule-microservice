@@ -1,8 +1,8 @@
 package com.mospolyteh.data.services.performance
 
 import com.mospolytech.domain.services.performance.Grade
+import com.mospolytech.domain.services.performance.GradePosition
 import com.mospolytech.domain.services.performance.GradeValue
-import com.mospolytech.domain.services.performance.Performance
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
@@ -40,7 +40,7 @@ data class PerformanceResponse(
     val chair: String,
 )
 
-fun PerformanceResponse.toModel(): Performance {
+fun PerformanceResponse.toModel(): GradePosition {
     val grade = convertGrade(grade)
     val teacherName = getShortName(teacher).takeIf { it.isNotEmpty() }
     val date = examDate.toDate()?.toRussianText()
@@ -54,7 +54,7 @@ fun PerformanceResponse.toModel(): Performance {
             date
         }
 
-    return Performance(
+    return GradePosition(
         id = id.toString(),
         title = name,
         type = examType,
@@ -134,8 +134,8 @@ private fun parseGrade(grade: String): Grade {
     }
     return Grade(
         value = value,
-        maxValue = range.first,
-        minValue = range.last,
+        maxValue = range.last,
+        minValue = range.first,
         normalizedValue = normalizedValue,
         description = grade,
     )
