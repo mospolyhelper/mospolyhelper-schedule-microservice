@@ -25,6 +25,7 @@ dependencies {
     implementation(libs.ktor.server.websockets)
     implementation(libs.ktor.server.metrics)
     implementation(libs.ktor.server.metrics.micrometer)
+    implementation(libs.ktor.server.ssl)
 
     implementation(libs.ktor.serialization.kotlinx.json)
 

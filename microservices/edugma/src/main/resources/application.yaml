@@ -1,6 +1,13 @@
 ktor:
   deployment:
-    port: 8003
+    port: 80
+    sslPort: 443
+  security:
+    ssl:
+      keyStore: keystore.jks
+      keyAlias: $SSL_KEYSTORE_ALIAS
+      keyStorePassword: $SSL_KEYSTORE_PWD
+      privateKeyPassword: $SSL_PRIVATE_KEY_PWD
   application:
     modules:
       - com.mospolytech.microservices.edugma.ApplicationKt.module
