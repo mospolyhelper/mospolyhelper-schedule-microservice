@@ -19,8 +19,7 @@ class LessonDateTimeConverter {
 
         val dateFrom = parseDate(rawDateTime.apiLesson.df, LocalDate.MIN)
         val dateTo = parseDate(rawDateTime.apiLesson.dt, LocalDate.MAX)
-        val dates = getDates(rawDateTime.day, rawDateTime.isByDate, dateFrom, dateTo)
-        val (realDateFrom, realDateTo) = dates
+        val (realDateFrom, realDateTo) = getDates(rawDateTime.day, rawDateTime.isByDate, dateFrom, dateTo)
 
         val start =
             LessonDateTime(
@@ -59,15 +58,19 @@ class LessonDateTimeConverter {
         dateFrom: LocalDate,
         dateTo: LocalDate,
     ): Pair<LocalDate, LocalDate?> {
-        return if (isByDate) {
+        if (isByDate) {
             val date = JavaLocalDate.parse(day, dateFormatter).toKotlinLocalDate()
-            date to null
-        } else {
-            val dayOfWeek = DayOfWeek.of(day.toIntOrNull() ?: 1)
-            val firstDayOfWeek = getClosestDayNotEarly(dateFrom, dayOfWeek)
-            val lastDayOfWeek = getClosestDayNotLater(dateTo, dayOfWeek)
-            firstDayOfWeek to lastDayOfWeek
+            return date to null
         }
+
+        if (dateFrom == dateTo) {
+            return dateFrom to null
+        }
+
+        val dayOfWeek = DayOfWeek.of(day.toIntOrNull() ?: 1)
+        val firstDayOfWeek = getClosestDayNotEarly(dateFrom, dayOfWeek)
+        val lastDayOfWeek = getClosestDayNotLater(dateTo, dayOfWeek)
+        return firstDayOfWeek to lastDayOfWeek
     }
 
     private fun getClosestDayNotEarly(

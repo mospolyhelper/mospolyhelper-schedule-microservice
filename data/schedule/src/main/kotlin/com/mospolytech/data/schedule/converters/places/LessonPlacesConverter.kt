@@ -152,18 +152,27 @@ class LessonPlacesConverter {
         place: String,
         url: String = "",
     ): PlaceInfo {
-        return parserChain.firstNotNullOfOrNull {
-            val matchResult = place.parseBy(patterns = it.patterns.toTypedArray())
+        return parsePlace2(place = place, url = url)
+            ?: parsePlace2(place = place.cleanDump(), url = url)
+            ?: PlaceInfo.Other(
+                id = "",
+                title = place,
+                description = null,
+            )
+    }
+
+    private fun parsePlace2(
+        place: String,
+        url: String = "",
+    ): PlaceInfo? {
+        return parserChain.firstNotNullOfOrNull { placeParserPack ->
+            val matchResult = place.parseBy(patterns = placeParserPack.patterns.toTypedArray())
             if (matchResult == null) {
                 null
             } else {
-                it.placeFactory(matchResult, listOf(url))
+                placeParserPack.placeFactory(matchResult, listOf(url))
             }
-        } ?: PlaceInfo.Other(
-            id = "",
-            title = place,
-            description = null,
-        )
+        }
     }
 
     private fun String.parseBy(vararg patterns: String): MatchResult? {

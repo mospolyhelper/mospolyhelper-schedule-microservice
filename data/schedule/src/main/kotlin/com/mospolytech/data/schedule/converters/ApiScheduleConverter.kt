@@ -57,9 +57,9 @@ class ApiScheduleConverter(
         lessons.entries.forEachIndexed { index, (_, apiSchedule) ->
             logger.debug("Schedule: ${index + 1} / ${lessons.size}")
             convertAndCacheLessons(
-                apiSchedule.grid.toList(),
-                listOf(apiSchedule.group),
-                apiSchedule.isSession,
+                days = apiSchedule.grid.toList(),
+                groups = listOf(apiSchedule.group),
+                isByDate = apiSchedule.isSession,
             )
         }
     }
@@ -105,9 +105,9 @@ class ApiScheduleConverter(
         lessons.forEachIndexed { index, apiSchedule ->
             logger.debug("Schedule Session: ${index + 1} / ${lessons.size}")
             convertAndCacheLessons(
-                apiSchedule.grid.toList(),
-                listOf(apiSchedule.group),
-                apiSchedule.isSession,
+                days = apiSchedule.grid.toList(),
+                groups = listOf(apiSchedule.group),
+                isByDate = apiSchedule.isSession,
             )
         }
     }

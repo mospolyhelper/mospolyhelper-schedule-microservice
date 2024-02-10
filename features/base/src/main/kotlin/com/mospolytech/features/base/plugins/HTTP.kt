@@ -6,9 +6,14 @@ import io.ktor.server.plugins.cors.routing.*
 
 fun Application.configureHTTP() {
     install(CORS) {
+        for (httpMethod in HttpMethod.DefaultMethods) {
+            allowMethod(httpMethod)
+        }
+        allowHeaders { true }
+        allowCredentials = true
+        allowNonSimpleContentTypes = true
         // TODO remove
         allowHost("localhost:8080")
-        allowHost("edugma.github.io")
-        allowHeader(HttpHeaders.ContentType)
+        allowHost("edugma.github.io", schemes = listOf("http", "https"))
     }
 }
