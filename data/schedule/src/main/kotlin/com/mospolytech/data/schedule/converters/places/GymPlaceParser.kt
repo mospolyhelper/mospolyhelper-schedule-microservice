@@ -154,7 +154,7 @@ internal val gymPlaceParserChain =
         },
         PlaceParserPack(
             """^м[\s\p{P}]*спорт[\s\p{P}]*зал$""",
-            """^м[\s\p{P}]*спорт[\s\p{P}]*зал\s\(графики\sкафедры\)$"""
+            """^м[\s\p{P}]*спорт[\s\p{P}]*зал\s\(графики\sкафедры\)$""",
         ) {
             createBuildingPlace(
                 title = "М Спортзал",

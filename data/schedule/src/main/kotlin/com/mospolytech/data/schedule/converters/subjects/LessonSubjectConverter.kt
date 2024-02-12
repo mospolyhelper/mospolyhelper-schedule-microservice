@@ -16,7 +16,8 @@ class LessonSubjectConverter {
             """\s*\(\s*(\d)\s*подгруппа\)""".toRegex(),
             """\s*\(\s*(\d)-я\s*подгруппа\)""".toRegex(),
         )
-    // Обрезать пробелы по краям
+
+    private val multipleSpacesRegex = """\s\s+""".toRegex()
 
     private fun convertTitle(rawTitle: String): LessonSubjectCache {
         val matchedRegex = regexList.firstOrNull { it.containsMatchIn(rawTitle) }
@@ -29,12 +30,18 @@ class LessonSubjectConverter {
                 rawTitle
             }
 
+        val fixedTitle = fixTitle(title)
+
         return converterCache.getOrPut(rawTitle) {
             LessonSubjectCache(
-                title = title,
+                title = fixedTitle,
                 subgroup = subgroup,
             )
         }
+    }
+
+    private fun fixTitle(input: String): String {
+        return input.replace(multipleSpacesRegex, " ")
     }
 
     fun getCachedId(rawTitle: String): Pair<String, Byte?> {
