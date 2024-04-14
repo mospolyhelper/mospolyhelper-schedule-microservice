@@ -1,0 +1,33 @@
+services:
+    edugma:
+        image: edugma:latest
+        hostname: edugma
+        container_name: edugma
+        ports:
+          - "80"
+        env_file:
+          - edugma.env
+
+    nginx:
+        build: .
+        image: umputun/nginx-le:latest
+        hostname: nginx
+        restart: always
+        container_name: nginx
+        depends_on:
+          - "edugma"
+
+        volumes:
+            # Для хранения сертификата
+            - ./etc/ssl:/etc/nginx/ssl
+            # Конфиг сервиса к конфигу service*.conf
+            - ./etc/edugma.conf:/etc/nginx/service.conf
+        ports:
+            - "80:80"
+            - "443:443"
+
+        environment:
+            - TZ=GMT
+            - LETSENCRYPT=true
+            - LE_EMAIL=${CERT_EMAIL}
+            - LE_FQDN=${CERT_DOMAIN}
