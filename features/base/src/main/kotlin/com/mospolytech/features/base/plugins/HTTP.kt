@@ -15,5 +15,6 @@ fun Application.configureHTTP() {
         // TODO remove
         allowHost("localhost:8080")
         allowHost("edugma.github.io", schemes = listOf("http", "https"))
+        allowHost("*.edugma.com", schemes = listOf("http", "https"))
     }
 }
