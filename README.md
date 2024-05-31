@@ -5,6 +5,14 @@
 ```
 
 ## Docker
+Для сборки и отправки на сервер использовать скрипт build_send.ps1
+
+После добавления edugma в докер
+Запуск Docker Compose с деатачем от процесса
+```shell
+sudo docker compose up -d
+```
+
 Удаление старого образа. Создание и сохранение образа:
 ```shell
 docker rmi $(docker images 'edugma' -a -q)
