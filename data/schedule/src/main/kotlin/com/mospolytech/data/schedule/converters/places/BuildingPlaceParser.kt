@@ -16,15 +16,15 @@ internal val buildingPlaceParserChain =
                 floor = groupValues[3],
                 auditorium = groupValues[1],
                 coordinates =
-                    when (groupValues[2]) {
-                        "1" -> Coordinates(55.704191, 37.645163)
-                        "2" -> Coordinates(55.704561, 37.645704)
-                        "3" -> Coordinates(55.704839, 37.646956)
-                        "4" -> Coordinates(55.704452, 37.646639)
-                        "5" -> Coordinates(55.705504, 37.646804)
-                        "6" -> Coordinates(55.704282, 37.646083)
-                        else -> null
-                    },
+                when (groupValues[2]) {
+                    "1" -> Coordinates(55.704191, 37.645163)
+                    "2" -> Coordinates(55.704561, 37.645704)
+                    "3" -> Coordinates(55.704839, 37.646956)
+                    "4" -> Coordinates(55.704452, 37.646639)
+                    "5" -> Coordinates(55.705504, 37.646804)
+                    "6" -> Coordinates(55.704282, 37.646083)
+                    else -> null
+                },
             )
         },
         PlaceParserPack("""^пр\s*((\d)(\d).+)$""") {
@@ -36,11 +36,11 @@ internal val buildingPlaceParserChain =
                 floor = groupValues[3],
                 auditorium = groupValues[1],
                 coordinates =
-                    when (groupValues[2]) {
-                        "1" -> Coordinates(55.833268, 37.544180)
-                        "2" -> Coordinates(55.833708, 37.543758)
-                        else -> null
-                    },
+                when (groupValues[2]) {
+                    "1" -> Coordinates(55.833268, 37.544180)
+                    "2" -> Coordinates(55.833708, 37.543758)
+                    else -> null
+                },
             )
         },
         PlaceParserPack("""^пр\s*ВЦ\s*\d+\s*\(((\d)(\d).+)\)$""") {
@@ -54,11 +54,11 @@ internal val buildingPlaceParserChain =
                 floor = groupValues[3],
                 auditorium = groupValues[1],
                 coordinates =
-                    when (building) {
-                        "1" -> Coordinates(55.833268, 37.544180)
-                        "2" -> Coordinates(55.833708, 37.543758)
-                        else -> null
-                    },
+                when (building) {
+                    "1" -> Coordinates(55.833268, 37.544180)
+                    "2" -> Coordinates(55.833708, 37.543758)
+                    else -> null
+                },
             )
         },
         PlaceParserPack("""^пр\s(ФО[\s-]*\d+)$""") {
@@ -94,10 +94,10 @@ internal val buildingPlaceParserChain =
                 floor = groupValues[3],
                 auditorium = groupValues[1],
                 coordinates =
-                    when (building) {
-                        "3" -> Coordinates(55.837459, 37.533427)
-                        else -> null
-                    },
+                when (building) {
+                    "3" -> Coordinates(55.837459, 37.533427)
+                    else -> null
+                },
             )
         },
         PlaceParserPack("""^м\s*(эстамп)$""") {
@@ -119,11 +119,11 @@ internal val buildingPlaceParserChain =
                 floor = groupValues[3],
                 auditorium = groupValues[2],
                 coordinates =
-                    when (building) {
-                        "1" -> Coordinates(55.819439, 37.663351)
-                        "2" -> Coordinates(55.819287, 37.664276)
-                        else -> null
-                    },
+                when (building) {
+                    "1" -> Coordinates(55.819439, 37.663351)
+                    "2" -> Coordinates(55.819287, 37.664276)
+                    else -> null
+                },
             )
         },
         PlaceParserPack("""^пк\s*((\d).+)$""") {
@@ -148,15 +148,15 @@ internal val buildingPlaceParserChain =
                 floor = groupValues[2],
                 auditorium = groupValues[0],
                 coordinates =
-                    when (building) {
-                        "А" -> Coordinates(55.781310, 37.711513)
-                        "Б" -> Coordinates(55.781074, 37.712677)
-                        "В" -> Coordinates(55.781428, 37.710494)
-                        "Н" -> Coordinates(55.780930, 37.709807)
-                        "Нд" -> Coordinates(55.780300, 37.709753)
-                        "Л" -> Coordinates(55.781164, 37.710555)
-                        else -> null
-                    },
+                when (building) {
+                    "А" -> Coordinates(55.781310, 37.711513)
+                    "Б" -> Coordinates(55.781074, 37.712677)
+                    "В" -> Coordinates(55.781428, 37.710494)
+                    "Н" -> Coordinates(55.780930, 37.709807)
+                    "Нд" -> Coordinates(55.780300, 37.709753)
+                    "Л" -> Coordinates(55.781164, 37.710555)
+                    else -> null
+                },
             )
         },
         PlaceParserPack("""^(А)[\s-]?ОМД$""") {
@@ -170,15 +170,15 @@ internal val buildingPlaceParserChain =
                 floor = groupValues[1],
                 auditorium = "А ОМД",
                 coordinates =
-                    when (building) {
-                        "А" -> Coordinates(55.781310, 37.711513)
-                        "Б" -> Coordinates(55.781074, 37.712677)
-                        "В" -> Coordinates(55.781428, 37.710494)
-                        "Н" -> Coordinates(55.780930, 37.709807)
-                        "Нд" -> Coordinates(55.780300, 37.709753)
-                        "Л" -> Coordinates(55.781164, 37.710555)
-                        else -> null
-                    },
+                when (building) {
+                    "А" -> Coordinates(55.781310, 37.711513)
+                    "Б" -> Coordinates(55.781074, 37.712677)
+                    "В" -> Coordinates(55.781428, 37.710494)
+                    "Н" -> Coordinates(55.780930, 37.709807)
+                    "Нд" -> Coordinates(55.780300, 37.709753)
+                    "Л" -> Coordinates(55.781164, 37.710555)
+                    else -> null
+                },
                 additionalDescription = "Лаборатория обработки материалов давлением",
             )
         },

@@ -54,14 +54,14 @@ fun PlaceEntity.toModel(): PlaceInfo {
                 floor = floor,
                 auditorium = auditorium,
                 coordinates =
-                    lat?.let { lat ->
-                        lng?.let { lng ->
-                            Coordinates(
-                                lat = lat,
-                                lng = lng,
-                            )
-                        }
-                    },
+                lat?.let { lat ->
+                    lng?.let { lng ->
+                        Coordinates(
+                            lat = lat,
+                            lng = lng,
+                        )
+                    }
+                },
                 description = description,
             )
         PlaceTypes.Online ->
@@ -87,14 +87,14 @@ fun PlaceEntity.toCompactModel(): CompactPlaceInfo {
                 id = id.value.toString(),
                 title = title,
                 coordinates =
-                    lat?.let { lat ->
-                        lng?.let { lng ->
-                            Coordinates(
-                                lat = lat,
-                                lng = lng,
-                            )
-                        }
-                    },
+                lat?.let { lat ->
+                    lng?.let { lng ->
+                        Coordinates(
+                            lat = lat,
+                            lng = lng,
+                        )
+                    }
+                },
                 description = description,
             )
         PlaceTypes.Online ->

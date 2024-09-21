@@ -23,6 +23,7 @@ internal val otherPlaceParserChain =
                 title = "Проектная деятельность",
             )
         },
+        @Suppress("SpreadOperator")
         PlaceParserPack(*otherMap.keys.toTypedArray()) {
             val title = this.value
 

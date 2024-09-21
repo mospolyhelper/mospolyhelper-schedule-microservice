@@ -13,7 +13,7 @@ import io.ktor.server.response.*
 import io.ktor.util.*
 import org.slf4j.*
 
-private val CustomAuthKey: Any = "MpuAuth"
+private const val CustomAuthKey: String = "MpuAuth"
 
 private val CustomLogger: Logger = LoggerFactory.getLogger("com.mospolytech.microservices.auth.plugins")
 

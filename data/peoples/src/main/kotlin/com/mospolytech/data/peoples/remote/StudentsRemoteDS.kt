@@ -18,17 +18,14 @@ import com.mospolytech.domain.peoples.model.toPerson
 import com.mospolytech.domain.peoples.utils.toGroupId
 import kotlinx.datetime.Clock
 import kotlinx.datetime.toKotlinLocalDate
-import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.SqlExpressionBuilder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.mapLazy
 import org.jetbrains.exposed.sql.or
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -155,7 +152,7 @@ class StudentsRemoteDS {
                                 (StudentsDb.name eq student.fio) and
                                 (StudentsDb.group eq groupEntity?.id) and
                                 (StudentsDb.faculty eq student.faculty)
-                        )
+                            )
                     },
                     newId = { UUID.randomUUID().toString() },
                 ) {

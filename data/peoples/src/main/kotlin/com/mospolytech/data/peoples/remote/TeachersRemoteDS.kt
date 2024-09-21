@@ -91,7 +91,7 @@ class TeachersRemoteDS {
                                 (TeachersDb.name eq teacher.fio) and
                                 (TeachersDb.grade eq teacher.post) and
                                 (TeachersDb.department eq teacher.division)
-                        )
+                            )
                     },
                     newId = { UUID.randomUUID().toString() },
                 ) {

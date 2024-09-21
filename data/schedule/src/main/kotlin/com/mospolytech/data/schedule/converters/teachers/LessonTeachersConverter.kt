@@ -141,7 +141,7 @@ class LessonTeachersConverter {
                 contains("Вакансия", true) ||
                 contains("ППС", true) ||
                 contains("Зав.каф.", true)
-        ).not()
+            ).not()
     }
 
     data class TeacherCache(

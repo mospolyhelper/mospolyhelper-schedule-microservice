@@ -51,15 +51,15 @@ class LessonEntity(id: EntityID<UUID>) : UUIDEntity(id) {
             placesId = places.map { it.id.toString() },
             attendeesId = groupAttendees + teacherAttendees,
             start =
-                LessonDateTime(
-                    dateTime = startDateTime,
-                    timeZone = TimeZone.Moscow,
-                ),
+            LessonDateTime(
+                dateTime = startDateTime,
+                timeZone = TimeZone.Moscow,
+            ),
             end =
-                LessonDateTime(
-                    dateTime = endDateTime,
-                    timeZone = TimeZone.Moscow,
-                ),
+            LessonDateTime(
+                dateTime = endDateTime,
+                timeZone = TimeZone.Moscow,
+            ),
             recurrence = recurrence.map { it.recurrence },
             importance = importance.toImportance(),
         )

@@ -76,14 +76,14 @@ class FreePlacesRepositoryImpl(
             PlaceDailyOccupancy(
                 date = it.key,
                 values =
-                    it.value.sortedBy { it.timeFrom }
-                        .map {
-                            PlaceOccupancyTimeRange(
-                                timeFrom = it.timeFrom,
-                                timeTo = it.timeTo,
-                                value = it.value,
-                            )
-                        },
+                it.value.sortedBy { it.timeFrom }
+                    .map {
+                        PlaceOccupancyTimeRange(
+                            timeFrom = it.timeFrom,
+                            timeTo = it.timeTo,
+                            value = it.value,
+                        )
+                    },
             )
         }
     }
@@ -160,6 +160,7 @@ class FreePlacesRepositoryImpl(
         // return lessons.filter { it.placesId.any { it == placeId } && it.times.any { it in dateTimeFrom..dateTimeTo } }
     }
 
+    @Suppress("FunctionOnlyReturningConstant")
     operator fun ClosedRange<LocalDateTime>.contains(lessonDateTime: CompactLessonEvent): Boolean {
         // TODO
         return true

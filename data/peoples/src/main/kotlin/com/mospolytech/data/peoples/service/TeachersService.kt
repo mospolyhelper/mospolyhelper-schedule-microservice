@@ -103,7 +103,7 @@ class TeachersService(
 
         private const val FOLDER_NAME = "teachers"
 
-        private val GET_TEACHERS_BODY = """<?xml version="1.0" encoding="utf-8"?>
+        private const val GET_TEACHERS_BODY = """<?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
     <ИнформацияПоРаботникамИФизЛицамВЧастиПерсональныхДанных xmlns="BS">

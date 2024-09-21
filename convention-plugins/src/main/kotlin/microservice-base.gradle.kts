@@ -1,4 +1,5 @@
 @file:Suppress("UnstableApiUsage")
+
 import org.gradle.accessors.dm.LibrariesForLibs
 
 plugins {
@@ -28,7 +29,6 @@ dependencies {
 
 group = "com.mospolytech.microservices"
 version = "com.mospolytech.microservices.0.0.1"
-
 
 tasks.getByPath(":${project.path}:classes").dependsOn("installGitHook")
 tasks.check.orNull?.dependsOn("ktlint")

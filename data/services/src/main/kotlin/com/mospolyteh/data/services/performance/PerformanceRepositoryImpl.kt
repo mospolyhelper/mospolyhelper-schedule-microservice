@@ -64,10 +64,10 @@ class PerformanceRepositoryImpl(
             PerformanceApi(
                 periods = periods,
                 selected =
-                    Performance(
-                        id = id ?: firstPeriodId,
-                        grades = performanceList,
-                    ),
+                Performance(
+                    id = id ?: firstPeriodId,
+                    grades = performanceList,
+                ),
             )
         }
     }

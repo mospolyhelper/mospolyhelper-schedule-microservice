@@ -75,23 +75,23 @@ fun PersonalResponse.toModel(): Personal {
         description = description,
         avatar = this.user.avatar.ifEmpty { null },
         data =
-            buildList {
-                add(PersonalData(title = "Статус", value = user.status))
-                add(PersonalData(title = "Курс", value = user.course))
-                add(PersonalData(title = "Дата рождения", value = user.birthday))
-                add(PersonalData(title = "Пол", value = user.sex.getSex()))
-                add(PersonalData(title = "Код студента", value = user.code))
-                add(PersonalData(title = "Факультет", value = user.faculty))
-                add(PersonalData(title = "Группа", value = user.group))
-                add(PersonalData(title = "Направление", value = user.specialty))
-                user.specialization.ifEmpty { null }?.let { specialization ->
-                    add(PersonalData(title = "Специализация", value = specialization))
-                }
-                add(PersonalData(title = "Срок обучения", value = user.degreeLength.filter { it.isDigit() }))
-                add(PersonalData(title = "Форма обучения", value = user.educationForm))
-                add(PersonalData(title = "Вид финансирования", value = user.finance))
-                add(PersonalData(title = "Год набора", value = user.enterYear))
-            },
+        buildList {
+            add(PersonalData(title = "Статус", value = user.status))
+            add(PersonalData(title = "Курс", value = user.course))
+            add(PersonalData(title = "Дата рождения", value = user.birthday))
+            add(PersonalData(title = "Пол", value = user.sex.getSex()))
+            add(PersonalData(title = "Код студента", value = user.code))
+            add(PersonalData(title = "Факультет", value = user.faculty))
+            add(PersonalData(title = "Группа", value = user.group))
+            add(PersonalData(title = "Направление", value = user.specialty))
+            user.specialization.ifEmpty { null }?.let { specialization ->
+                add(PersonalData(title = "Специализация", value = specialization))
+            }
+            add(PersonalData(title = "Срок обучения", value = user.degreeLength.filter { it.isDigit() }))
+            add(PersonalData(title = "Форма обучения", value = user.educationForm))
+            add(PersonalData(title = "Вид финансирования", value = user.finance))
+            add(PersonalData(title = "Год набора", value = user.enterYear))
+        },
     )
 }
 

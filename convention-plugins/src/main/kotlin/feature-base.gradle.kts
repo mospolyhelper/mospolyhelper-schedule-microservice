@@ -1,4 +1,5 @@
 @file:Suppress("UnstableApiUsage")
+
 import org.gradle.accessors.dm.LibrariesForLibs
 
 plugins {
@@ -39,7 +40,6 @@ dependencies {
     implementation(libs.kotlinx.datetime)
 
     implementation(libs.quartz)
-
 
     testImplementation(libs.ktor.server.tests)
     testImplementation(libs.kotlin.test.junit)
