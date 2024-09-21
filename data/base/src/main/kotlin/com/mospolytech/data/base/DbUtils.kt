@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.Query
 import org.jetbrains.exposed.sql.SizedIterable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.Table.Dual.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.stringParam
 
@@ -85,14 +85,26 @@ fun <ID : Comparable<ID>, T : Entity<ID>> EntityClass<ID, T>.findOrAllIfEmpty(
     }
 }
 
-inline fun FieldSet.selectOrSelectAllIfEmpty(
+fun FieldSet.selectOrSelectAllIfEmpty(
     query: String,
     where: SqlExpressionBuilder.() -> Op<Boolean>,
 ): Query {
     return if (query.isEmpty()) {
         selectAll()
     } else {
-        select(where)
+        selectAll().where(where)
+    }
+}
+
+fun FieldSet.selectOrSelectAllIfEmpty(
+    columns: List<Expression<*>>,
+    query: String,
+    where: SqlExpressionBuilder.() -> Op<Boolean>,
+): Query {
+    return if (query.isEmpty()) {
+        select(columns)
+    } else {
+        select(columns).where(where)
     }
 }
 

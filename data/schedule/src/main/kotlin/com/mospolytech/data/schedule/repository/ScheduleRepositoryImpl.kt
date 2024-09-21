@@ -22,9 +22,13 @@ import com.mospolytech.domain.schedule.repository.LessonSubjectsRepository
 import com.mospolytech.domain.schedule.repository.LessonsRepository
 import com.mospolytech.domain.schedule.repository.PlacesRepository
 import com.mospolytech.domain.schedule.repository.ScheduleRepository
+import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 
 class ScheduleRepositoryImpl(
     private val lessonsRepository: LessonsRepository,
@@ -158,11 +162,11 @@ class ScheduleRepositoryImpl(
 
     override suspend fun findGroupByTitle(title: String): String? {
         return MosPolyDb.transaction {
-            GroupsDb.select {
-                GroupsDb.title eq title
-            }.firstOrNull()?.let {
-                it[GroupsDb.id].value
-            }
+            GroupsDb.selectAll()
+                .where { GroupsDb.title eq title }
+                .firstOrNull()?.let {
+                    it[GroupsDb.id].value
+                }
         }
     }
 

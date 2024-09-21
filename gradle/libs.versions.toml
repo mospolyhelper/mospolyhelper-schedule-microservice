@@ -19,8 +19,6 @@ gradlePlugin-ktlint = { module = "org.jmailen.gradle:kotlinter-gradle", version.
 gradlePlugin-kotlinxSerialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 gradlePlugin-ktor = { module = "io.ktor.plugin:plugin", version.ref = "ktor" }
 
-
-
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 ktor-server-config-yaml = { module = "io.ktor:ktor-server-config-yaml", version.ref = "ktor" }
 ktor-server-host-common = { module = "io.ktor:ktor-server-host-common", version.ref = "ktor" }

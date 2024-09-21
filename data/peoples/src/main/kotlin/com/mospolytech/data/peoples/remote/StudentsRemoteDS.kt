@@ -18,14 +18,18 @@ import com.mospolytech.domain.peoples.model.toPerson
 import com.mospolytech.domain.peoples.utils.toGroupId
 import kotlinx.datetime.Clock
 import kotlinx.datetime.toKotlinLocalDate
+import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.mapLazy
 import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -40,8 +44,7 @@ class StudentsRemoteDS {
         createPagingDto(pageSize, page) { offset ->
             val dbQuery =
                 StudentsDb.leftJoin(GroupsDb)
-                    .slice(StudentsDb.columns)
-                    .selectOrSelectAllIfEmpty(query) {
+                    .selectOrSelectAllIfEmpty(StudentsDb.columns, query) {
                         (GroupsDb.title like "%$query%") or
                             (StudentsDb.name.lowerCase() like "%${query.lowercase()}%")
                     }.orderBy(StudentsDb.name to SortOrder.ASC)
@@ -57,9 +60,9 @@ class StudentsRemoteDS {
         MosPolyDb.transaction {
             val query =
                 StudentsDb.leftJoin(GroupsDb)
-                    .select {
-                        (GroupsDb.title eq group)
-                    }.orderBy(
+                    .selectAll()
+                    .where { (GroupsDb.title eq group) }
+                    .orderBy(
                         StudentsDb.name to SortOrder.ASC,
                     )
 
@@ -76,8 +79,7 @@ class StudentsRemoteDS {
         createPagingDto(pageSize, page) { offset ->
             val query =
                 StudentsDb.leftJoin(GroupsDb)
-                    .slice(StudentsDb.columns)
-                    .selectOrSelectAllIfEmpty(query) {
+                    .selectOrSelectAllIfEmpty(StudentsDb.columns, query) {
                         (GroupsDb.title like "%$query%") or
                             (StudentsDb.name.lowerCase() like "%${query.lowercase()}%")
                     }.orderBy(StudentsDb.name to SortOrder.ASC)

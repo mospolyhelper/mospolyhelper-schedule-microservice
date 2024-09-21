@@ -19,6 +19,8 @@ import com.mospolytech.domain.schedule.model.pack.CompactSchedule
 import com.mospolytech.domain.schedule.model.place.CompactPlaceInfo
 import com.mospolytech.domain.schedule.repository.LessonsRepository
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import java.util.UUID
 
 class LessonsRepositoryImpl(
@@ -42,9 +44,9 @@ class LessonsRepositoryImpl(
                 if (placeIds.isNotEmpty()) {
                     val placesId = placeIds.map { UUID.fromString(it) }
 
-                    LessonToPlacesDb.select {
-                        LessonToPlacesDb.place inList placesId
-                    }.map { it[LessonToPlacesDb.lesson].value }.toSet()
+                    LessonToPlacesDb.selectAll()
+                        .where { LessonToPlacesDb.place inList placesId }
+                        .map { it[LessonToPlacesDb.lesson].value }.toSet()
                 } else {
                     setOf<UUID>()
                 }
@@ -71,15 +73,14 @@ class LessonsRepositoryImpl(
     override suspend fun getLessonsByGroup(groupId: String): CompactSchedule {
         return MosPolyDb.transaction {
             val lessonsId =
-                LessonToGroupsDb.select {
-                    LessonToGroupsDb.group eq groupId
-                }.mapLazy { it[LessonToGroupsDb.lesson].value }
+                LessonToGroupsDb.selectAll()
+                    .where { LessonToGroupsDb.group eq groupId }
+                    .mapLazy { it[LessonToGroupsDb.lesson].value }
                     .toList()
 
             val query =
-                fullQuery().select {
-                    LessonsDb.id inList lessonsId
-                }
+                fullQuery().selectAll()
+                    .where { LessonsDb.id inList lessonsId }
 
             buildSchedule(query)
         }
@@ -90,15 +91,14 @@ class LessonsRepositoryImpl(
             val groupId = StudentEntity.findById(studentId)?.group?.id?.value.orEmpty()
 
             val lessonsId =
-                LessonToGroupsDb.select {
-                    LessonToGroupsDb.group eq groupId
-                }.mapLazy { it[LessonToGroupsDb.lesson].value }
+                LessonToGroupsDb.selectAll()
+                    .where { LessonToGroupsDb.group eq groupId }
+                    .mapLazy { it[LessonToGroupsDb.lesson].value }
                     .toList()
 
             val query =
-                fullQuery().select {
-                    LessonsDb.id inList lessonsId
-                }
+                fullQuery().selectAll()
+                    .where { LessonsDb.id inList lessonsId }
 
             buildSchedule(query)
         }
@@ -107,15 +107,14 @@ class LessonsRepositoryImpl(
     override suspend fun getLessonsByTeacher(teacherId: String): CompactSchedule {
         return MosPolyDb.transaction {
             val lessonsId =
-                LessonToTeachersDb.select {
-                    LessonToTeachersDb.teacher eq teacherId
-                }.mapLazy { it[LessonToTeachersDb.lesson].value }
+                LessonToTeachersDb.selectAll()
+                    .where { LessonToTeachersDb.teacher eq teacherId }
+                    .mapLazy { it[LessonToTeachersDb.lesson].value }
                     .toList()
 
             val query =
-                fullQuery().select {
-                    LessonsDb.id inList lessonsId
-                }
+                fullQuery().selectAll()
+                    .where { LessonsDb.id inList lessonsId }
 
             buildSchedule(query)
         }
@@ -124,15 +123,14 @@ class LessonsRepositoryImpl(
     override suspend fun getLessonsByPlace(placeId: String): CompactSchedule {
         return MosPolyDb.transaction {
             val lessonsId =
-                LessonToPlacesDb.select {
-                    LessonToPlacesDb.place eq UUID.fromString(placeId)
-                }.mapLazy { it[LessonToPlacesDb.lesson].value }
+                LessonToPlacesDb.selectAll()
+                    .where { LessonToPlacesDb.place eq UUID.fromString(placeId) }
+                    .mapLazy { it[LessonToPlacesDb.lesson].value }
                     .toList()
 
             val query =
-                fullQuery().select {
-                    LessonsDb.id inList lessonsId
-                }
+                fullQuery().selectAll()
+                    .where { LessonsDb.id inList lessonsId }
 
             buildSchedule(query)
         }
@@ -141,9 +139,8 @@ class LessonsRepositoryImpl(
     override suspend fun getLessonsBySubject(subjectId: String): CompactSchedule {
         return MosPolyDb.transaction {
             val query =
-                fullQuery().select {
-                    LessonsDb.subject eq subjectId
-                }
+                fullQuery().selectAll()
+                    .where { LessonsDb.subject eq subjectId }
 
             buildSchedule(query)
         }
@@ -166,9 +163,10 @@ class LessonsRepositoryImpl(
 
             if (filter.groupsId.isNotEmpty()) {
                 val lessonsToIntersect =
-                    LessonToGroupsDb.select {
-                        LessonToGroupsDb.group inList filter.groupsId
-                    }.map { it[LessonToGroupsDb.lesson].value }.toSet()
+                    LessonToGroupsDb.selectAll()
+                        .where { LessonToGroupsDb.group inList filter.groupsId }
+                        .map { it[LessonToGroupsDb.lesson].value }
+                        .toSet()
 
                 updateResList(lessonsToIntersect)
                 if (isInitialized && resLessons.isEmpty()) return@transaction CompactSchedule.empty
@@ -176,9 +174,10 @@ class LessonsRepositoryImpl(
 
             if (filter.teachersId.isNotEmpty()) {
                 val lessonsToIntersect =
-                    LessonToTeachersDb.select {
-                        LessonToTeachersDb.teacher inList filter.teachersId
-                    }.map { it[LessonToTeachersDb.lesson].value }.toSet()
+                    LessonToTeachersDb.selectAll()
+                        .where { LessonToTeachersDb.teacher inList filter.teachersId }
+                        .map { it[LessonToTeachersDb.lesson].value }
+                        .toSet()
 
                 updateResList(lessonsToIntersect)
                 if (isInitialized && resLessons.isEmpty()) return@transaction CompactSchedule.empty
@@ -187,9 +186,10 @@ class LessonsRepositoryImpl(
             if (filter.placesId.isNotEmpty()) {
                 val placesId = filter.placesId.map { UUID.fromString(it) }
                 val lessonsToIntersect =
-                    LessonToPlacesDb.select {
-                        LessonToPlacesDb.place inList placesId
-                    }.map { it[LessonToPlacesDb.lesson].value }.toSet()
+                    LessonToPlacesDb.selectAll()
+                        .where { LessonToPlacesDb.place inList placesId }
+                        .map { it[LessonToPlacesDb.lesson].value }
+                        .toSet()
 
                 updateResList(lessonsToIntersect)
                 if (isInitialized && resLessons.isEmpty()) return@transaction CompactSchedule.empty
