@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     implementation(libs.gradlePlugin.kotlin.jvm)
-    implementation(libs.gradlePlugin.ktlint)
+    implementation(libs.gradlePlugin.detekt)
     implementation(libs.gradlePlugin.kotlinxSerialization)
     implementation(libs.gradlePlugin.ktor)
 

@@ -1,3 +1,3 @@
 plugins {
-    id("ktlint")
+    id("com.mospolytech.lint")
 }

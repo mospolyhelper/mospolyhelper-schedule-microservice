@@ -1,5 +1,5 @@
 plugins {
-    id("ktlint")
+    id("com.mospolytech.lint")
     kotlin("jvm")
 }
 
