@@ -10,5 +10,21 @@ task<Copy>("installGitHook") {
     from(fromFile)
     into(intoFile)
     rename("$prefix-$suffix", prefix)
-    fileMode = 775
+    filePermissions {
+        user {
+            read = true
+            write = true
+            execute = true
+        }
+        group {
+            read = true
+            write = true
+            execute = true
+        }
+        other {
+            read = true
+            execute = true
+            write = false
+        }
+    }
 }
