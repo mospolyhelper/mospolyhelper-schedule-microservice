@@ -35,7 +35,7 @@ fun Application.module() {
 }
 
 fun Application.setRoutes() {
-    authRoutesV1(get(), get(), get(), get())
+    authRoutesV1(get(), get(), get(), get(), get())
     applicationsRoutesV1(get())
     paymentsRoutesV1(get())
     personalRoutesV1(get())
