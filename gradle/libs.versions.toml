@@ -9,8 +9,10 @@ koin = "4.0.0" # https://github.com/InsertKoinIO/koin/releases
 exposed = "0.54.0" # https://github.com/JetBrains/Exposed/blob/main/CHANGELOG.md
 xmlutil = "0.90.1" # https://github.com/pdvrieze/xmlutil/releases
 kotlinxDatetime = "0.6.1" # https://github.com/Kotlin/kotlinx-datetime/releases
+kotlinxSerialization = "1.7.3" # https://github.com/Kotlin/kotlinx.serialization/releases
 postgresql = "42.7.4" # https://mvnrepository.com/artifact/org.postgresql/postgresql
 quartz = "2.3.2" # https://mvnrepository.com/artifact/org.quartz-scheduler/quartz
+jwt = "4.4.0" # https://github.com/auth0/java-jwt/releases
 
 
 [libraries]
@@ -45,6 +47,7 @@ ktor-client-apache = { module = "io.ktor:ktor-client-apache", version.ref = "kto
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 
+jwt = { module = "com.auth0:java-jwt", version.ref = "jwt" }
 
 prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "prometeus" }
 
@@ -66,6 +69,7 @@ xmlutil-serialization = { module = "io.github.pdvrieze.xmlutil:serialization", v
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
 quartz = { module = "org.quartz-scheduler:quartz", version.ref = "quartz" }
 

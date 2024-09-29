@@ -22,6 +22,10 @@ class AppConfigImpl(private val config: ApplicationConfig) : AppConfig {
         }
     }
 
+    override val jwtSecret: String by lazy {
+        config.propertyOrNull("jwt.secret")?.getString().orEmpty()
+    }
+
     override val getStudentsUrl: String by lazy {
         config.propertyOrNull("urls.getStudents")?.getString().orEmpty()
     }

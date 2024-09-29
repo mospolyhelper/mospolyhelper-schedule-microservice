@@ -4,6 +4,7 @@ import com.mospolytech.data.auth.authDataModule
 import com.mospolytech.data.base.baseDataModule
 import com.mospolytech.data.peoples.peoplesDataModule
 import com.mospolytech.data.schedule.scheduleDataModule
+import com.mospolytech.domain.auth.authDomainModule
 import com.mospolytech.domain.peoples.peoplesDomainModule
 import com.mospolytech.domain.schedule.scheduleDomainModule
 import com.mospolytech.domain.services.applications.applicationsDomainModule
@@ -27,6 +28,7 @@ val appModules =
         baseDataModule,
         BaseFeatureModule.di,
         authDataModule,
+        authDomainModule,
         applicationsDataModule,
         applicationsDomainModule,
         applicationsFeatureModule,

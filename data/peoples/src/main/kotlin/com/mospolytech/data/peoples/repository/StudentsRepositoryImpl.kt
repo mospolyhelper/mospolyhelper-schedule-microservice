@@ -30,8 +30,12 @@ class StudentsRepositoryImpl(
     }
 
     override suspend fun getClassmates(token: String): Result<List<Person>> {
-        return personalRepository.getPersonalGroup(token).mapCatching {
-            studentsDS.getStudents(it).map { it.toPerson() }
+        return personalRepository.getPersonalGroup(token).mapCatching { group ->
+            if (group == null) {
+                emptyList()
+            } else {
+                studentsDS.getStudents(group).map { it.toPerson() }
+            }
         }
     }
 

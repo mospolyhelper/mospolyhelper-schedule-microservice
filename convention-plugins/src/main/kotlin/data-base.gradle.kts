@@ -11,6 +11,7 @@ plugins {
 val libs = the<LibrariesForLibs>()
 
 dependencies {
+    implementation(libs.kotlinx.serialization)
     implementation(libs.ktor.serialization.kotlinx.json)
 
     implementation(libs.ktor.client.core)

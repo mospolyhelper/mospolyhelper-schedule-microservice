@@ -15,3 +15,13 @@ suspend fun ApplicationCall.getTokenOrRespondError(): String? {
         principal.token
     }
 }
+
+suspend fun ApplicationCall.getPrincipalOrRespondError(): MpuPrincipal? {
+    val principal: MpuPrincipal? = authentication.principal()
+    return if (principal == null) {
+        respond(HttpStatusCode.Unauthorized)
+        null
+    } else {
+        principal
+    }
+}

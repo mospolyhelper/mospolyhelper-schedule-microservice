@@ -27,7 +27,11 @@ class MpuCredential(val payload: Payload) : Credential
 /**
  * Represents a JWT principal consist of the specified [String]
  */
-class MpuPrincipal(val token: String) : Principal
+data class MpuPrincipal(
+    val token: String,
+    val guid: String?,
+    val jwt: String?,
+) : Principal
 
 /**
  * JWT authentication provider that will be registered with the specified [name]
@@ -149,12 +153,12 @@ private suspend fun verifyAndValidate(
 private fun HttpAuthHeader.getBlob(secret: String) =
     when {
         this is HttpAuthHeader.Single && authScheme == "Bearer" -> {
-            blob.decodeJwtToken(secret).parse()
+            blob.verifyAndDecodeJwtToken(secret).parse()
         }
         else -> null
     }
 
-private fun String.decodeJwtToken(secret: String) =
+private fun String.verifyAndDecodeJwtToken(secret: String): DecodedJWT =
     JWT
         .require(Algorithm.HMAC256(secret))
         .build()

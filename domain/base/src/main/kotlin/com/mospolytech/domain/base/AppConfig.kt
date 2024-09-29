@@ -11,6 +11,8 @@ interface AppConfig {
     val adminKey: String
     val adminLogLevel: AdminLogLevel
 
+    val jwtSecret: String
+
     val getStudentsUrl: String
     val getStudentsAuth: String
 

@@ -1,5 +1,6 @@
 package com.mospolytech.features.base.plugins
 
+import com.mospolytech.domain.base.model.MpuPrincipalFields
 import com.mospolytech.features.base.AuthConfigs
 import com.mospolytech.features.base.MpuPrincipal
 import com.mospolytech.features.base.mpuAuth
@@ -11,7 +12,11 @@ fun Application.configureSecurity() {
     install(Authentication) {
         mpuAuth(AuthConfigs.MPU, secret) {
             validate {
-                MpuPrincipal(it.payload.getClaim("mospolytechLkToken").asString())
+                MpuPrincipal(
+                    token = it.payload.getClaim(MpuPrincipalFields.MpuLkToken).asString(),
+                    guid = it.payload.getClaim(MpuPrincipalFields.MpuUserGuid).asString(),
+                    jwt = it.payload.getClaim(MpuPrincipalFields.MpuJwt).asString(),
+                )
             }
         }
     }

@@ -4,4 +4,5 @@ plugins {
 
 dependencies {
     api(projects.domain.base)
+    implementation(libs.jwt)
 }

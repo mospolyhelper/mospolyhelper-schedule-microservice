@@ -14,7 +14,7 @@ class PersonalRepositoryImpl(
         }
     }
 
-    override suspend fun getPersonalGroup(token: String): Result<String> {
+    override suspend fun getPersonalGroup(token: String): Result<String?> {
         return runCatching {
             val personalResponse = service.getPersonalInfo(token)
             personalResponse.user.group
@@ -23,7 +23,7 @@ class PersonalRepositoryImpl(
 
     override suspend fun getCourse(token: String): Result<Int> {
         return runCatching {
-            service.getPersonalInfo(token).user.course.toIntOrNull() ?: 1
+            service.getPersonalInfo(token).user.course?.toIntOrNull() ?: 1
         }
     }
 

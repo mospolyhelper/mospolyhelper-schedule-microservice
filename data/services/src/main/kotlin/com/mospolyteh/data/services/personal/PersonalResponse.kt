@@ -17,11 +17,9 @@ data class PersonalResponse(
 ) {
     @Serializable
     data class User(
-        val id: Int,
+        val id: String,
         @SerialName("user_status")
         val userStatus: String,
-        val status: String,
-        val course: String,
         val name: String,
         val surname: String,
         val patronymic: String,
@@ -30,16 +28,34 @@ data class PersonalResponse(
         val sex: String,
         val code: String,
         val faculty: String,
-        val group: String,
         val specialty: String,
         val specialization: String,
         val degreeLength: String,
-        val educationForm: String,
-        val finance: String,
-        val degreeLevel: String,
         val enterYear: String,
-        val orders: List<String>,
+        val orders: List<String>? = null,
         val subdivisions: List<Subdivision>? = null,
+        // Student
+        @SerialName("status")
+        val status: String? = null,
+        @SerialName("group")
+        val group: String? = null,
+        @SerialName("course")
+        val course: String? = null,
+        @SerialName("educationForm")
+        val educationForm: String? = null,
+        @SerialName("finance")
+        val finance: String? = null,
+//        @SerialName("vacation_start")
+//        val vacationStart: String? = null,
+//        @SerialName("vacation_end")
+//        val vacationEnd: String? = null,
+        @SerialName("degreeLevel")
+        val degreeLevel: String? = null,
+        // Staff
+        @SerialName("work_place")
+        val workPlace: String? = null,
+        @SerialName("email_staff")
+        val emailStaff: String? = null,
     )
 
     @Serializable
@@ -65,34 +81,43 @@ fun PersonalResponse.toModel(): Personal {
     val isStudent = user.isStudent()
     val description =
         if (isStudent) {
-            "${user.group} • ${user.degreeLevel.lowercase()}"
+            "${user.group} • ${user.degreeLevel?.lowercase() ?: "студент"}"
         } else {
-            "Преподаватель"
+            if (user.workPlace == null) {
+                "Сотрудник"
+            } else {
+                "Сотрудник • ${user.workPlace}"
+            }
         }
+
     return Personal(
-        id = this.user.id.toString(),
+        id = this.user.id,
         name = fullName,
         description = description,
         avatar = this.user.avatar.ifEmpty { null },
         data =
         buildList {
-            add(PersonalData(title = "Статус", value = user.status))
-            add(PersonalData(title = "Курс", value = user.course))
-            add(PersonalData(title = "Дата рождения", value = user.birthday))
-            add(PersonalData(title = "Пол", value = user.sex.getSex()))
-            add(PersonalData(title = "Код студента", value = user.code))
-            add(PersonalData(title = "Факультет", value = user.faculty))
-            add(PersonalData(title = "Группа", value = user.group))
-            add(PersonalData(title = "Направление", value = user.specialty))
-            user.specialization.ifEmpty { null }?.let { specialization ->
-                add(PersonalData(title = "Специализация", value = specialization))
-            }
-            add(PersonalData(title = "Срок обучения", value = user.degreeLength.filter { it.isDigit() }))
-            add(PersonalData(title = "Форма обучения", value = user.educationForm))
-            add(PersonalData(title = "Вид финансирования", value = user.finance))
-            add(PersonalData(title = "Год набора", value = user.enterYear))
+            addData("Статус", user.status)
+            addData("Статус", user.status)
+            addData("Курс", user.course)
+            addData("Дата рождения", user.birthday)
+            addData("Пол", user.sex.getSex())
+            addData("Код студента", user.code)
+            addData("Факультет", user.faculty)
+            addData("Группа", user.group)
+            addData("Направление", user.specialty)
+            addData("Специализация", user.specialization.ifEmpty { null })
+            addData("Срок обучения", user.degreeLength.filter { it.isDigit() })
+            addData("Форма обучения", user.educationForm)
+            addData("Вид финансирования", user.finance)
+            addData("Год набора", user.enterYear)
         },
     )
+}
+private fun MutableList<PersonalData>.addData(title: String, value: String?) {
+    if (value == null) return
+
+    add(PersonalData(title = title, value = value))
 }
 
 private fun String.getSex() =

@@ -1,8 +1,10 @@
 package com.mospolytech.data.auth
 
+import com.mospolytech.domain.auth.AccountsModel
 import com.mospolytech.domain.auth.AuthRepository
+import com.mospolytech.domain.auth.RefreshTokenModel
+import com.mospolytech.domain.auth.TokenModel
 import com.mospolytech.domain.base.AppConfig
-import java.util.*
 
 class AuthRepositoryImpl(
     private val service: AuthService,
@@ -11,9 +13,30 @@ class AuthRepositoryImpl(
     override suspend fun getToken(
         login: String,
         password: String,
-    ): Result<String> {
+    ): Result<TokenModel> {
         return runCatching {
-            service.getToken(login, password).token
+            val response = service.getToken(login, password)
+
+            response.toDomainModel()
+        }
+    }
+
+    override suspend fun refreshToken(refreshTokenModel: RefreshTokenModel): Result<TokenModel> {
+        return if (refreshTokenModel.jwtRefresh == null) {
+            Result.success(
+                TokenModel(
+                    token = refreshTokenModel.token,
+                    guid = refreshTokenModel.guid,
+                    jwt = null,
+                    jwtRefresh = null,
+                )
+            )
+        } else {
+            runCatching {
+                val response = service.refreshToken(refreshTokenModel.jwtRefresh!!)
+
+                response.toDomainModel(refreshTokenModel.token)
+            }
         }
     }
 
@@ -21,5 +44,13 @@ class AuthRepositoryImpl(
         val login = appConfig.mainLkLogin
         val password = appConfig.mainLkPassword
         return service.getToken(login, password).token
+    }
+
+    override suspend fun getAccount(token: String, guid: String?): Result<AccountsModel> {
+        return runCatching {
+            val response = service.getAccounts(token)
+
+            response.toModel(guid)
+        }
     }
 }

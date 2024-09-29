@@ -21,6 +21,9 @@ val baseDataModule =
                     val json =
                         Json {
                             ignoreUnknownKeys = true
+
+                            // Api политеха может выдать и "id": 123, и "id": "123"
+                            isLenient = true
                         }
 
                     json(json)
@@ -28,7 +31,7 @@ val baseDataModule =
                 }
 
                 install(Logging) {
-                    logger = Logger.DEFAULT
+                    logger = CustomLogger
                     level = LogLevel.INFO
                 }
 
@@ -43,3 +46,11 @@ val baseDataModule =
             }
         }
     }
+
+private object CustomLogger : Logger {
+    override fun log(message: String) {
+        // Replace the token parameter in URLs with asterisks
+        val filteredMessage = message.replace(Regex("token=[^&\\s]*"), "token=****")
+        Logger.DEFAULT.log(filteredMessage)
+    }
+}
