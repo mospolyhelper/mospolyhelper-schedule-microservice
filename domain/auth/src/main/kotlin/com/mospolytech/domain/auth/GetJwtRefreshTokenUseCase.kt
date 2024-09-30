@@ -20,7 +20,7 @@ class GetJwtRefreshTokenUseCase(
             // MpuLkToken не устаревает и мы будем возвращать его
             .withClaim(MpuPrincipalFields.MpuLkToken, this.token)
             .withNullableClaim(MpuPrincipalFields.MpuUserGuid, this.guid)
-            .withNullableClaim(MpuPrincipalFields.MpuJwt, this.jwt)
+            .withNullableClaim(MpuPrincipalFields.MpuJwt, this.jwtRefresh)
             .withExpiresAt(Date(Long.MAX_VALUE))
             .sign(Algorithm.HMAC256(secretKey))
     }
