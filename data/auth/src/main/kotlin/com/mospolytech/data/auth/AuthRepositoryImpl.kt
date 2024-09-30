@@ -2,6 +2,8 @@ package com.mospolytech.data.auth
 
 import com.mospolytech.domain.auth.AccountsModel
 import com.mospolytech.domain.auth.AuthRepository
+import com.mospolytech.domain.auth.GetJwtRefreshTokenUseCase
+import com.mospolytech.domain.auth.GetJwtTokenUseCase
 import com.mospolytech.domain.auth.RefreshTokenModel
 import com.mospolytech.domain.auth.TokenModel
 import com.mospolytech.domain.base.AppConfig
@@ -9,6 +11,8 @@ import com.mospolytech.domain.base.AppConfig
 class AuthRepositoryImpl(
     private val service: AuthService,
     private val appConfig: AppConfig,
+    private val getJwtTokenUseCase: GetJwtTokenUseCase,
+    private val getJwtRefreshTokenUseCase: GetJwtRefreshTokenUseCase,
 ) : AuthRepository {
     override suspend fun getToken(
         login: String,
@@ -49,6 +53,8 @@ class AuthRepositoryImpl(
     override suspend fun getAccount(token: String, guid: String?): Result<AccountsModel> {
         return runCatching {
             val response = service.getAccounts(token)
+
+            val accessToken = getJwtTokenUseCase()
 
             response.toModel(guid)
         }

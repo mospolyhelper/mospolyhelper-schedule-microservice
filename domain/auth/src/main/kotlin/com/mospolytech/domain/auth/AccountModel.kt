@@ -13,6 +13,10 @@ data class AccountModel(
     val description: String,
     @SerialName("avatar")
     val avatar: String?,
+    @SerialName("accessToken")
+    val accessToken: String?,
+    @SerialName("refreshToken")
+    val refreshToken: String?,
 )
 
 @Serializable
