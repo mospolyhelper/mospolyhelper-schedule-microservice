@@ -36,7 +36,7 @@ fun Application.authRoutesV1(
                 loginPost(repository, getJwtTokenUseCase, getJwtRefreshTokenUseCase)
             }
 
-            get("/refresh") {
+            post("/refresh") {
                 val refreshRequest = call.receive<RefreshRequest>()
                 val refreshTokenModel = parseRefreshTokenUseCase(refreshRequest.refreshToken)
                 val newToken = repository.refreshToken(refreshTokenModel).mapCatching {
