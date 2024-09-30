@@ -16,8 +16,11 @@ class AccountsDtoMapper(
     private val getJwtTokenUseCase: GetJwtTokenUseCase,
     private val getJwtRefreshTokenUseCase: GetJwtRefreshTokenUseCase,
 ) {
+    fun toModel(response: AccountsResponse, guid: String?): AccountsModel {
+        return response.toModel(guid)
+    }
 
-    fun AccountsResponse.toModel(guid: String?): AccountsModel {
+    private fun AccountsResponse.toModel(guid: String?): AccountsModel {
         val fullName = this.user.surname + " " + this.user.name + " " + this.user.patronymic
         val isStudent = user.isStudent()
         val description =
@@ -67,7 +70,7 @@ class AccountsDtoMapper(
         val token = toTokenModel(guid)
 
         val accessToken = getJwtTokenUseCase(token)
-        val refreshToken = getJwtTokenUseCase(token)
+        val refreshToken = getJwtRefreshTokenUseCase(token)
 
         val description =
             if (isStudent) {
