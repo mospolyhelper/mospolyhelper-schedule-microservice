@@ -1,7 +1,6 @@
 package com.mospolytech.data.peoples.remote
 
 import com.mospolytech.data.base.createPagingDto
-import com.mospolytech.data.base.selectOrSelectAllIfEmpty
 import com.mospolytech.data.base.upsert
 import com.mospolytech.data.common.db.MosPolyDb
 import com.mospolytech.data.peoples.model.db.GroupsDb
@@ -22,6 +21,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.andWhere
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.mapLazy
@@ -41,10 +41,15 @@ class StudentsRemoteDS {
         createPagingDto(pageSize, page) { offset ->
             val dbQuery =
                 StudentsDb.leftJoin(GroupsDb)
-                    .selectOrSelectAllIfEmpty(StudentsDb.columns, query) {
-                        (GroupsDb.title like "%$query%") or
-                            (StudentsDb.name.lowerCase() like "%${query.lowercase()}%")
-                    }.orderBy(StudentsDb.name to SortOrder.ASC)
+                    .select(StudentsDb.columns)
+                    .orderBy(StudentsDb.name to SortOrder.ASC)
+
+            if (query.isNotEmpty()) {
+                dbQuery.andWhere {
+                    (GroupsDb.title like "%$query%") or
+                        (StudentsDb.name.lowerCase() like "%${query.lowercase()}%")
+                }
+            }
 
             StudentEntity.wrapRows(dbQuery)
                 .limit(pageSize, offset.toLong())
@@ -74,14 +79,19 @@ class StudentsRemoteDS {
         page: Int,
     ) = MosPolyDb.transaction {
         createPagingDto(pageSize, page) { offset ->
-            val query =
+            val dbQuery =
                 StudentsDb.leftJoin(GroupsDb)
-                    .selectOrSelectAllIfEmpty(StudentsDb.columns, query) {
-                        (GroupsDb.title like "%$query%") or
-                            (StudentsDb.name.lowerCase() like "%${query.lowercase()}%")
-                    }.orderBy(StudentsDb.name to SortOrder.ASC)
+                    .select(StudentsDb.columns)
+                    .orderBy(StudentsDb.name to SortOrder.ASC)
 
-            StudentShortEntity.wrapRows(query)
+            if (query.isNotEmpty()) {
+                dbQuery.andWhere {
+                    (GroupsDb.title like "%$query%") or
+                        (StudentsDb.name.lowerCase() like "%${query.lowercase()}%")
+                }
+            }
+
+            StudentShortEntity.wrapRows(dbQuery)
                 .limit(pageSize, offset.toLong())
                 .mapLazy { it.toModel() }
                 .toList()

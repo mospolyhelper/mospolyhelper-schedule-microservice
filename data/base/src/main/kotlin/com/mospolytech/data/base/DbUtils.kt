@@ -6,13 +6,9 @@ import org.jetbrains.exposed.dao.EntityClass
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.CustomStringFunction
 import org.jetbrains.exposed.sql.Expression
-import org.jetbrains.exposed.sql.FieldSet
 import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.Query
 import org.jetbrains.exposed.sql.SizedIterable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
-import org.jetbrains.exposed.sql.Table.Dual.select
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.stringParam
 
 fun <T : Entity<ID>, ID : Comparable<ID>> EntityClass<ID, T>.upsert(
@@ -82,29 +78,6 @@ fun <ID : Comparable<ID>, T : Entity<ID>> EntityClass<ID, T>.findOrAllIfEmpty(
         all()
     } else {
         find(op)
-    }
-}
-
-fun FieldSet.selectOrSelectAllIfEmpty(
-    query: String,
-    where: SqlExpressionBuilder.() -> Op<Boolean>,
-): Query {
-    return if (query.isEmpty()) {
-        selectAll()
-    } else {
-        selectAll().where(where)
-    }
-}
-
-fun FieldSet.selectOrSelectAllIfEmpty(
-    columns: List<Expression<*>>,
-    query: String,
-    where: SqlExpressionBuilder.() -> Op<Boolean>,
-): Query {
-    return if (query.isEmpty()) {
-        select(columns)
-    } else {
-        select(columns).where(where)
     }
 }
 
