@@ -17,6 +17,8 @@ class GetJwtRefreshTokenUseCase(
     private fun TokenModel.createRefreshJwt(secretKey: String): String {
         return JWT
             .create()
+            // MpuLkToken не устаревает и мы будем возвращать его
+            .withClaim(MpuPrincipalFields.MpuLkToken, this.token)
             .withNullableClaim(MpuPrincipalFields.MpuUserGuid, this.guid)
             .withNullableClaim(MpuPrincipalFields.MpuJwt, this.jwt)
             .withExpiresAt(Date(Long.MAX_VALUE))

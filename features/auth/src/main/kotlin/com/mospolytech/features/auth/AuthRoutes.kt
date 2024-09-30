@@ -61,7 +61,7 @@ fun Application.authRoutesV1(
                         guid = principal.guid,
                     )
 
-                    call.respond(accounts)
+                    call.respondResult(accounts)
                 }
             }
         }
