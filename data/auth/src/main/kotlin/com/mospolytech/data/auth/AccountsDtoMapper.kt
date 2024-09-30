@@ -20,6 +20,7 @@ class AccountsDtoMapper(
         return response.toModel(guid)
     }
 
+    @JvmName("toModelPrivate")
     private fun AccountsResponse.toModel(guid: String?): AccountsModel {
         val fullName = this.user.surname + " " + this.user.name + " " + this.user.patronymic
         val isStudent = user.isStudent()
