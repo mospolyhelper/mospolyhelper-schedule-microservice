@@ -41,7 +41,7 @@ class TeachersRepositoryImpl(
             teachersDS.createTables()
         } else {
             teachersDS.ensureCreated()
-            teachersDS.clearData()
+            teachersDS.clearOldData()
         }
 
         val isSource1 = false

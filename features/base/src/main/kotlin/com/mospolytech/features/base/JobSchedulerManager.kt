@@ -2,8 +2,15 @@ package com.mospolytech.features.base
 
 import com.mospolytech.domain.base.AppConfig
 import com.mospolytech.features.base.utils.DiJobFactory
+import org.quartz.CronScheduleBuilder
+import org.quartz.Job
+import org.quartz.JobBuilder
+import org.quartz.JobDetail
+import org.quartz.JobKey
 import org.quartz.Scheduler
 import org.quartz.SchedulerFactory
+import org.quartz.Trigger
+import org.quartz.TriggerBuilder
 import org.quartz.impl.StdSchedulerFactory
 import java.util.*
 
@@ -42,5 +49,42 @@ class JobSchedulerManager(config: AppConfig) {
 
     fun startScheduler() {
         scheduler.start()
+    }
+
+    fun launchJobNow(key: String, group: String) {
+        val jobKey = JobKey.jobKey(key, group)
+        scheduler.triggerJob(jobKey)
+    }
+
+    inline fun <reified T : Job> createNewJob(key: String, group: String): JobDetail {
+        // If a job exists, delete it!
+        val jobKey = JobKey.jobKey(key, group)
+        scheduler.deleteJob(jobKey)
+
+        val job: JobDetail =
+            JobBuilder.newJob(T::class.java)
+                .withIdentity(key, group)
+                .build()
+
+        return job
+    }
+
+    fun createTrigger(triggerId: String, group: String, schedule: CronScheduleBuilder): Trigger {
+        val trigger: Trigger =
+            TriggerBuilder.newTrigger()
+                .withIdentity(triggerId, group)
+                .withSchedule(schedule)
+                .build()
+
+        return trigger
+    }
+
+    companion object {
+        val scheduleUpdateCron
+            get() = CronScheduleBuilder.dailyAtHourAndMinute(0, 32)
+        val studentsUpdateCron
+            get() = CronScheduleBuilder.monthlyOnDayAndHourAndMinute(4, 1, 44)
+        val teachersUpdateCron
+            get() = CronScheduleBuilder.monthlyOnDayAndHourAndMinute(5, 1, 44)
     }
 }

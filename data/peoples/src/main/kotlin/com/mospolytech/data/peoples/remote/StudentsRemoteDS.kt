@@ -13,16 +13,18 @@ import com.mospolytech.data.peoples.model.xml.StudentEducationGroupXml
 import com.mospolytech.data.peoples.model.xml.StudentInfoXml
 import com.mospolytech.data.peoples.model.xml.StudentXml
 import com.mospolytech.domain.peoples.model.Student
-import com.mospolytech.domain.peoples.model.toPerson
 import com.mospolytech.domain.peoples.utils.toGroupId
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimePeriod
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
 import kotlinx.datetime.toKotlinLocalDate
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.andWhere
-import org.jetbrains.exposed.sql.deleteAll
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.lowerCase
 import org.jetbrains.exposed.sql.mapLazy
 import org.jetbrains.exposed.sql.or
@@ -33,31 +35,6 @@ import java.util.*
 import kotlin.sequences.Sequence
 
 class StudentsRemoteDS {
-    suspend fun getStudentsPaging(
-        query: String,
-        pageSize: Int,
-        page: Int,
-    ) = MosPolyDb.transaction {
-        createPagingDto(pageSize, page) { offset ->
-            val dbQuery =
-                StudentsDb.leftJoin(GroupsDb)
-                    .select(StudentsDb.columns)
-                    .orderBy(StudentsDb.name to SortOrder.ASC)
-
-            if (query.isNotEmpty()) {
-                dbQuery.andWhere {
-                    (GroupsDb.title like "%$query%") or
-                        (StudentsDb.name.lowerCase() like "%${query.lowercase()}%")
-                }
-            }
-
-            StudentEntity.wrapRows(dbQuery)
-                .limit(pageSize, offset.toLong())
-                .mapLazy { it.toModel().toPerson() }
-                .toList()
-        }
-    }
-
     suspend fun getStudents(group: String): List<Student> =
         MosPolyDb.transaction {
             val query =
@@ -244,10 +221,10 @@ class StudentsRemoteDS {
         }
     }
 
-    suspend fun clearData() {
+    suspend fun clearOldData() {
         MosPolyDb.transaction {
-            // TODO Делать умную очискту на основе последней даты
-            StudentsDb.deleteAll()
+            val oneYearAgo = Clock.System.now().minus(DateTimePeriod(years = 1), TimeZone.UTC)
+            StudentsDb.deleteWhere { StudentsDb.lastUpdate less oneYearAgo }
 //            GroupsDb.deleteAll()
         }
     }

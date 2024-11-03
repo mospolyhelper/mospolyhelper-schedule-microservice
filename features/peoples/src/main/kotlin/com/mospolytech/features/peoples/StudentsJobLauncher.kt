@@ -7,33 +7,22 @@ class StudentsJobLauncher(
     private val jobSchedulerManager: JobSchedulerManager,
 ) {
     fun launch() {
-        val triggerId = "UpdateStudentsJob"
+        val job = jobSchedulerManager.createNewJob<StudentsUpdateJob>(
+            key = StudentsUpdateJob.KEY,
+            group = StudentsUpdateJob.GROUP,
+        )
 
-        // If a job exists, delete it!
-        val jobScheduler = jobSchedulerManager.scheduler
-        val jobKey = JobKey.jobKey(StudentsUpdateJob.KEY, StudentsUpdateJob.GROUP)
-        jobScheduler.deleteJob(jobKey)
-
-        val job: JobDetail =
-            JobBuilder.newJob(StudentsUpdateJob::class.java)
-                .withIdentity(StudentsUpdateJob.KEY, StudentsUpdateJob.GROUP)
-                .build()
-
-        val trigger: Trigger =
-            TriggerBuilder.newTrigger()
-                .withIdentity(triggerId, StudentsUpdateJob.GROUP)
-                .withSchedule(
-                    CronScheduleBuilder.monthlyOnDayAndHourAndMinute(4, 1, 44),
-                )
-                .build()
+        val trigger = jobSchedulerManager.createTrigger(
+            triggerId = "UpdateStudentsJob",
+            group = StudentsUpdateJob.GROUP,
+            schedule = JobSchedulerManager.studentsUpdateCron,
+        )
 
         // Tell quartz to schedule the job using our trigger
         jobSchedulerManager.scheduler.scheduleJob(job, trigger)
     }
 
     fun launchNow() {
-        val jobScheduler = jobSchedulerManager.scheduler
-        val jobKey = JobKey.jobKey(StudentsUpdateJob.KEY, StudentsUpdateJob.GROUP)
-        jobScheduler.triggerJob(jobKey)
+        jobSchedulerManager.launchJobNow(StudentsUpdateJob.KEY, StudentsUpdateJob.GROUP)
     }
 }

@@ -45,7 +45,7 @@ class StudentsRepositoryImpl(
             studentsDS.createTables()
         } else {
             studentsDS.ensureCreated()
-            studentsDS.clearData()
+            studentsDS.clearOldData()
         }
 
         val isSource1 = false

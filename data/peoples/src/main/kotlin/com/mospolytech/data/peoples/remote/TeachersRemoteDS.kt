@@ -10,6 +10,7 @@ import com.mospolytech.data.peoples.model.response.StaffResponse
 import com.mospolytech.data.peoples.model.xml.EmployeeInfo
 import com.mospolytech.domain.peoples.model.toPerson
 import kotlinx.datetime.Clock
+import kotlinx.datetime.minus
 import org.jetbrains.exposed.sql.*
 import java.util.UUID
 import kotlin.sequences.Sequence
@@ -123,10 +124,16 @@ class TeachersRemoteDS {
         }
     }
 
-    suspend fun clearData() {
-        MosPolyDb.transaction {
-            // TeachersDb.deleteAll()
-        }
+    suspend fun clearOldData() {
+//        MosPolyDb.transaction {
+//            val oneYearAgo = Clock.System.now().minus(DateTimePeriod(years = 1), TimeZone.UTC)
+//            TeachersDb.deleteWhere {
+//                (TeachersDb.lastUpdate less oneYearAgo) and
+//                    notExists(
+//                        LessonToTeachersDb.select { LessonToTeachersDb.teacher eq TeachersDb.id }
+//                    )
+//            }
+//        }
     }
 
     suspend fun deleteTables() {
