@@ -5,7 +5,19 @@
 ```
 
 ## Docker
-Для сборки и отправки на сервер использовать скрипт build_send.ps1
+Для сборки и отправки на сервер использовать скрипт build_send
+Для запуска на сервере
+```shell
+cd edugma/prod/
+sudo ./load
+sudo docker compose up -d
+```
+Для логов за последние 10 минут
+```shell
+sudo docker compose logs --since 10m
+```
+
+## Прочее
 
 После добавления edugma в докер
 Запуск Docker Compose с деатачем от процесса
