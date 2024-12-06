@@ -7,11 +7,11 @@ import com.mospolytech.domain.services.personal.PersonalRepository
 import com.mospolytech.features.schedule.ScheduleJobLauncher
 import com.mospolytech.features.schedule.routes.model.ScheduleRequest
 import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.locations.*
 import io.ktor.server.request.*
+import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.routing.get
 
 fun Routing.scheduleRoutesV1(
     repository: ScheduleRepository,

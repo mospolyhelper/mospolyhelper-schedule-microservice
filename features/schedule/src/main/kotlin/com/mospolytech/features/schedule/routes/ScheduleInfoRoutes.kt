@@ -4,8 +4,7 @@ import com.mospolytech.domain.schedule.model.scheduleInfo.ScheduleInfoObject
 import com.mospolytech.domain.schedule.repository.ScheduleInfoRepository
 import com.mospolytech.features.base.utils.respondResult
 import com.mospolytech.features.schedule.routes.model.ScheduleInfoRequest
-import io.ktor.server.application.*
-import io.ktor.server.locations.*
+import io.ktor.server.resources.*
 import io.ktor.server.routing.*
 
 fun Routing.scheduleInfoRoutesV1(repository: ScheduleInfoRepository) {

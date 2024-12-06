@@ -12,9 +12,7 @@ import com.mospolytech.features.base.utils.respondResult
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.util.pipeline.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -76,7 +74,7 @@ fun Application.authRoutesV1(
     }
 }
 
-private suspend fun PipelineContext<Unit, ApplicationCall>.loginPost(
+private suspend fun RoutingContext.loginPost(
     repository: AuthRepository,
     getJwtTokenUseCase: GetJwtTokenUseCase,
     getJwtRefreshTokenUseCase: GetJwtRefreshTokenUseCase,

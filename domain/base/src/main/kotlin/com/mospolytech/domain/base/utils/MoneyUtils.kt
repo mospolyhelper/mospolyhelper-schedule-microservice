@@ -8,7 +8,7 @@ fun BigDecimal.formatRoubles(): String {
     return formatter.format(this)
 }
 
-private val locale = Locale("ru", "RU")
+private val locale = Locale.of("ru", "RU")
 private val formatter =
     NumberFormat.getCurrencyInstance(locale).apply {
     }

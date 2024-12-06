@@ -12,6 +12,7 @@ import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.io.readByteArray
 import kotlinx.serialization.decodeFromString
 import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
 import nl.adaptivity.xmlutil.serialization.UnknownChildHandler
@@ -28,7 +29,9 @@ class TeachersService(
         withContext(Dispatchers.IO) {
             val xml =
                 XML {
-                    unknownChildHandler = UnknownChildHandler { _, _, _, _, _ -> emptyList() }
+                    defaultPolicy {
+                        unknownChildHandler = UnknownChildHandler { _, _, _, _, _ -> emptyList() }
+                    }
                 }
 
             val inputString =
@@ -69,8 +72,8 @@ class TeachersService(
             val channel: ByteReadChannel = httpResponse.body()
             while (!channel.isClosedForRead) {
                 val packet = channel.readRemaining(DEFAULT_BUFFER_SIZE.toLong())
-                while (!packet.isEmpty) {
-                    val bytes = packet.readBytes()
+                while (!packet.exhausted()) {
+                    val bytes = packet.readByteArray()
                     file.appendBytes(bytes)
                 }
             }

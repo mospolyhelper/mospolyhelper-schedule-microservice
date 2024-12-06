@@ -1,22 +1,20 @@
 package com.mospolytech.data.base
 
 import io.ktor.client.*
-import io.ktor.client.engine.apache.*
-import io.ktor.client.plugins.*
+import io.ktor.client.engine.apache5.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-import org.apache.http.conn.ssl.NoopHostnameVerifier
-import org.apache.http.conn.ssl.TrustAllStrategy
-import org.apache.http.ssl.SSLContextBuilder
+import org.apache.hc.client5.http.ssl.TrustAllStrategy
+import org.apache.hc.core5.ssl.SSLContextBuilder
 import org.koin.dsl.module
 
 val baseDataModule =
     module {
         single {
-            HttpClient(Apache) {
+            HttpClient(Apache5) {
                 install(ContentNegotiation) {
                     val json =
                         Json {
@@ -37,8 +35,7 @@ val baseDataModule =
 
                 engine {
                     customizeClient {
-                        setSSLContext(SSLContextBuilder().loadTrustMaterial(null, TrustAllStrategy.INSTANCE).build())
-                        setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+                        sslContext = SSLContextBuilder().loadTrustMaterial(null, TrustAllStrategy.INSTANCE).build()
                         socketTimeout = 10_000_000
                         connectTimeout = 0
                     }

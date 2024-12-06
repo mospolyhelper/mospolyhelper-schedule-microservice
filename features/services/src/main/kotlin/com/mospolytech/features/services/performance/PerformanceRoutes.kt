@@ -6,7 +6,6 @@ import com.mospolytech.features.base.utils.getTokenOrRespondError
 import com.mospolytech.features.base.utils.respondResult
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.locations.*
 import io.ktor.server.routing.*
 
 fun Application.performanceRoutesV1(repository: PerformanceRepository) {

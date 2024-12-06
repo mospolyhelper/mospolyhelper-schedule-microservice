@@ -29,7 +29,8 @@ class GroupsRepositoryImpl : GroupsRepository {
             createPagingDto(pageSize, page) { offset ->
                 GroupEntity.findOrAllIfEmpty(query) { GroupsDb.title like "%$query%" }
                     .orderBy(GroupsDb.title to SortOrder.ASC)
-                    .limit(pageSize, offset.toLong())
+                    .limit(pageSize)
+                    .offset(offset.toLong())
                     .mapLazy { it.toShortModel() }
                     .toList()
             }

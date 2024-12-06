@@ -144,7 +144,7 @@ private fun parseGrade(grade: String): Grade {
 private val dateFormatter = DateTimeFormatter.ofPattern("MMMM d',' yyyy", Locale.US)
 private val dateFormatterRu =
     DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
-        .withLocale(Locale("ru", "RU"))
+        .withLocale(Locale.of("ru", "RU"))
 
 fun String.toDate(): LocalDate? {
     return try {

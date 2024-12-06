@@ -1,17 +1,17 @@
 [versions]
-kotlin = "2.0.20" # https://github.com/JetBrains/kotlin/releases
-detekt = "1.23.6" # https://github.com/detekt/detekt/releases
+kotlin = "2.0.21" # https://github.com/JetBrains/kotlin/releases
+detekt = "1.23.7" # https://github.com/detekt/detekt/releases
 
-ktor = "2.3.12" # https://github.com/ktorio/ktor/releases
-logback = "1.5.8" # https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+ktor = "3.0.2" # https://github.com/ktorio/ktor/releases
+logback = "1.5.12" # https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
 prometeus = "1.13.4" # https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-prometheus
 koin = "4.0.0" # https://github.com/InsertKoinIO/koin/releases
-exposed = "0.54.0" # https://github.com/JetBrains/Exposed/blob/main/CHANGELOG.md
-xmlutil = "0.90.1" # https://github.com/pdvrieze/xmlutil/releases
+exposed = "0.57.0" # https://github.com/JetBrains/Exposed/blob/main/CHANGELOG.md
+xmlutil = "0.90.3" # https://github.com/pdvrieze/xmlutil/releases
 kotlinxDatetime = "0.6.1" # https://github.com/Kotlin/kotlinx-datetime/releases
 kotlinxSerialization = "1.7.3" # https://github.com/Kotlin/kotlinx.serialization/releases
 postgresql = "42.7.4" # https://mvnrepository.com/artifact/org.postgresql/postgresql
-quartz = "2.3.2" # https://mvnrepository.com/artifact/org.quartz-scheduler/quartz
+quartz = "2.5.0" # https://mvnrepository.com/artifact/org.quartz-scheduler/quartz
 jwt = "4.4.0" # https://github.com/auth0/java-jwt/releases
 
 
@@ -23,27 +23,26 @@ gradlePlugin-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plug
 
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 ktor-server-config-yaml = { module = "io.ktor:ktor-server-config-yaml", version.ref = "ktor" }
-ktor-server-host-common = { module = "io.ktor:ktor-server-host-common", version.ref = "ktor" }
 ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
 ktor-server-data-conversion = { module = "io.ktor:ktor-server-data-conversion", version.ref = "ktor" }
 ktor-server-call-logging = { module = "io.ktor:ktor-server-call-logging", version.ref = "ktor" }
 ktor-server-cors = { module = "io.ktor:ktor-server-cors", version.ref = "ktor" }
 ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
-ktor-server-locations = { module = "io.ktor:ktor-server-locations", version.ref = "ktor" }
+ktor-server-resources = { module = "io.ktor:ktor-server-resources", version.ref = "ktor" }
 ktor-server-auth = { module = "io.ktor:ktor-server-auth", version.ref = "ktor" }
 ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt", version.ref = "ktor" }
 ktor-server-websockets = { module = "io.ktor:ktor-server-websockets", version.ref = "ktor" }
 ktor-server-metrics = { module = "io.ktor:ktor-server-metrics", version.ref = "ktor" }
 ktor-server-metrics-micrometer = { module = "io.ktor:ktor-server-metrics-micrometer", version.ref = "ktor" }
-ktor-server-tests = { module = "io.ktor:ktor-server-tests", version.ref = "ktor" }
+ktor-server-tests = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 ktor-server-ssl = { module = "io.ktor:ktor-network-tls-certificates", version.ref = "ktor" }
 
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-core-jvm = { module = "io.ktor:ktor-client-core-jvm", version.ref = "ktor" }
-ktor-client-apache = { module = "io.ktor:ktor-client-apache", version.ref = "ktor" }
+ktor-client-apache = { module = "io.ktor:ktor-client-apache5", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 

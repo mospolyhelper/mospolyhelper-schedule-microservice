@@ -31,7 +31,8 @@ class LessonSubjectsRepositoryImpl : LessonSubjectsRepository {
                 SubjectEntity.findOrAllIfEmpty(query) {
                     SubjectsDb.title.replace(" ", "").lowerCase() like "%${query.lowercase()}%"
                 }.orderBy(SubjectsDb.title to SortOrder.ASC)
-                    .limit(pageSize, offset.toLong())
+                    .limit(pageSize)
+                    .offset(offset.toLong())
                     .mapLazy { it.toModel() }
                     .toList()
             }

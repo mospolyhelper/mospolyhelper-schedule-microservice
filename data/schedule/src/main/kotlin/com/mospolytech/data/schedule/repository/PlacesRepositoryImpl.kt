@@ -34,7 +34,8 @@ class PlacesRepositoryImpl : PlacesRepository {
                 PlaceEntity.findOrAllIfEmpty(query) {
                     PlacesDb.title.replace(" ", "").lowerCase() like "%${query.lowercase()}%"
                 }.orderBy(PlacesDb.type to SortOrder.ASC, PlacesDb.title to SortOrder.ASC)
-                    .limit(pageSize, offset.toLong())
+                    .limit(pageSize)
+                    .offset(offset.toLong())
                     .mapLazy { it.toModel() }
                     .toList()
             }

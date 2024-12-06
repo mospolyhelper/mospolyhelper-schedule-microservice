@@ -22,7 +22,7 @@ private val CustomLogger: Logger = LoggerFactory.getLogger("com.mospolytech.micr
  * @param payload JWT
  * @see Payload
  */
-class MpuCredential(val payload: Payload) : Credential
+class MpuCredential(val payload: Payload)
 
 /**
  * Represents a JWT principal consist of the specified [String]
@@ -31,7 +31,7 @@ data class MpuPrincipal(
     val token: String,
     val guid: String?,
     val jwt: String?,
-) : Principal
+)
 
 /**
  * JWT authentication provider that will be registered with the specified [name]
@@ -65,7 +65,7 @@ class MpuAuthenticationProvider(private val secret: String, config: Configuratio
             )
         }
 
-        public fun validate(validate: suspend ApplicationCall.(MpuCredential) -> Principal?) {
+        public fun validate(validate: suspend ApplicationCall.(MpuCredential) -> Any?) {
             authenticationFunction = validate
         }
 
@@ -138,8 +138,8 @@ private suspend fun verifyAndValidate(
     secret: String,
     call: ApplicationCall,
     token: HttpAuthHeader,
-    validate: suspend ApplicationCall.(Payload) -> Principal?,
-): Principal? {
+    validate: suspend ApplicationCall.(Payload) -> Any?,
+): Any? {
     val jwt =
         try {
             token.getBlob(secret)

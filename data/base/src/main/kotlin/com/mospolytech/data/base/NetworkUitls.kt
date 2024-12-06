@@ -1,7 +1,7 @@
 package com.mospolytech.data.base
 
-import io.ktor.utils.io.errors.*
 import kotlinx.coroutines.delay
+import kotlinx.io.IOException
 import kotlinx.serialization.SerializationException
 
 suspend fun <T> retryIO(

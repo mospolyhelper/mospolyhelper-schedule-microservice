@@ -38,7 +38,8 @@ class TeachersRemoteDS {
         createPagingDto(pageSize, page) { offset ->
             TeacherEntity.findOrAllIfEmpty(query) { TeachersDb.name.lowerCase() like "%${query.lowercase()}%" }
                 .orderBy(TeachersDb.name to SortOrder.ASC)
-                .limit(pageSize, offset.toLong())
+                .limit(pageSize)
+                .offset(offset.toLong())
                 .map { it.toModel().toPerson() }
         }
     }

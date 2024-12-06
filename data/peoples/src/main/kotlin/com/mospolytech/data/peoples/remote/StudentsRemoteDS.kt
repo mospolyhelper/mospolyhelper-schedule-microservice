@@ -69,7 +69,8 @@ class StudentsRemoteDS {
             }
 
             StudentShortEntity.wrapRows(dbQuery)
-                .limit(pageSize, offset.toLong())
+                .limit(pageSize)
+                .offset(offset.toLong())
                 .mapLazy { it.toModel() }
                 .toList()
         }

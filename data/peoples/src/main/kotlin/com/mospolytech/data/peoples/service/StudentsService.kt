@@ -16,7 +16,9 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import kotlinx.io.readByteArray
 import kotlinx.serialization.decodeFromString
+import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
 import nl.adaptivity.xmlutil.serialization.UnknownChildHandler
 import nl.adaptivity.xmlutil.serialization.XML
 import java.io.File
@@ -25,11 +27,14 @@ class StudentsService(
     private val client: HttpClient,
     private val appConfig: AppConfig,
 ) {
+    @OptIn(ExperimentalXmlUtilApi::class)
     suspend fun parseStudents(file: File): Sequence<StudentXml> =
         withContext(Dispatchers.IO) {
             val xml =
                 XML {
-                    unknownChildHandler = UnknownChildHandler { _, _, _, _, _ -> emptyList() }
+                    defaultPolicy {
+                        unknownChildHandler = UnknownChildHandler { _, _, _, _, _ -> emptyList() }
+                    }
                 }
 
             val inputString =
@@ -62,8 +67,8 @@ class StudentsService(
             val channel: ByteReadChannel = httpResponse.body()
             while (!channel.isClosedForRead) {
                 val packet = channel.readRemaining(DEFAULT_BUFFER_SIZE.toLong())
-                while (!packet.isEmpty) {
-                    val bytes = packet.readBytes()
+                while (!packet.exhausted()) {
+                    val bytes = packet.readByteArray()
                     file.appendBytes(bytes)
                 }
             }
